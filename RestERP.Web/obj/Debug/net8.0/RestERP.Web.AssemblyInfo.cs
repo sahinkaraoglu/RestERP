@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RestERP.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c1a7c14d48e79f648d509d4c48adc30f0b8ca0fb")]
 [assembly: System.Reflection.AssemblyProductAttribute("RestERP.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RestERP.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
