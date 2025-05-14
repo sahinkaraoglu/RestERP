@@ -1,0 +1,23 @@
+using RestERP.Domain.Common;
+using RestERP.Domain.Enums;
+
+namespace RestERP.Domain.Entities
+{
+    /// <summary>
+    /// Sipariş entity sınıfı
+    /// </summary>
+    public class Order : BaseEntity
+    {
+        public string OrderNumber { get; set; } = string.Empty;
+        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public Guid? TableId { get; set; }
+        public Guid? CustomerId { get; set; }
+        public Guid? EmployeeId { get; set; }
+        public OrderStatus Status { get; set; } = OrderStatus.New;
+        public decimal TotalAmount { get; set; }
+        public bool IsPaid { get; set; }
+        
+        // İlişkiler
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    }
+} 

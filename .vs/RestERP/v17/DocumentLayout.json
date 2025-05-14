@@ -1,7 +1,44 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|c:\\users\\sahin\\documents\\github\\resterp\\resterp.domain\\entities\\employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|solutionrelative:resterp.domain\\entities\\employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|c:\\users\\sahin\\documents\\github\\resterp\\resterp.domain\\enums\\employeerole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|solutionrelative:resterp.domain\\enums\\employeerole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|c:\\users\\sahin\\documents\\github\\resterp\\resterp.domain\\entities\\customer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|solutionrelative:resterp.domain\\entities\\customer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|c:\\users\\sahin\\documents\\github\\resterp\\resterp.domain\\entities\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|solutionrelative:resterp.domain\\entities\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|c:\\users\\sahin\\documents\\github\\resterp\\resterp.domain\\enums\\orderstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|solutionrelative:resterp.domain\\enums\\orderstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|c:\\users\\sahin\\documents\\github\\resterp\\resterp.domain\\entities\\table.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|solutionrelative:resterp.domain\\entities\\table.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|c:\\users\\sahin\\documents\\github\\resterp\\resterp.domain\\entities\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|solutionrelative:resterp.domain\\entities\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|c:\\users\\sahin\\documents\\github\\resterp\\resterp.domain\\entities\\orderitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|solutionrelative:resterp.domain\\entities\\orderitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|c:\\users\\sahin\\documents\\github\\resterp\\resterp.domain\\entities\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}|RestERP.Domain\\RestERP.Domain.csproj|solutionrelative:resterp.domain\\entities\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,8 +46,125 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 6,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "OrderStatus.cs",
+              "DocumentMoniker": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Enums\\OrderStatus.cs",
+              "RelativeDocumentMoniker": "RestERP.Domain\\Enums\\OrderStatus.cs",
+              "ToolTip": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Enums\\OrderStatus.cs",
+              "RelativeToolTip": "RestERP.Domain\\Enums\\OrderStatus.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T23:35:08.056Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Table.cs",
+              "DocumentMoniker": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Table.cs",
+              "RelativeDocumentMoniker": "RestERP.Domain\\Entities\\Table.cs",
+              "ToolTip": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Table.cs",
+              "RelativeToolTip": "RestERP.Domain\\Entities\\Table.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T22:35:18.076Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "EmployeeRole.cs",
+              "DocumentMoniker": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Enums\\EmployeeRole.cs",
+              "RelativeDocumentMoniker": "RestERP.Domain\\Enums\\EmployeeRole.cs",
+              "ToolTip": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Enums\\EmployeeRole.cs",
+              "RelativeToolTip": "RestERP.Domain\\Enums\\EmployeeRole.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAqwAIAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T23:34:49.582Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Product.cs",
+              "DocumentMoniker": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Product.cs",
+              "RelativeDocumentMoniker": "RestERP.Domain\\Entities\\Product.cs",
+              "ToolTip": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Product.cs",
+              "RelativeToolTip": "RestERP.Domain\\Entities\\Product.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T22:33:35.999Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "OrderItem.cs",
+              "DocumentMoniker": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\OrderItem.cs",
+              "RelativeDocumentMoniker": "RestERP.Domain\\Entities\\OrderItem.cs",
+              "ToolTip": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\OrderItem.cs",
+              "RelativeToolTip": "RestERP.Domain\\Entities\\OrderItem.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T22:33:29.419Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Order.cs",
+              "DocumentMoniker": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Order.cs",
+              "RelativeDocumentMoniker": "RestERP.Domain\\Entities\\Order.cs",
+              "ToolTip": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Order.cs",
+              "RelativeToolTip": "RestERP.Domain\\Entities\\Order.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T22:33:28.828Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Employee.cs",
+              "DocumentMoniker": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Employee.cs",
+              "RelativeDocumentMoniker": "RestERP.Domain\\Entities\\Employee.cs",
+              "ToolTip": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Employee.cs",
+              "RelativeToolTip": "RestERP.Domain\\Entities\\Employee.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAqwBEAAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T22:33:28.258Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Customer.cs",
+              "DocumentMoniker": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Customer.cs",
+              "RelativeDocumentMoniker": "RestERP.Domain\\Entities\\Customer.cs",
+              "ToolTip": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Customer.cs",
+              "RelativeToolTip": "RestERP.Domain\\Entities\\Customer.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T22:33:27.732Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Category.cs",
+              "DocumentMoniker": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Category.cs",
+              "RelativeDocumentMoniker": "RestERP.Domain\\Entities\\Category.cs",
+              "ToolTip": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Domain\\Entities\\Category.cs",
+              "RelativeToolTip": "RestERP.Domain\\Entities\\Category.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-14T22:33:17.347Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:131:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
