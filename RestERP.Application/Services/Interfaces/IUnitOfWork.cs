@@ -1,4 +1,4 @@
-using RestERP.Domain.Common;
+using RestERP.Domain.Entities.Base;
 
 namespace RestERP.Domain.Interfaces
 {

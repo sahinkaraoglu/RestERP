@@ -1,4 +1,4 @@
-using MarketWorld.Domain.Entities.Base;
+using RestERP.Domain.Entities.Base;
 
 namespace RestERP.Domain.Entities
 {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MarketWorld.Domain.Entities.Base
+namespace RestERP.Domain.Entities.Base
 {
     public class BaseEntity
     {
