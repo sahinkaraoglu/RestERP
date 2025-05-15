@@ -10,9 +10,9 @@ namespace RestERP.Domain.Entities
     {
         public string OrderNumber { get; set; } = string.Empty;
         public DateTime OrderDate { get; set; } = DateTime.Now;
-        public Guid? TableId { get; set; }
-        public Guid? CustomerId { get; set; }
-        public Guid? EmployeeId { get; set; }
+        public int? TableId { get; set; }
+        public int? CustomerId { get; set; }
+        public int? EmployeeId { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.New;
         public decimal TotalAmount { get; set; }
         public bool IsPaid { get; set; }

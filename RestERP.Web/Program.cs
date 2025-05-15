@@ -1,7 +1,22 @@
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+using RestERP.Domain.Interfaces;
+using RestERP.Infrastructure;
+using RestERP.Infrastructure.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Veritabanı bağlantısı
+builder.Services.AddDbContext<RestERPDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Dependency Injection kayıtları
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 

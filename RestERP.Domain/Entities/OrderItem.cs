@@ -7,8 +7,8 @@ namespace RestERP.Domain.Entities
     /// </summary>
     public class OrderItem : BaseEntity
     {
-        public Guid OrderId { get; set; }
-        public Guid ProductId { get; set; }
+        public int OrderId { get; set; }
+        public int ProductId { get; set; }
         public int Quantity { get; set; } = 1;
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }

@@ -5,10 +5,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using RestERP.Domain.Entities.Base;
+using RestERP.Domain.Interfaces;
 
 namespace RestERP.Infrastructure.Repositories
 {
-    public class Repository<T> : RestERP.Domain.Interfaces.IRepository<T> where T : BaseEntity
+    public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         protected readonly RestERPDbContext _dbContext;
 
@@ -29,10 +30,9 @@ namespace RestERP.Infrastructure.Repositories
             await Task.CompletedTask;
         }
 
-        public async Task<bool> ExistsAsync(Guid id)
+        public async Task<bool> ExistsAsync(int id)
         {
-            // int türüne çevirme gerekebilir, proje yapısına göre kontrol edilmeli
-            return await _dbContext.Set<T>().AnyAsync(e => e.Id == Convert.ToInt32(id));
+            return await _dbContext.Set<T>().AnyAsync(e => e.Id == id);
         }
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
@@ -45,10 +45,9 @@ namespace RestERP.Infrastructure.Repositories
             return await _dbContext.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(Guid id)
+        public async Task<T?> GetByIdAsync(int id)
         {
-            // int türüne çevirme gerekebilir, proje yapısına göre kontrol edilmeli
-            return await _dbContext.Set<T>().FindAsync(Convert.ToInt32(id));
+            return await _dbContext.Set<T>().FindAsync(id);
         }
 
         public async Task UpdateAsync(T entity)
