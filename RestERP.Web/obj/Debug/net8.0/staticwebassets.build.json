@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Ky+BLFjuXrs0IBDJ2wOS8DKtg93amrNhNaREojc/kIs=",
+  "Hash": "PqdncW3c3r1cjRVUxmLksFmkTO0yCoijnSOD2+VRirg=",
   "Source": "RestERP.Web",
   "BasePath": "_content/RestERP.Web",
   "Mode": "Default",
@@ -91,6 +91,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Web\\wwwroot\\img\\mainpage.jpg",
+      "SourceId": "RestERP.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Web\\wwwroot\\",
+      "BasePath": "_content/RestERP.Web",
+      "RelativePath": "img/mainpage.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\img\\mainpage.jpg"
     },
     {
       "Identity": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Web\\wwwroot\\js\\site.js",

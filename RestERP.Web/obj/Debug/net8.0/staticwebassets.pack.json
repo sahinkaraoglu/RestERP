@@ -13,6 +13,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Web\\wwwroot\\img\\mainpage.jpg",
+      "PackagePath": "staticwebassets\\img\\mainpage.jpg"
+    },
+    {
       "Id": "C:\\Users\\sahin\\Documents\\GitHub\\RestERP\\RestERP.Web\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

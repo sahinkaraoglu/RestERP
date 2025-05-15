@@ -4,25 +4,20 @@ using RestERP.Web.Models;
 
 namespace RestERP.Web.Controllers;
 
-public class HomeController : Controller
+public class PanelController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ILogger<PanelController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public PanelController(ILogger<PanelController> logger)
     {
         _logger = logger;
     }
 
-    public IActionResult Index()
+
+    public IActionResult Panel()
     {
         return View();
     }
-
-    public IActionResult Menu()
-    {
-        return View();
-    }
-
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
