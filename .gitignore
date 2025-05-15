@@ -41,6 +41,17 @@ bld/
 *.userosscache
 *.sln.docstates
 
+# Build folders
+bin/
+obj/
+
+# VS temporary files
+*.cache
+
+# Auto-generated assembly info
+**/obj/**/*.AssemblyInfo.cs
+**/obj/**/*.AssemblyInfoInputs.cache
+
 # Visual Studio 2017 auto generated files
 Generated\ Files/
 
