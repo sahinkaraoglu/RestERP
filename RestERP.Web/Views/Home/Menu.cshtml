@@ -1,3 +1,264 @@
 ﻿@{
     ViewData["Title"] = "Menüler";
 }
+
+@using RestERP.Infrastructure.Data.SeedData
+@using RestERP.Domain.Entities
+
+<div class="restaurant-menu">
+    <div class="menu-header">
+        <h1>RestERP Restaurant</h1>
+        <div class="divider">
+            <span>✦</span>
+        </div>
+        <h2>Menümüz</h2>
+    </div>
+
+    <div class="menu-container">
+        @{
+            var categories = CategorySeedData.GetCategories();
+            var subCategories = SubCategorySeedData.GetSubCategories();
+        }
+
+        @foreach (var category in categories)
+        {
+            <div class="category">
+                <div class="category-header" onclick="toggleCategory(@category.Id)">
+                    <h3>@category.TurkishName</h3>
+                    <div class="toggle-icon">+</div>
+                </div>
+                <div class="subcategory-container" id="category-@category.Id">
+                    <table class="subcategory-table">
+                        <tbody>
+                            @foreach (var subCategory in subCategories.Where(s => s.CategoryId == category.Id))
+                            {
+                                <tr>
+                                    <td class="subcategory-name">@subCategory.TurkishName</td>
+                                    <td class="subcategory-price">@subCategory.Price</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="menu-footer">
+        <div class="divider">
+            <span>❦</span>
+        </div>
+        <p>Afiyet Olsun</p>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f9f6f0;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .restaurant-menu {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 40px;
+        background-color: #fff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e5e0d5;
+        position: relative;
+    }
+
+    .restaurant-menu::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        border: 1px solid #e0d8c8;
+        pointer-events: none;
+    }
+
+    .menu-header {
+        text-align: center;
+        margin-bottom: 40px;
+        position: relative;
+    }
+
+    .menu-header h1 {
+        font-size: 2.8rem;
+        font-weight: 600;
+        color: #4a3c2e;
+        margin-bottom: 10px;
+        font-family: 'Lora', serif;
+        letter-spacing: 1px;
+    }
+
+    .menu-header h2 {
+        font-size: 2rem;
+        font-weight: 400;
+        color: #8c7762;
+        margin-top: 5px;
+        font-family: 'Lora', serif;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, transparent, #d2c4af, transparent);
+    }
+
+    .divider span {
+        padding: 0 15px;
+        color: #b09a7b;
+        font-size: 1.2rem;
+    }
+
+    .menu-container {
+        padding: 20px 10px;
+    }
+
+    .category {
+        margin-bottom: 25px;
+        border-bottom: 1px dashed #e5ded2;
+        padding-bottom: 15px;
+    }
+
+    .category-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background-color: #f8f4ec;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border-left: 4px solid #d6c6af;
+    }
+
+    .category-header:hover {
+        background-color: #f1eadd;
+    }
+
+    .category-header h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+        color: #6a563d;
+        font-family: 'Lora', serif;
+    }
+
+    .toggle-icon {
+        font-size: 1.5rem;
+        color: #a38b6e;
+        transition: transform 0.3s ease;
+    }
+
+    .subcategory-container {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+    }
+
+    .subcategory-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+        margin-top: 10px;
+    }
+
+    .subcategory-table tr {
+        transition: background-color 0.3s;
+    }
+
+    .subcategory-table tr:hover {
+        background-color: #f9f6f0;
+    }
+
+    .subcategory-name {
+        padding: 8px 15px;
+        font-size: 1.1rem;
+        color: #5c4c3a;
+        font-weight: 500;
+    }
+
+    .subcategory-price {
+        text-align: right;
+        padding: 8px 15px;
+        font-weight: 600;
+        color: #8c7762;
+        white-space: nowrap;
+    }
+
+    .menu-footer {
+        text-align: center;
+        margin-top: 50px;
+        font-style: italic;
+    }
+
+    .menu-footer p {
+        margin-top: 10px;
+        font-size: 1.3rem;
+        color: #8c7762;
+        font-family: 'Lora', serif;
+    }
+
+    /* Responsive Tasarım */
+    @@media (max-width: 768px) {
+        .restaurant-menu {
+            padding: 20px;
+            margin: 20px;
+        }
+
+        .menu-header h1 {
+            font-size: 2.2rem;
+        }
+
+        .menu-header h2 {
+            font-size: 1.6rem;
+        }
+
+        .category-header h3 {
+            font-size: 1.3rem;
+        }
+    }
+
+    .category-active .toggle-icon {
+        transform: rotate(45deg);
+    }
+</style>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script>
+    function toggleCategory(categoryId) {
+        const container = document.getElementById(`category-${categoryId}`);
+        const header = container.previousElementSibling;
+        
+        if (container.style.maxHeight) {
+            container.style.maxHeight = null;
+            header.classList.remove('category-active');
+        } else {
+            container.style.maxHeight = container.scrollHeight + "px";
+            header.classList.add('category-active');
+        }
+    }
+
+    // Sayfa yüklendiğinde tüm kategorileri kapalı hale getir
+    document.addEventListener('DOMContentLoaded', function() {
+        const categories = document.querySelectorAll('.subcategory-container');
+        categories.forEach(category => {
+            category.style.maxHeight = null;
+        });
+    });
+</script>
