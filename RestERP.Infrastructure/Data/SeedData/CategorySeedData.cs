@@ -29,7 +29,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                 {
                     Id = 3,
                     Name = "HotAppetizers",
-                    TurkishName = "AraSıcaklar",
+                    TurkishName = "Ara Sıcaklar",
                 },
                 new Category
                 {
