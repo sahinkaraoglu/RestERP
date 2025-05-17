@@ -2,8 +2,180 @@
     ViewData["Title"] = "RestERP Ana Sayfa";
 }
 
-<div class="text-center" style="margin: 0; padding: 0;">
-    <a href="#">
-        <img src="/img/mainpage.jpg" alt="Main Page Image" style="width: 100%; height: 100vh; object-fit: cover;" />
-    </a>
+<div class="hero-section">
+    <img src="/img/mainpage.jpg" alt="RestERP Restaurant" class="hero-image" />
+    <div class="hero-content">
+        <h1>RestERP Restaurant</h1>
+        <div class="divider">
+            <span>✦</span>
+        </div>
+        <h2>Modern Lezzetler, Eşsiz Deneyim</h2>
+        <div class="hero-buttons">
+            <a href="/Home/Menu" class="hero-button">Menüye Gözat</a>
+            <a href="#" class="hero-button secondary">Rezervasyon Yap</a>
+        </div>
+    </div>
 </div>
+
+<div class="welcome-section">
+    <div class="container">
+        <div class="welcome-content">
+            <h2>Hoş Geldiniz</h2>
+            <div class="divider">
+                <span>✦</span>
+            </div>
+            <p>RestERP Restaurant, modern mutfağın en seçkin lezzetlerini geleneksel tatlarla buluşturan özel bir mekandır. 
+            Şeflerimiz tarafından özenle hazırlanan menümüz, taze ve kaliteli malzemelerle mevsimsel olarak güncellenmektedir.</p>
+            <p>Sıcak ve şık atmosferimizde, dostlarınızla keyifli anlar yaşamanız için tüm detayları düşündük. 
+            Profesyonel ekibimiz, size unutulmaz bir yemek deneyimi sunmak için hizmetinizdedir.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section {
+        position: relative;
+        height: 85vh;
+        overflow: hidden;
+        margin-bottom: 50px;
+    }
+    
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    
+    .hero-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: #fff;
+        width: 80%;
+        max-width: 800px;
+        z-index: 1;
+    }
+    
+    .hero-content h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        font-family: 'Lora', serif;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    }
+    
+    .hero-content h2 {
+        font-size: 1.8rem;
+        font-weight: 400;
+        margin-top: 5px;
+        font-family: 'Lora', serif;
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+    }
+    
+    .hero-buttons {
+        margin-top: 30px;
+    }
+    
+    .hero-button {
+        display: inline-block;
+        padding: 12px 30px;
+        margin: 0 10px;
+        background-color: #b09a7b;
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        font-family: 'Montserrat', sans-serif;
+        border: 2px solid #b09a7b;
+    }
+    
+    .hero-button:hover {
+        background-color: #8c7762;
+        border-color: #8c7762;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .hero-button.secondary {
+        background-color: transparent;
+        border: 2px solid white;
+    }
+    
+    .hero-button.secondary:hover {
+        background-color: white;
+        color: #6a563d;
+    }
+    
+    .welcome-section {
+        padding: 60px 0;
+        background-color: #fff;
+    }
+    
+    .welcome-content {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    
+    .welcome-content h2 {
+        font-size: 2.2rem;
+        font-weight: 600;
+        color: #4a3c2e;
+        font-family: 'Lora', serif;
+    }
+    
+    .welcome-content p {
+        font-size: 1.1rem;
+        color: #6a563d;
+        line-height: 1.8;
+        margin-bottom: 20px;
+    }
+    
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 15px auto 25px;
+        max-width: 400px;
+        filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.7));
+    }
+    
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, transparent, #d2c4af, transparent);
+    }
+    
+    .divider span {
+        padding: 0 15px;
+        color: #b09a7b;
+        font-size: 1.2rem;
+    }
+    
+    @@media (max-width: 768px) {
+        .hero-section {
+            height: 70vh;
+        }
+        
+        .hero-content h1 {
+            font-size: 2.5rem;
+        }
+        
+        .hero-content h2 {
+            font-size: 1.4rem;
+        }
+        
+        .hero-button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 0.9rem;
+        }
+    }
+</style>

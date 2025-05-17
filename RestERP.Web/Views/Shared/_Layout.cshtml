@@ -56,8 +56,8 @@
         
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #f9f6f0;
-            color: #333;
+            background-color: #faf7f2;
+            color: #5a5348;
             line-height: 1.6;
             display: flex;
             flex-direction: column;
@@ -69,16 +69,16 @@
         }
         
         .restaurant-header {
-            background-color: #fff;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            border-bottom: 1px solid #e5e0d5;
-            margin-bottom: 30px;
+            background-color: #fffcf7;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-bottom: 1px solid #f0e9df;
+            margin-bottom: 20px;
         }
         
         .custom-navbar {
             max-width: 1140px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
         }
         
         .navbar-container {
@@ -86,16 +86,16 @@
         }
         
         .navbar-top {
-            margin-bottom: 15px;
+            margin-bottom: 6px;
         }
         
         .navbar-brand h1 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            color: #4a3c2e;
-            margin-bottom: 10px;
+            font-size: 2.3rem;
+            font-weight: 500;
+            color: #5d4b38;
+            margin-bottom: 2px;
             font-family: 'Lora', serif;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px;
             text-decoration: none;
         }
         
@@ -106,7 +106,10 @@
         .divider {
             display: flex;
             align-items: center;
-            margin: 15px 0;
+            justify-content: center;
+            margin: 5px auto;
+            max-width: 450px;
+            position: relative;
         }
         
         .divider::before,
@@ -114,13 +117,15 @@
             content: '';
             flex: 1;
             height: 1px;
-            background: linear-gradient(to right, transparent, #d2c4af, transparent);
+            background: linear-gradient(to right, transparent, #e2d7c7, transparent);
         }
         
         .divider span {
             padding: 0 15px;
-            color: #b09a7b;
-            font-size: 1.2rem;
+            color: #b8a88d;
+            font-size: 1.1rem;
+            position: relative;
+            display: inline-block;
         }
         
         .horizontal-menu {
@@ -128,39 +133,42 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            margin: 20px 0;
+            margin: 10px 0;
             width: 100%;
         }
         
         .menu-button {
             display: inline-block;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #6a563d;
-            font-weight: 500;
-            padding: 8px 20px;
-            margin: 0 15px;
+            font-weight: 400;
+            padding: 5px 15px;
+            margin: 0 8px;
             text-decoration: none;
             position: relative;
-            border: 1px solid #d2c4af;
-            border-radius: 4px;
-            background-color: #faf8f3;
-            transition: all 0.3s ease;
+            border: 1px solid #e6dfd4;
+            border-radius: 6px;
+            background-color: #fdfaf5;
+            transition: all 0.4s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
         
         .menu-button:hover {
             color: #4a3c2e;
-            background-color: #f1eadd;
-            border-color: #b09a7b;
+            background-color: #f7f2e8;
+            border-color: #d6c8b4;
             text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
         
         .footer-slim {
-            background-color: #fff;
-            color: #8c7762;
-            padding: 15px 0;
+            background-color: #fffcf7;
+            color: #9b8977;
+            padding: 16px 0;
             font-family: 'Lora', serif;
             font-size: 0.9rem;
-            border-top: 1px solid #e5e0d5;
+            border-top: 1px solid #f0e9df;
             flex-shrink: 0;
         }
         
@@ -169,13 +177,14 @@
         }
         
         .footer-content p {
-            margin: 8px 0;
+            margin: 10px 0;
         }
         
         .divider-small {
             display: flex;
             align-items: center;
-            margin: 5px auto;
+            justify-content: center;
+            margin: 6px auto;
             max-width: 200px;
         }
         
@@ -184,18 +193,18 @@
             content: '';
             flex: 1;
             height: 1px;
-            background: linear-gradient(to right, transparent, #d2c4af, transparent);
+            background: linear-gradient(to right, transparent, #e2d7c7, transparent);
         }
         
         .divider-small span {
-            padding: 0 10px;
-            color: #b09a7b;
+            padding: 0 12px;
+            color: #b8a88d;
             font-size: 0.9rem;
         }
         
         @@media (max-width: 768px) {
             .navbar-brand h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             .horizontal-menu {
@@ -203,10 +212,13 @@
                 flex-direction: row;
                 justify-content: center;
                 flex-wrap: wrap;
+                margin: 8px 0;
             }
             
             .menu-button {
-                margin: 5px 10px;
+                margin: 3px 6px;
+                font-size: 1rem;
+                padding: 5px 12px;
             }
         }
     </style>
