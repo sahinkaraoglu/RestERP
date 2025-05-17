@@ -25,8 +25,8 @@ The project has a layered architecture in line with Clean Architecture principle
 - Monitor order status (New, In Progress, Completed, Cancelled)
 - Table-based order management
 
-### Product Management
-- Add, edit, and categorize products
+### Food Management
+- Add, edit, and categorize food items
 - Price management
 
 ### Customer Management
@@ -40,27 +40,38 @@ The project has a layered architecture in line with Clean Architecture principle
 - Table status tracking
 - Table-based order viewing
 
+## Basic Entities Used in the Project
 
-Basic entities used in the project:
-
-- **Category**: Product categories
+- **FoodCategory**: Food categories
+- **Food**: Food information
 - **Customer**: Customer information
 - **Employee**: Employee information
 - **Order**: Order information
 - **OrderItem**: Order items
-- **Product**: Product information
 - **Table**: Table information
 
 All entities are derived from the `BaseEntity` class and basically contain the following properties:
-- Id
-- IsDeleted
-- CreatedById, CreatedDate
-- UpdatedById, UpdatedDate
+- Id (int): Unique identifier
+- IsDeleted (bool): Deletion status
+- CreatedById (long?), CreatedDate (DateTime?): Creator user and date
+- UpdatedById (long?), UpdatedDate (DateTime?): Updater user and date
+
+## Employee Roles
+The system defines the following employee roles:
+- Manager
+- Chef
+- Waiter
+- Cashier
+
+## Order Statuses
+The following statuses are defined for orders:
+- New
+- InProgress
+- Completed
+- Cancelled
 
 ### Repository Pattern
-
 The project uses Generic Repository and Unit of Work pattern. This provides:
-
 - A standard interface for database operations
 - Prevention of code duplication
 - Increased testability
