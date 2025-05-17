@@ -368,3 +368,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# ASP.NET Core static web assets
+**/bin/Debug/net*/**.staticwebassets.runtime.json
+**/bin/Release/net*/**.staticwebassets.runtime.json
+*.staticwebassets.runtime.json
+**/obj/Debug/net*/staticwebassets/
+**/obj/Debug/net*/staticwebassets.*
+**/obj/Release/net*/staticwebassets/
+**/obj/Release/net*/staticwebassets.*
