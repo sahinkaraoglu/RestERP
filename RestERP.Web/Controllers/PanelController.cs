@@ -27,7 +27,7 @@ public class PanelController : Controller
         ViewBag.Categories = categories;
         ViewBag.SubCategories = subCategories;
         
-        return View();
+        return View("Menu/Menu");
     }
 
     public IActionResult Panel()
