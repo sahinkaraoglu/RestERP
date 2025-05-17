@@ -38,7 +38,7 @@
                                             <span>@subCategory.TurkishName</span>
                                             <div class="quantity-control">
                                                 <button class="quantity-btn minus" onclick="decreaseQuantity(@subCategory.Id)">-</button>
-                                                <span id="quantity-@subCategory.Id" class="quantity-value">1</span>
+                                                <span id="quantity-@subCategory.Id" class="quantity-value">0</span>
                                                 <button class="quantity-btn plus" onclick="increaseQuantity(@subCategory.Id)">+</button>
                                             </div>
                                         </div>
@@ -391,7 +391,7 @@
     function decreaseQuantity(subCategoryId) {
         const quantityElement = document.getElementById(`quantity-${subCategoryId}`);
         let quantity = parseInt(quantityElement.innerText);
-        if (quantity > 1) {
+        if (quantity > 0) {
             quantityElement.innerText = quantity - 1;
         }
         event.stopPropagation();
@@ -411,8 +411,48 @@
                 alert('Lütfen masa numarası giriniz!');
                 return;
             }
-            alert(`${tableNumber} numaralı masa için siparişiniz alınıyor...`);
-            // Burada sipariş işleme mantığı geliştirilebilir
+            
+            // Sipariş verilerini topla
+            const orderItems = [];
+            const categories = document.querySelectorAll('.category');
+            
+            categories.forEach(category => {
+                const categoryName = category.querySelector('.category-header h3').textContent;
+                const items = category.querySelectorAll('.subcategory-table tr');
+                
+                items.forEach(item => {
+                    const itemName = item.querySelector('.subcategory-name span').textContent;
+                    const quantityElement = item.querySelector('.quantity-value');
+                    const price = parseFloat(item.querySelector('.subcategory-price').textContent);
+                    const quantity = parseInt(quantityElement.textContent);
+                    
+                    if (quantity > 0) {
+                        orderItems.push({
+                            category: categoryName,
+                            name: itemName,
+                            price: price,
+                            quantity: quantity
+                        });
+                    }
+                });
+            });
+            
+            // Sipariş verileri kontrolü
+            if (orderItems.length === 0) {
+                alert('Lütfen en az bir ürün seçiniz!');
+                return;
+            }
+            
+            // Sipariş verilerini hazırla
+            const orderData = {
+                tableNumber: tableNumber,
+                items: orderItems,
+                orderDate: new Date().toISOString()
+            };
+            
+            // Order/Index sayfasına yönlendir
+            const orderDataParam = encodeURIComponent(JSON.stringify(orderData));
+            window.location.href = `/Order/Index?orderData=${orderDataParam}`;
         });
     });
 </script>
