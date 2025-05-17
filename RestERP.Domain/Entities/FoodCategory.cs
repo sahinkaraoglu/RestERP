@@ -5,13 +5,11 @@ namespace RestERP.Domain.Entities
     /// <summary>
     /// Ürün kategorisi entity sınıfı
     /// </summary>
-    public class Category : BaseEntity
+    public class FoodCategory : BaseEntity
     {
         public string Name { get; set; }
         public string TurkishName { get; set; }
-        public string? ShortenedEntityName { get; set; }
         public string? Description { get; set; }
-        public ICollection<SubCategory>? SubCategories { get; set; }
-        public ICollection<Product>? Products { get; set; }
+        public ICollection<Food>? SubCategories { get; set; }
     }
 } 

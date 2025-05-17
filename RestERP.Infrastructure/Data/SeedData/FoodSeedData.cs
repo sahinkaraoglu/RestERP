@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace RestERP.Infrastructure.Data.SeedData
 {
-    public class SubCategorySeedData
+    public class FoodSeedData
     {
-        public static List<SubCategory> GetSubCategories()
+        public static List<Food> GetFood()
         {
-            return new List<SubCategory>
+            return new List<Food>
             {
-                new SubCategory
+                new Food
                 {
                     Id = 1,
                     CategoryId = 1,
@@ -21,7 +21,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Kahvaltı Tabağı",
                     Price = "200₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 2,
                     CategoryId = 1,
@@ -29,7 +29,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Serpme Kahvaltı",
                     Price = "300₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 3,
                     CategoryId = 1,
@@ -37,7 +37,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Peynir Tabağı",
                     Price = "70₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 4,
                     CategoryId = 1,
@@ -45,7 +45,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Zeytin Tabağı",
                     Price = "47,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 5,
                     CategoryId = 1,
@@ -53,7 +53,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Omlet",
                     Price = "47,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 6,
                     CategoryId = 1,
@@ -61,7 +61,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Kaşarlı Omlet",
                     Price = "55₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 7,
                     CategoryId = 1,
@@ -69,7 +69,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Karışık Omlet",
                     Price = "80₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 8,
                     CategoryId = 1,
@@ -77,7 +77,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Menemen",
                     Price = "62,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 9,
                     CategoryId = 1,
@@ -85,7 +85,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Sucuklu Yumurta",
                     Price = "80₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 10,
                     CategoryId = 1,
@@ -93,7 +93,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Mıhlama",
                     Price = "100₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 11,
                     CategoryId = 1,
@@ -101,7 +101,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Pastırmalı Yumurta",
                     Price = "75₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 12,
                     CategoryId = 1,
@@ -109,7 +109,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Sahanda Sucuk",
                     Price = "85₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 13,
                     CategoryId = 1,
@@ -117,7 +117,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Patates Tava",
                     Price = "40₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 14,
                     CategoryId = 4,
@@ -125,7 +125,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Mini Kalem Böreği",
                     Price = "40₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 15,
                     CategoryId = 1,
@@ -133,7 +133,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Bal & Kaymak",
                     Price = "60₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 16,
                     CategoryId = 1,
@@ -141,7 +141,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Tereyağı Porsiyonu",
                     Price = "47,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 17,
                     CategoryId = 1,
@@ -149,7 +149,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Söğüş Tabağı",
                     Price = "47,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 18,
                     CategoryId = 1,
@@ -157,7 +157,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Meyve Tabağı",
                     Price = "55₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 19,
                     CategoryId = 2,
@@ -165,7 +165,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Biber Dolma",
                     Price = "57,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 20,
                     CategoryId = 2,
@@ -173,7 +173,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Soslu Patlıcan",
                     Price = "57,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 21,
                     CategoryId = 2,
@@ -181,7 +181,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Enginar",
                     Price = "57,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 22,
                     CategoryId = 2,
@@ -189,7 +189,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Taze Fasulye",
                     Price = "57,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 23,
                     CategoryId = 2,
@@ -197,7 +197,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Yaprak Sarma",
                     Price = "57,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 24,
                     CategoryId = 2,
@@ -205,7 +205,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Zeytinyağı Tabağı",
                     Price = "80₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 25,
                     CategoryId = 3,
@@ -213,7 +213,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Patates Tava",
                     Price = "40₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 26,
                     CategoryId = 3,
@@ -221,7 +221,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Paçanga Böreği",
                     Price = "67,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 27,
                     CategoryId = 3,
@@ -229,7 +229,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Mantar Graten",
                     Price = "75₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 28,
                     CategoryId = 3,
@@ -237,7 +237,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Mantar Kavurma",
                     Price = "55₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 29,
                     CategoryId = 3,
@@ -245,7 +245,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Julyen Dil Balığı",
                     Price = "210₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 30,
                     CategoryId = 4,
@@ -253,7 +253,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Çipura Izgara 550 - 650 gr.",
                     Price = "550₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 31,
                     CategoryId = 4,
@@ -261,7 +261,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Çipura Izgara 300 - 350 gr.",
                     Price = "310₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 32,
                     CategoryId = 4,
@@ -269,7 +269,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Mezgit Tava",
                     Price = "260₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 33,
                     CategoryId = 4,
@@ -277,7 +277,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Fesleğen Soslu Somon Izgara",
                     Price = "415₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 34,
                     CategoryId = 4,
@@ -285,7 +285,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Levrek Fileto",
                     Price = "400₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 35,
                     CategoryId = 4,
@@ -293,7 +293,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Levrek Izgara 550 - 650 gr.",
                     Price = "550₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 36,
                     CategoryId = 4,
@@ -301,7 +301,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Levrek Izgara 300 - 350 gr.",
                     Price = "300₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 37,
                     CategoryId = 4,
@@ -309,7 +309,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Kiremitte Levrek",
                     Price = "415₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 38,
                     CategoryId = 4,
@@ -317,7 +317,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Somon Izgara",
                     Price = "400₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 39,
                     CategoryId = 4,
@@ -325,7 +325,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Dil Balığı Izgara",
                     Price = "270₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 40,
                     CategoryId = 4,
@@ -333,7 +333,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Somon Kavurma",
                     Price = "415₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 41,
                     CategoryId = 5,
@@ -341,7 +341,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "İstavrit",
                     Price = "285₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 42,
                     CategoryId = 5,
@@ -349,7 +349,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Sarıkanat",
                     Price = "295₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 43,
                     CategoryId = 5,
@@ -357,7 +357,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Palamut",
                     Price = "340₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 44,
                     CategoryId = 5,
@@ -365,7 +365,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Hamsi Tava",
                     Price = "250₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 45,
                     CategoryId = 5,
@@ -373,7 +373,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Mezgit",
                     Price = "270₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 46,
                     CategoryId = 5,
@@ -381,7 +381,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Tekir",
                     Price = "290₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 47,
                     CategoryId = 5,
@@ -389,7 +389,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Lüfer",
                     Price = "375₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 48,
                     CategoryId = 6,
@@ -397,7 +397,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Köfte Izgara",
                     Price = "200₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 49,
                     CategoryId = 6,
@@ -405,7 +405,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Kaşarlı Köfte Izgara",
                     Price = "210₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 50,
                     CategoryId = 6,
@@ -413,7 +413,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Piliç Izgara",
                     Price = "130₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 51,
                     CategoryId = 6,
@@ -421,7 +421,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Piliç Kavurma",
                     Price = "145₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 52,
                     CategoryId = 6,
@@ -429,7 +429,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Beğendili Julyen Piliç",
                     Price = "145₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 53,
                     CategoryId = 6,
@@ -437,7 +437,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Bonfile",
                     Price = "390₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 54,
                     CategoryId = 6,
@@ -445,7 +445,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Kaşarlı Bonfile",
                     Price = "400₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 55,
                     CategoryId = 6,
@@ -453,7 +453,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Beğendili Julyen Bonfile",
                     Price = "400₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 56,
                     CategoryId = 6,
@@ -461,7 +461,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Karışık Izgara",
                     Price = "390₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 57,
                     CategoryId = 6,
@@ -469,7 +469,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Çoban Kavurma",
                     Price = "325₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 58,
                     CategoryId = 7,
@@ -477,7 +477,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Sütlaç",
                     Price = "55₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 59,
                     CategoryId = 7,
@@ -485,7 +485,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Trileçe",
                     Price = "55₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 60,
                     CategoryId = 7,
@@ -493,7 +493,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Aşure",
                     Price = "55₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 61,
                     CategoryId = 7,
@@ -501,7 +501,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Profiterol",
                     Price = "55₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 62,
                     CategoryId = 7,
@@ -509,7 +509,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Volkanik",
                     Price = "80₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 63,
                     CategoryId = 7,
@@ -517,7 +517,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Meyveli Tatlılar",
                     Price = "60₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 64,
                     CategoryId = 7,
@@ -525,7 +525,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Hamur İşi Tatlıları",
                     Price = "60₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 65,
                     CategoryId = 7,
@@ -533,7 +533,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Dondurma Porsiyon",
                     Price = "47,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 66,
                     CategoryId = 7,
@@ -541,7 +541,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Meyve Tabağı",
                     Price = "55₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 67,
                     CategoryId = 7,
@@ -549,7 +549,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Tahinli Sarma",
                     Price = "67,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 68,
                     CategoryId = 8,
@@ -557,7 +557,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Meşrubat Çeşitleri",
                     Price = "55₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 69,
                     CategoryId = 8,
@@ -565,7 +565,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Ayran",
                     Price = "16₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 70,
                     CategoryId = 8,
@@ -573,7 +573,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Soda",
                     Price = "16₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 71,
                     CategoryId = 8,
@@ -581,7 +581,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Meyveli Soda",
                     Price = "19₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 72,
                     CategoryId = 8,
@@ -589,7 +589,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Sıkma Portakal / Nar Suyu",
                     Price = "55₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 73,
                     CategoryId = 8,
@@ -597,7 +597,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Nar Çiçeği Şerbeti",
                     Price = "55₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 74,
                     CategoryId = 8,
@@ -605,7 +605,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Çay",
                     Price = "10₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 75,
                     CategoryId = 8,
@@ -613,7 +613,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Hazır Kahve",
                     Price = "40₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 76,
                     CategoryId = 8,
@@ -621,7 +621,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Türk Kahvesi",
                     Price = "40₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 77,
                     CategoryId = 8,
@@ -629,7 +629,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     TurkishName = "Filtre Kahve",
                     Price = "47,50₺"
                 },
-                new SubCategory
+                new Food
                 {
                     Id = 78,
                     CategoryId = 8,

@@ -21,13 +21,27 @@ public class PanelController : Controller
 
     public IActionResult Menu()
     {
-        var categories = CategorySeedData.GetCategories();
-        var subCategories = SubCategorySeedData.GetSubCategories();
+        var categories = FoodCategorySeedData.GetFoodCategories();
+        var subCategories = FoodSeedData.GetFood();
         
         ViewBag.Categories = categories;
         ViewBag.SubCategories = subCategories;
         
         return View("Menu/Menu");
+    }
+
+    public IActionResult MenuAdd()
+    {
+        var categories = FoodCategorySeedData.GetFoodCategories();
+        ViewBag.Categories = categories;
+        
+        return View("Menu/MenuAdd");
+    }
+
+    [HttpPost]
+    public IActionResult AddMenuItem(MenuItemViewModel model)
+    {
+        return Json(new { success = true, message = "Ürün başarıyla eklendi" });
     }
 
     public IActionResult Panel()

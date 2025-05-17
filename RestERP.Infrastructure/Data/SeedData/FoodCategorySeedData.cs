@@ -7,55 +7,55 @@ using System.Threading.Tasks;
 
 namespace RestERP.Infrastructure.Data.SeedData
 {
-    public class CategorySeedData
+    public class FoodCategorySeedData
     {
-        public static List<Category> GetCategories()
+        public static List<FoodCategory> GetFoodCategories()
         {
-            return new List<Category>
+            return new List<FoodCategory>
             {
-                new Category
+                new FoodCategory
                 {
                     Id = 1,
                     Name = "Breakfast",
                     TurkishName = "Kahvaltı",
                 },
-                new Category
+                new FoodCategory
                 {
                     Id = 2,
                     Name = "OliveOilDishes",
                     TurkishName = "Zeytinyağlılar",
                 },
-                 new Category
+                 new FoodCategory
                 {
                     Id = 3,
                     Name = "HotAppetizers",
                     TurkishName = "Ara Sıcaklar",
                 },
-                new Category
+                new FoodCategory
                 {
                     Id = 4,
                     Name = "Types of Fish",
                     TurkishName = "Balık Çeşitleri",
                 },
-                new Category
+                new FoodCategory
                 {
                     Id = 5,
                     Name = "SeasonalFish",
                     TurkishName = "Mevsim Balıkları",
                 },
-                new Category
+                new FoodCategory
                 {
                     Id = 6,
                     Name = "TypesofGrillDishes",
                     TurkishName = "Izgara ve Kavurmalar",
                 },
-                new Category
+                new FoodCategory
                 {
                     Id = 7,
                     Name = "Dessert",
                     TurkishName = "Tatlılar",
                 },
-                new Category
+                new FoodCategory
                 {
                     Id = 8,
                     Name = "Drinks",

@@ -22,7 +22,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Servis kayıtları
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IFoodService, FoodService>();
 // Diğer servisleri buraya ekleyin
 
 var app = builder.Build();

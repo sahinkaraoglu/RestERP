@@ -11,13 +11,12 @@ namespace RestERP.Infrastructure
         {
         }
 
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<SubCategory> SubCategories { get; set; }
+        public DbSet<Food> Foods { get; set; }
+        public DbSet<FoodCategory> FoodCategories { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<Product> Products { get; set; }
         public DbSet<Table> Tables { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,7 +40,7 @@ namespace RestERP.Infrastructure
                 .HasForeignKey(oi => oi.OrderId);
                 
             modelBuilder.Entity<OrderItem>()
-                .HasOne(oi => oi.Product)
+                .HasOne(oi => oi.Food)
                 .WithMany()
                 .HasForeignKey(oi => oi.ProductId);
             
@@ -51,13 +50,13 @@ namespace RestERP.Infrastructure
                 .HasPrecision(18, 2);
             
             // Product konfigürasyonu
-            modelBuilder.Entity<Product>()
+            modelBuilder.Entity<Food>()
                 .Property(p => p.Price)
                 .HasPrecision(18, 2);
                 
             // Seed verilerini ekle
-            modelBuilder.Entity<Category>().HasData(CategorySeedData.GetCategories());
-            modelBuilder.Entity<SubCategory>().HasData(SubCategorySeedData.GetSubCategories());
+            modelBuilder.Entity<FoodCategory>().HasData(FoodCategorySeedData.GetFoodCategories());
+            modelBuilder.Entity<Food>().HasData(FoodSeedData.GetFood());
         }
     }
 }

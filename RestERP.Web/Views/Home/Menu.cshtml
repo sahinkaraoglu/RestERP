@@ -16,8 +16,8 @@
 
     <div class="menu-container">
         @{
-            var categories = CategorySeedData.GetCategories();
-            var subCategories = SubCategorySeedData.GetSubCategories();
+            var categories = FoodCategorySeedData.GetFoodCategories();
+            var subCategories = FoodSeedData.GetFood();
         }
 
         @foreach (var category in categories)

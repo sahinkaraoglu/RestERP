@@ -15,6 +15,6 @@ namespace RestERP.Domain.Entities
         
         // İlişkiler
         public Order Order { get; set; } = null!;
-        public Product Product { get; set; } = null!;
+        public Food Food { get; set; } = null!;
     }
 } 
