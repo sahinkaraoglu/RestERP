@@ -58,6 +58,7 @@
             <span>❦</span>
         </div>
         <p>Afiyet Olsun</p>
+        <button id="orderButton" class="order-button">Sipariş Ver</button>
     </div>
 </div>
 
@@ -286,6 +287,27 @@
         min-width: 20px;
         text-align: center;
     }
+    
+    /* Sipariş Ver butonu için stiller */
+    .order-button {
+        display: block;
+        margin: 20px auto 0;
+        padding: 12px 40px;
+        background-color: #8c7762;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .order-button:hover {
+        background-color: #6a563d;
+    }
 </style>
 
 <!-- Google Fonts -->
@@ -326,6 +348,12 @@
         const categories = document.querySelectorAll('.subcategory-container');
         categories.forEach(category => {
             category.style.maxHeight = null;
+        });
+        
+        // Sipariş Ver butonuna tıklama işlevi
+        document.getElementById('orderButton').addEventListener('click', function() {
+            alert('Siparişiniz alınıyor...');
+            // Burada sipariş işleme mantığı geliştirilebilir
         });
     });
 </script>
