@@ -13,10 +13,6 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
-# Visual Studio ve .NET derleme çıktıları
-*.cache
-*.AssemblyInfo.cs
-
 # Mono auto generated files
 mono_crash.*
 
@@ -37,24 +33,10 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
-
-# Visual Studio user-specific files
+# Visual Studio 2015/2017 cache/options directory
 .vs/
-*.user
-*.suo
-*.userosscache
-*.sln.docstates
-
-# Build folders
-bin/
-obj/
-
-# VS temporary files
-*.cache
-
-# Auto-generated assembly info
-**/obj/**/*.AssemblyInfo.cs
-**/obj/**/*.AssemblyInfoInputs.cache
+# Uncomment if you have tasks that create the project's static files in wwwroot
+#wwwroot/
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/
