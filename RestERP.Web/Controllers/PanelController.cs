@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Models;
 
 namespace RestERP.Web.Controllers;
@@ -15,6 +16,17 @@ public class PanelController : Controller
 
     public IActionResult Index()
     {
+        return View();
+    }
+
+    public IActionResult Menu()
+    {
+        var categories = CategorySeedData.GetCategories();
+        var subCategories = SubCategorySeedData.GetSubCategories();
+        
+        ViewBag.Categories = categories;
+        ViewBag.SubCategories = subCategories;
+        
         return View();
     }
 
