@@ -24,6 +24,23 @@
     </div>
 
     <div class="container dashboard-content">
+        <!-- Başarı ve Hata Mesajları -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        
         <!-- Kategori Filtreleme -->
         <div class="row mb-4">
             <div class="col-md-12">
@@ -47,7 +64,8 @@
             </div>
             <div class="col-md-6 text-end">                
                 <a href="/Panel/MenuAdd" class="btn btn-primary rounded-pill">
-               <i class="bi bi-plus-circle"></i> Yeni Ürün Ekle </a></div>
+               <i class="bi bi-plus-circle"></i> Yeni Ürün Ekle </a>
+             </div>
         </div>
 
         <!-- Menü Öğeleri Listesi -->
@@ -89,12 +107,12 @@
                                                 <p class="menu-desc">@item.Name</p>
                                             </div>
                                             <div class="menu-actions">
-                                                <button class="btn btn-sm btn-outline-primary" onclick="editMenuItem(@item.Id)">
+                                                <a href="/Panel/MenuUpdate?id=@item.Id" class="btn btn-sm btn-outline-primary">
                                                     <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteMenuItem(@item.Id)">
+                                                </a>
+                                                <a href="/Panel/MenuDelete?id=@item.Id" class="btn btn-sm btn-outline-danger">
                                                     <i class="bi bi-trash"></i>
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -136,118 +154,7 @@
     </div>
 </div>
 
-<!-- Yeni Ürün Ekleme Modal -->
-<div class="modal fade" id="addItemModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Yeni Ürün Ekle</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addItemForm">
-                    <div class="mb-3">
-                        <label for="itemCategory" class="form-label">Kategori</label>
-                        <select class="form-select" id="itemCategory" required>
-                            <option value="">Kategori Seçin</option>
-                            @foreach (var food in foodcategories)
-                            {
-                                <option value="@food.Id">@food.TurkishName</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemName" class="form-label">Ürün Adı (Türkçe)</label>
-                        <input type="text" class="form-control" id="itemName" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemNameEn" class="form-label">Ürün Adı (İngilizce)</label>
-                        <input type="text" class="form-control" id="itemNameEn" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemDesc" class="form-label">Açıklama</label>
-                        <textarea class="form-control" id="itemDesc" rows="2"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="itemPrice" class="form-label">Fiyat (₺)</label>
-                        <input type="text" class="form-control" id="itemPrice" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <button type="button" class="btn btn-primary" id="saveItemBtn">Kaydet</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Ürün Düzenleme Modal -->
-<div class="modal fade" id="editItemModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Ürün Düzenle</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editItemForm">
-                    <input type="hidden" id="editItemId">
-                    <div class="mb-3">
-                        <label for="editItemCategory" class="form-label">Kategori</label>
-                        <select class="form-select" id="editItemCategory" required>
-                            <option value="">Kategori Seçin</option>
-                            @foreach (var food in foodcategories)
-                            {
-                                <option value="@food.Id">@food.TurkishName</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editItemName" class="form-label">Ürün Adı (Türkçe)</label>
-                        <input type="text" class="form-control" id="editItemName" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editItemNameEn" class="form-label">Ürün Adı (İngilizce)</label>
-                        <input type="text" class="form-control" id="editItemNameEn" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editItemDesc" class="form-label">Açıklama</label>
-                        <textarea class="form-control" id="editItemDesc" rows="2"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editItemPrice" class="form-label">Fiyat (₺)</label>
-                        <input type="text" class="form-control" id="editItemPrice" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <button type="button" class="btn btn-primary" id="updateItemBtn">Güncelle</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Silme İşlemi Onay Modal -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Silme İşlemi Onayı</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Bu ürünü silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</p>
-                <input type="hidden" id="deleteItemId">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Sil</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <style>
     .dashboard-container {
@@ -528,23 +435,7 @@
             }
         });
         
-        // Güncelleme butonu
-        const updateItemBtn = document.getElementById('updateItemBtn');
-        updateItemBtn.addEventListener('click', function() {
-            const id = document.getElementById('editItemId').value;
-            const category = document.getElementById('editItemCategory').value;
-            const name = document.getElementById('editItemName').value;
-            const nameEn = document.getElementById('editItemNameEn').value;
-            const desc = document.getElementById('editItemDesc').value;
-            const price = document.getElementById('editItemPrice').value;
-            
-            if (category && name && nameEn && price) {
-                // Burada API'ye ürün güncelleme isteği gönderilecek
-                // Başarılı olursa:
-                alert('Ürün başarıyla güncellendi: ' + name);
-                $('#editItemModal').modal('hide');
-            }
-        });
+        
         
         // Silme onay butonu
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
@@ -558,25 +449,7 @@
         });
     });
     
-    // Ürün düzenleme fonksiyonu
-    function editMenuItem(id) {
-        // ID'ye göre ürün bilgilerini almak için API çağrısı yapılabilir
-        // Şimdilik sayfadaki verileri kullanalım
-        const menuItem = document.querySelector(`.menu-item button[onclick="editMenuItem(${id})"]`).closest('.menu-item');
-        const menuName = menuItem.querySelector('.menu-name').textContent;
-        const menuDesc = menuItem.querySelector('.menu-desc').textContent;
-        const menuPrice = menuItem.querySelector('.menu-price').textContent;
-        const categoryId = menuItem.closest('.menu-category').getAttribute('data-category');
-        
-        document.getElementById('editItemId').value = id;
-        document.getElementById('editItemCategory').value = categoryId;
-        document.getElementById('editItemName').value = menuName;
-        document.getElementById('editItemNameEn').value = menuDesc;
-        document.getElementById('editItemDesc').value = '';
-        document.getElementById('editItemPrice').value = menuPrice.replace('₺', '');
-        
-        $('#editItemModal').modal('show');
-    }
+    // Ürün düzenleme fonksiyonu    function editMenuItem(id) {        // Düzenleme sayfasına yönlendir        window.location.href = `/Panel/MenuUpdate?id=${id}`;    }
     
     // Ürün silme fonksiyonu
     function deleteMenuItem(id) {
