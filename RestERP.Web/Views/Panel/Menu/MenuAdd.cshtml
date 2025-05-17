@@ -240,6 +240,12 @@
             for (const [key, value] of formData.entries()) {
                 if (key === 'IsActive' || key === 'IsVegan' || key === 'IsVegetarian' || key === 'IsGlutenFree' || key === 'IsSpicy') {
                     jsonData[key] = true; // Checkbox işaretliyse true
+                } else if (key === 'CategoryId') {
+                    // CategoryId'yi sayıya dönüştür
+                    jsonData[key] = parseInt(value);
+                } else if (key === 'Price') {
+                    // Price'ı decimal değere dönüştür (virgülü noktaya çevirerek)
+                    jsonData[key] = parseFloat(value.replace(',', '.'));
                 } else {
                     jsonData[key] = value;
                 }
@@ -267,14 +273,18 @@
                 throw new Error('Ürün eklenirken bir hata oluştu.');
             })
             .then(data => {
-                // Alert yerine Toast bildirimini göster
-                document.getElementById('toastMessage').textContent = 'Ürün başarıyla eklendi!';
-                successToast.show();
-                
-                // Kısa bir gecikme sonrası yönlendirme yap
-                setTimeout(function() {
-                    window.location.href = '/Panel/Menu'; // Başarılı olursa menü listesine dön
-                }, 1500);
+                if (data.success) {
+                    // Alert yerine Toast bildirimini göster
+                    document.getElementById('toastMessage').textContent = data.message || 'Ürün başarıyla eklendi!';
+                    successToast.show();
+                    
+                    // Kısa bir gecikme sonrası yönlendirme yap
+                    setTimeout(function() {
+                        window.location.href = '/Panel/Menu'; // Başarılı olursa menü listesine dön
+                    }, 1500);
+                } else {
+                    alert(data.message || 'İşlem sırasında bir hata oluştu.');
+                }
             })
             .catch(error => {
                 alert(error.message); // Hata durumunda normal alert göster

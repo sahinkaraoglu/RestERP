@@ -10,7 +10,7 @@ namespace RestERP.Domain.Entities
         public string Name { get; set; }
         public string TurkishName { get; set; }
         public string? Description { get; set; }
-        public string Price { get; set; }
+        public decimal Price { get; set; }
         public int CategoryId { get; set; }
   
         [ForeignKey("CategoryId")]

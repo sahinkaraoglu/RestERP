@@ -12,8 +12,8 @@ using RestERP.Infrastructure;
 namespace RestERP.Infrastructure.Migrations
 {
     [DbContext(typeof(RestERPDbContext))]
-    [Migration("20250517181419_InitialCreate4")]
-    partial class InitialCreate4
+    [Migration("20250517220302_InitialCreate1")]
+    partial class InitialCreate1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -146,10 +146,9 @@ namespace RestERP.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Price")
-                        .IsRequired()
+                    b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TurkishName")
                         .IsRequired()
@@ -174,7 +173,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Turkish Breakfast Spread",
-                            Price = "200₺",
+                            Price = 200m,
                             TurkishName = "Kahvaltı Tabağı"
                         },
                         new
@@ -183,7 +182,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Mixed Breakfast (Per Person)",
-                            Price = "300₺",
+                            Price = 300m,
                             TurkishName = "Serpme Kahvaltı"
                         },
                         new
@@ -192,7 +191,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Cheese Platter",
-                            Price = "70₺",
+                            Price = 70m,
                             TurkishName = "Peynir Tabağı"
                         },
                         new
@@ -201,7 +200,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Olive Platter",
-                            Price = "47,50₺",
+                            Price = 47.50m,
                             TurkishName = "Zeytin Tabağı"
                         },
                         new
@@ -210,7 +209,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Omelette",
-                            Price = "47,50₺",
+                            Price = 47.50m,
                             TurkishName = "Omlet"
                         },
                         new
@@ -219,7 +218,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Omelette with Gorgonzola Cheese",
-                            Price = "55₺",
+                            Price = 55m,
                             TurkishName = "Kaşarlı Omlet"
                         },
                         new
@@ -228,7 +227,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Mixed Omelette",
-                            Price = "80₺",
+                            Price = 80m,
                             TurkishName = "Karışık Omlet"
                         },
                         new
@@ -237,7 +236,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Scrambled Eggs with Tomatoes and Green Pepper",
-                            Price = "62,50₺",
+                            Price = 62.50m,
                             TurkishName = "Menemen"
                         },
                         new
@@ -246,7 +245,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Scrambled Eggs with Garlic Sausages",
-                            Price = "80₺",
+                            Price = 80m,
                             TurkishName = "Sucuklu Yumurta"
                         },
                         new
@@ -255,7 +254,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Melted Cheese and Cornmeal",
-                            Price = "100₺",
+                            Price = 100m,
                             TurkishName = "Mıhlama"
                         },
                         new
@@ -264,7 +263,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Scrambled Eggs with Pastrami",
-                            Price = "75₺",
+                            Price = 75m,
                             TurkishName = "Pastırmalı Yumurta"
                         },
                         new
@@ -273,7 +272,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Fried Garlic Sausage",
-                            Price = "85₺",
+                            Price = 85m,
                             TurkishName = "Sahanda Sucuk"
                         },
                         new
@@ -282,7 +281,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "French Fries",
-                            Price = "40₺",
+                            Price = 40m,
                             TurkishName = "Patates Tava"
                         },
                         new
@@ -291,7 +290,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Rolled Pastry",
-                            Price = "40₺",
+                            Price = 40m,
                             TurkishName = "Mini Kalem Böreği"
                         },
                         new
@@ -300,7 +299,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Honey & Clotted Cream",
-                            Price = "60₺",
+                            Price = 60m,
                             TurkishName = "Bal & Kaymak"
                         },
                         new
@@ -309,7 +308,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "A Serving of Butter",
-                            Price = "47,50₺",
+                            Price = 47.50m,
                             TurkishName = "Tereyağı Porsiyonu"
                         },
                         new
@@ -318,7 +317,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Tomato and Cucumber",
-                            Price = "47,50₺",
+                            Price = 47.50m,
                             TurkishName = "Söğüş Tabağı"
                         },
                         new
@@ -327,7 +326,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 1,
                             IsDeleted = false,
                             Name = "Fruit Platter",
-                            Price = "55₺",
+                            Price = 55m,
                             TurkishName = "Meyve Tabağı"
                         },
                         new
@@ -336,7 +335,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 2,
                             IsDeleted = false,
                             Name = "Stuffed Peppers",
-                            Price = "57,50₺",
+                            Price = 57.50m,
                             TurkishName = "Biber Dolma"
                         },
                         new
@@ -345,7 +344,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 2,
                             IsDeleted = false,
                             Name = "Sauced Aubergine",
-                            Price = "57,50₺",
+                            Price = 57.50m,
                             TurkishName = "Soslu Patlıcan"
                         },
                         new
@@ -354,7 +353,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 2,
                             IsDeleted = false,
                             Name = "Artichoke",
-                            Price = "57,50₺",
+                            Price = 57.50m,
                             TurkishName = "Enginar"
                         },
                         new
@@ -363,7 +362,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 2,
                             IsDeleted = false,
                             Name = "Green Beans",
-                            Price = "57,50₺",
+                            Price = 57.50m,
                             TurkishName = "Taze Fasulye"
                         },
                         new
@@ -372,7 +371,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 2,
                             IsDeleted = false,
                             Name = "Stuffed Vine Leaves",
-                            Price = "57,50₺",
+                            Price = 57.50m,
                             TurkishName = "Yaprak Sarma"
                         },
                         new
@@ -381,7 +380,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 2,
                             IsDeleted = false,
                             Name = "Assorted Olive Oil Dish Platter",
-                            Price = "80₺",
+                            Price = 80m,
                             TurkishName = "Zeytinyağı Tabağı"
                         },
                         new
@@ -390,7 +389,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 3,
                             IsDeleted = false,
                             Name = "Fresh Fries",
-                            Price = "40₺",
+                            Price = 40m,
                             TurkishName = "Patates Tava"
                         },
                         new
@@ -399,7 +398,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 3,
                             IsDeleted = false,
                             Name = "Pastrami Pastry",
-                            Price = "67,50₺",
+                            Price = 67.50m,
                             TurkishName = "Paçanga Böreği"
                         },
                         new
@@ -408,7 +407,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 3,
                             IsDeleted = false,
                             Name = "Mushroom Gratin",
-                            Price = "75₺",
+                            Price = 75m,
                             TurkishName = "Mantar Graten"
                         },
                         new
@@ -417,7 +416,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 3,
                             IsDeleted = false,
                             Name = "Fried Mushrooms",
-                            Price = "55₺",
+                            Price = 55m,
                             TurkishName = "Mantar Kavurma"
                         },
                         new
@@ -426,7 +425,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 3,
                             IsDeleted = false,
                             Name = "Julienne Sole Fish",
-                            Price = "210₺",
+                            Price = 210m,
                             TurkishName = "Julyen Dil Balığı"
                         },
                         new
@@ -435,7 +434,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Grilled Sea Bream 550 - 650 gr.",
-                            Price = "550₺",
+                            Price = 550m,
                             TurkishName = "Çipura Izgara 550 - 650 gr."
                         },
                         new
@@ -444,7 +443,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Grilled Sea Bream 300 - 350 gr.",
-                            Price = "310₺",
+                            Price = 310m,
                             TurkishName = "Çipura Izgara 300 - 350 gr."
                         },
                         new
@@ -453,7 +452,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Fried Whiting Fish",
-                            Price = "260₺",
+                            Price = 260m,
                             TurkishName = "Mezgit Tava"
                         },
                         new
@@ -462,7 +461,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Pan Seared Salmon",
-                            Price = "415₺",
+                            Price = 415m,
                             TurkishName = "Fesleğen Soslu Somon Izgara"
                         },
                         new
@@ -471,7 +470,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Sea Bass Filleted",
-                            Price = "400₺",
+                            Price = 400m,
                             TurkishName = "Levrek Fileto"
                         },
                         new
@@ -480,7 +479,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Grilled Sea Bass 550 - 650 gr.",
-                            Price = "550₺",
+                            Price = 550m,
                             TurkishName = "Levrek Izgara 550 - 650 gr."
                         },
                         new
@@ -489,7 +488,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Grilled Sea Bass 300 - 350 gr.",
-                            Price = "300₺",
+                            Price = 300m,
                             TurkishName = "Levrek Izgara 300 - 350 gr."
                         },
                         new
@@ -498,7 +497,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Sea Bass on the Clay Tile",
-                            Price = "415₺",
+                            Price = 415m,
                             TurkishName = "Kiremitte Levrek"
                         },
                         new
@@ -507,7 +506,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Broiled Salmon Steak",
-                            Price = "400₺",
+                            Price = 400m,
                             TurkishName = "Somon Izgara"
                         },
                         new
@@ -516,7 +515,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Grilled Sole Fish",
-                            Price = "270₺",
+                            Price = 270m,
                             TurkishName = "Dil Balığı Izgara"
                         },
                         new
@@ -525,7 +524,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 4,
                             IsDeleted = false,
                             Name = "Baked Salmon",
-                            Price = "415₺",
+                            Price = 415m,
                             TurkishName = "Somon Kavurma"
                         },
                         new
@@ -534,7 +533,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 5,
                             IsDeleted = false,
                             Name = "Horse Mackerel",
-                            Price = "285₺",
+                            Price = 285m,
                             TurkishName = "İstavrit"
                         },
                         new
@@ -543,7 +542,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 5,
                             IsDeleted = false,
                             Name = "Blue Fish",
-                            Price = "295₺",
+                            Price = 295m,
                             TurkishName = "Sarıkanat"
                         },
                         new
@@ -552,7 +551,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 5,
                             IsDeleted = false,
                             Name = "Bonito",
-                            Price = "340₺",
+                            Price = 340m,
                             TurkishName = "Palamut"
                         },
                         new
@@ -561,7 +560,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 5,
                             IsDeleted = false,
                             Name = "Fried Anchovies",
-                            Price = "250₺",
+                            Price = 250m,
                             TurkishName = "Hamsi Tava"
                         },
                         new
@@ -570,7 +569,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 5,
                             IsDeleted = false,
                             Name = "Whiting Fish",
-                            Price = "270₺",
+                            Price = 270m,
                             TurkishName = "Mezgit"
                         },
                         new
@@ -579,7 +578,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 5,
                             IsDeleted = false,
                             Name = "Red Mullet",
-                            Price = "290₺",
+                            Price = 290m,
                             TurkishName = "Tekir"
                         },
                         new
@@ -588,7 +587,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 5,
                             IsDeleted = false,
                             Name = "Loufer",
-                            Price = "375₺",
+                            Price = 375m,
                             TurkishName = "Lüfer"
                         },
                         new
@@ -597,7 +596,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 6,
                             IsDeleted = false,
                             Name = "Grilled Köfte",
-                            Price = "200₺",
+                            Price = 200m,
                             TurkishName = "Köfte Izgara"
                         },
                         new
@@ -606,7 +605,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 6,
                             IsDeleted = false,
                             Name = "Grilled Köfte with Cheese",
-                            Price = "210₺",
+                            Price = 210m,
                             TurkishName = "Kaşarlı Köfte Izgara"
                         },
                         new
@@ -615,7 +614,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 6,
                             IsDeleted = false,
                             Name = "Chicken Shish",
-                            Price = "130₺",
+                            Price = 130m,
                             TurkishName = "Piliç Izgara"
                         },
                         new
@@ -624,7 +623,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 6,
                             IsDeleted = false,
                             Name = "Roasting Chicken",
-                            Price = "145₺",
+                            Price = 145m,
                             TurkishName = "Piliç Kavurma"
                         },
                         new
@@ -633,7 +632,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 6,
                             IsDeleted = false,
                             Name = "Chicken Julienne with Eggplant Purée",
-                            Price = "145₺",
+                            Price = 145m,
                             TurkishName = "Beğendili Julyen Piliç"
                         },
                         new
@@ -642,7 +641,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 6,
                             IsDeleted = false,
                             Name = "Veal Fillet",
-                            Price = "390₺",
+                            Price = 390m,
                             TurkishName = "Bonfile"
                         },
                         new
@@ -651,7 +650,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 6,
                             IsDeleted = false,
                             Name = "Veal Fillet with Turkish Cheese",
-                            Price = "400₺",
+                            Price = 400m,
                             TurkishName = "Kaşarlı Bonfile"
                         },
                         new
@@ -660,7 +659,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 6,
                             IsDeleted = false,
                             Name = "Steak Fillet Julienne with Eggplant Purée",
-                            Price = "400₺",
+                            Price = 400m,
                             TurkishName = "Beğendili Julyen Bonfile"
                         },
                         new
@@ -669,7 +668,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 6,
                             IsDeleted = false,
                             Name = "Mixed Grill",
-                            Price = "390₺",
+                            Price = 390m,
                             TurkishName = "Karışık Izgara"
                         },
                         new
@@ -678,7 +677,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 6,
                             IsDeleted = false,
                             Name = "Shepherd's Roasting",
-                            Price = "325₺",
+                            Price = 325m,
                             TurkishName = "Çoban Kavurma"
                         },
                         new
@@ -687,7 +686,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 7,
                             IsDeleted = false,
                             Name = "Sütlaç",
-                            Price = "55₺",
+                            Price = 55m,
                             TurkishName = "Sütlaç"
                         },
                         new
@@ -696,7 +695,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 7,
                             IsDeleted = false,
                             Name = "Tres Leches Cake",
-                            Price = "55₺",
+                            Price = 55m,
                             TurkishName = "Trileçe"
                         },
                         new
@@ -705,7 +704,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 7,
                             IsDeleted = false,
                             Name = "Noah's Pudding",
-                            Price = "55₺",
+                            Price = 55m,
                             TurkishName = "Aşure"
                         },
                         new
@@ -714,7 +713,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 7,
                             IsDeleted = false,
                             Name = "Profiterole",
-                            Price = "55₺",
+                            Price = 55m,
                             TurkishName = "Profiterol"
                         },
                         new
@@ -723,7 +722,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 7,
                             IsDeleted = false,
                             Name = "Volcanic",
-                            Price = "80₺",
+                            Price = 80m,
                             TurkishName = "Volkanik"
                         },
                         new
@@ -732,7 +731,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 7,
                             IsDeleted = false,
                             Name = "Fruit Dessert",
-                            Price = "60₺",
+                            Price = 60m,
                             TurkishName = "Meyveli Tatlılar"
                         },
                         new
@@ -741,7 +740,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 7,
                             IsDeleted = false,
                             Name = "Pastries",
-                            Price = "60₺",
+                            Price = 60m,
                             TurkishName = "Hamur İşi Tatlıları"
                         },
                         new
@@ -750,7 +749,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 7,
                             IsDeleted = false,
                             Name = "Ice Cream",
-                            Price = "47,50₺",
+                            Price = 47.50m,
                             TurkishName = "Dondurma Porsiyon"
                         },
                         new
@@ -759,7 +758,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 7,
                             IsDeleted = false,
                             Name = "Mixed Fruits",
-                            Price = "55₺",
+                            Price = 55m,
                             TurkishName = "Meyve Tabağı"
                         },
                         new
@@ -768,7 +767,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 7,
                             IsDeleted = false,
                             Name = "Tahini Bread Roll",
-                            Price = "67,50₺",
+                            Price = 67.50m,
                             TurkishName = "Tahinli Sarma"
                         },
                         new
@@ -777,7 +776,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 8,
                             IsDeleted = false,
                             Name = "Canned Soft Drinks",
-                            Price = "55₺",
+                            Price = 55m,
                             TurkishName = "Meşrubat Çeşitleri"
                         },
                         new
@@ -786,7 +785,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 8,
                             IsDeleted = false,
                             Name = "Ayran",
-                            Price = "16₺",
+                            Price = 16m,
                             TurkishName = "Ayran"
                         },
                         new
@@ -795,7 +794,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 8,
                             IsDeleted = false,
                             Name = "Mineral Water",
-                            Price = "16₺",
+                            Price = 16m,
                             TurkishName = "Soda"
                         },
                         new
@@ -804,7 +803,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 8,
                             IsDeleted = false,
                             Name = "Frute Mineral Water",
-                            Price = "19₺",
+                            Price = 19m,
                             TurkishName = "Meyveli Soda"
                         },
                         new
@@ -813,7 +812,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 8,
                             IsDeleted = false,
                             Name = "Orange / Pomegranate Juice",
-                            Price = "55₺",
+                            Price = 55m,
                             TurkishName = "Sıkma Portakal / Nar Suyu"
                         },
                         new
@@ -822,7 +821,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 8,
                             IsDeleted = false,
                             Name = "Nar Çiçeği Şerbeti",
-                            Price = "55₺",
+                            Price = 55m,
                             TurkishName = "Nar Çiçeği Şerbeti"
                         },
                         new
@@ -831,7 +830,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 8,
                             IsDeleted = false,
                             Name = "Tea",
-                            Price = "10₺",
+                            Price = 10m,
                             TurkishName = "Çay"
                         },
                         new
@@ -840,7 +839,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 8,
                             IsDeleted = false,
                             Name = "Instant Coffee",
-                            Price = "40₺",
+                            Price = 40m,
                             TurkishName = "Hazır Kahve"
                         },
                         new
@@ -849,7 +848,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 8,
                             IsDeleted = false,
                             Name = "Turkish Coffee",
-                            Price = "40₺",
+                            Price = 40m,
                             TurkishName = "Türk Kahvesi"
                         },
                         new
@@ -858,7 +857,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 8,
                             IsDeleted = false,
                             Name = "Filter Coffee",
-                            Price = "47,50₺",
+                            Price = 47.50m,
                             TurkishName = "Filtre Kahve"
                         },
                         new
@@ -867,7 +866,7 @@ namespace RestERP.Infrastructure.Migrations
                             CategoryId = 8,
                             IsDeleted = false,
                             Name = "Water",
-                            Price = "8₺",
+                            Price = 8m,
                             TurkishName = "Su"
                         });
                 });
@@ -1105,6 +1104,83 @@ namespace RestERP.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tables");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 6,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 7,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 8,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 9,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 10,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 11,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 12,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 13,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 14,
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            Id = 15,
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("RestERP.Domain.Entities.Food", b =>

@@ -19,7 +19,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Turkish Breakfast Spread",
                     TurkishName = "Kahvaltı Tabağı",
-                    Price = "200₺"
+                    Price = 200m
                 },
                 new Food
                 {
@@ -27,7 +27,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Mixed Breakfast (Per Person)",
                     TurkishName = "Serpme Kahvaltı",
-                    Price = "300₺"
+                    Price = 300m
                 },
                 new Food
                 {
@@ -35,7 +35,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Cheese Platter",
                     TurkishName = "Peynir Tabağı",
-                    Price = "70₺"
+                    Price = 70m
                 },
                 new Food
                 {
@@ -43,7 +43,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Olive Platter",
                     TurkishName = "Zeytin Tabağı",
-                    Price = "47,50₺"
+                    Price = 47.50m
                 },
                 new Food
                 {
@@ -51,7 +51,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Omelette",
                     TurkishName = "Omlet",
-                    Price = "47,50₺"
+                    Price = 47.50m
                 },
                 new Food
                 {
@@ -59,7 +59,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Omelette with Gorgonzola Cheese",
                     TurkishName = "Kaşarlı Omlet",
-                    Price = "55₺"
+                    Price = 55m
                 },
                 new Food
                 {
@@ -67,7 +67,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Mixed Omelette",
                     TurkishName = "Karışık Omlet",
-                    Price = "80₺"
+                    Price = 80m
                 },
                 new Food
                 {
@@ -75,7 +75,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Scrambled Eggs with Tomatoes and Green Pepper",
                     TurkishName = "Menemen",
-                    Price = "62,50₺"
+                    Price = 62.50m
                 },
                 new Food
                 {
@@ -83,7 +83,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Scrambled Eggs with Garlic Sausages",
                     TurkishName = "Sucuklu Yumurta",
-                    Price = "80₺"
+                    Price = 80m
                 },
                 new Food
                 {
@@ -91,7 +91,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Melted Cheese and Cornmeal",
                     TurkishName = "Mıhlama",
-                    Price = "100₺"
+                    Price = 100m
                 },
                 new Food
                 {
@@ -99,7 +99,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Scrambled Eggs with Pastrami",
                     TurkishName = "Pastırmalı Yumurta",
-                    Price = "75₺"
+                    Price = 75m
                 },
                 new Food
                 {
@@ -107,7 +107,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Fried Garlic Sausage",
                     TurkishName = "Sahanda Sucuk",
-                    Price = "85₺"
+                    Price = 85m
                 },
                 new Food
                 {
@@ -115,7 +115,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "French Fries",
                     TurkishName = "Patates Tava",
-                    Price = "40₺"
+                    Price = 40m
                 },
                 new Food
                 {
@@ -123,7 +123,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Rolled Pastry",
                     TurkishName = "Mini Kalem Böreği",
-                    Price = "40₺"
+                    Price = 40m
                 },
                 new Food
                 {
@@ -131,7 +131,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Honey & Clotted Cream",
                     TurkishName = "Bal & Kaymak",
-                    Price = "60₺"
+                    Price = 60m
                 },
                 new Food
                 {
@@ -139,7 +139,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "A Serving of Butter",
                     TurkishName = "Tereyağı Porsiyonu",
-                    Price = "47,50₺"
+                    Price = 47.50m
                 },
                 new Food
                 {
@@ -147,7 +147,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Tomato and Cucumber",
                     TurkishName = "Söğüş Tabağı",
-                    Price = "47,50₺"
+                    Price = 47.50m
                 },
                 new Food
                 {
@@ -155,7 +155,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 1,
                     Name = "Fruit Platter",
                     TurkishName = "Meyve Tabağı",
-                    Price = "55₺"
+                    Price = 55m
                 },
                 new Food
                 {
@@ -163,7 +163,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 2,
                     Name = "Stuffed Peppers",
                     TurkishName = "Biber Dolma",
-                    Price = "57,50₺"
+                    Price = 57.50m
                 },
                 new Food
                 {
@@ -171,7 +171,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 2,
                     Name = "Sauced Aubergine",
                     TurkishName = "Soslu Patlıcan",
-                    Price = "57,50₺"
+                    Price = 57.50m
                 },
                 new Food
                 {
@@ -179,7 +179,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 2,
                     Name = "Artichoke",
                     TurkishName = "Enginar",
-                    Price = "57,50₺"
+                    Price = 57.50m
                 },
                 new Food
                 {
@@ -187,7 +187,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 2,
                     Name = "Green Beans",
                     TurkishName = "Taze Fasulye",
-                    Price = "57,50₺"
+                    Price = 57.50m
                 },
                 new Food
                 {
@@ -195,7 +195,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 2,
                     Name = "Stuffed Vine Leaves",
                     TurkishName = "Yaprak Sarma",
-                    Price = "57,50₺"
+                    Price = 57.50m
                 },
                 new Food
                 {
@@ -203,7 +203,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 2,
                     Name = "Assorted Olive Oil Dish Platter",
                     TurkishName = "Zeytinyağı Tabağı",
-                    Price = "80₺"
+                    Price = 80m
                 },
                 new Food
                 {
@@ -211,7 +211,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 3,
                     Name = "Fresh Fries",
                     TurkishName = "Patates Tava",
-                    Price = "40₺"
+                    Price = 40m
                 },
                 new Food
                 {
@@ -219,7 +219,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 3,
                     Name = "Pastrami Pastry",
                     TurkishName = "Paçanga Böreği",
-                    Price = "67,50₺"
+                    Price = 67.50m
                 },
                 new Food
                 {
@@ -227,7 +227,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 3,
                     Name = "Mushroom Gratin",
                     TurkishName = "Mantar Graten",
-                    Price = "75₺"
+                    Price = 75m
                 },
                 new Food
                 {
@@ -235,7 +235,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 3,
                     Name = "Fried Mushrooms",
                     TurkishName = "Mantar Kavurma",
-                    Price = "55₺"
+                    Price = 55m
                 },
                 new Food
                 {
@@ -243,7 +243,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 3,
                     Name = "Julienne Sole Fish",
                     TurkishName = "Julyen Dil Balığı",
-                    Price = "210₺"
+                    Price = 210m
                 },
                 new Food
                 {
@@ -251,7 +251,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Grilled Sea Bream 550 - 650 gr.",
                     TurkishName = "Çipura Izgara 550 - 650 gr.",
-                    Price = "550₺"
+                    Price = 550m
                 },
                 new Food
                 {
@@ -259,7 +259,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Grilled Sea Bream 300 - 350 gr.",
                     TurkishName = "Çipura Izgara 300 - 350 gr.",
-                    Price = "310₺"
+                    Price = 310m
                 },
                 new Food
                 {
@@ -267,7 +267,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Fried Whiting Fish",
                     TurkishName = "Mezgit Tava",
-                    Price = "260₺"
+                    Price = 260m
                 },
                 new Food
                 {
@@ -275,7 +275,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Pan Seared Salmon",
                     TurkishName = "Fesleğen Soslu Somon Izgara",
-                    Price = "415₺"
+                    Price = 415m
                 },
                 new Food
                 {
@@ -283,7 +283,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Sea Bass Filleted",
                     TurkishName = "Levrek Fileto",
-                    Price = "400₺"
+                    Price = 400m
                 },
                 new Food
                 {
@@ -291,7 +291,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Grilled Sea Bass 550 - 650 gr.",
                     TurkishName = "Levrek Izgara 550 - 650 gr.",
-                    Price = "550₺"
+                    Price = 550m
                 },
                 new Food
                 {
@@ -299,7 +299,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Grilled Sea Bass 300 - 350 gr.",
                     TurkishName = "Levrek Izgara 300 - 350 gr.",
-                    Price = "300₺"
+                    Price = 300m
                 },
                 new Food
                 {
@@ -307,7 +307,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Sea Bass on the Clay Tile",
                     TurkishName = "Kiremitte Levrek",
-                    Price = "415₺"
+                    Price = 415m
                 },
                 new Food
                 {
@@ -315,7 +315,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Broiled Salmon Steak",
                     TurkishName = "Somon Izgara",
-                    Price = "400₺"
+                    Price = 400m
                 },
                 new Food
                 {
@@ -323,7 +323,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Grilled Sole Fish",
                     TurkishName = "Dil Balığı Izgara",
-                    Price = "270₺"
+                    Price = 270m
                 },
                 new Food
                 {
@@ -331,7 +331,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 4,
                     Name = "Baked Salmon",
                     TurkishName = "Somon Kavurma",
-                    Price = "415₺"
+                    Price = 415m
                 },
                 new Food
                 {
@@ -339,7 +339,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 5,
                     Name = "Horse Mackerel",
                     TurkishName = "İstavrit",
-                    Price = "285₺"
+                    Price = 285m
                 },
                 new Food
                 {
@@ -347,7 +347,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 5,
                     Name = "Blue Fish",
                     TurkishName = "Sarıkanat",
-                    Price = "295₺"
+                    Price = 295m
                 },
                 new Food
                 {
@@ -355,7 +355,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 5,
                     Name = "Bonito",
                     TurkishName = "Palamut",
-                    Price = "340₺"
+                    Price = 340m
                 },
                 new Food
                 {
@@ -363,7 +363,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 5,
                     Name = "Fried Anchovies",
                     TurkishName = "Hamsi Tava",
-                    Price = "250₺"
+                    Price = 250m
                 },
                 new Food
                 {
@@ -371,7 +371,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 5,
                     Name = "Whiting Fish",
                     TurkishName = "Mezgit",
-                    Price = "270₺"
+                    Price = 270m
                 },
                 new Food
                 {
@@ -379,7 +379,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 5,
                     Name = "Red Mullet",
                     TurkishName = "Tekir",
-                    Price = "290₺"
+                    Price = 290m
                 },
                 new Food
                 {
@@ -387,7 +387,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 5,
                     Name = "Loufer",
                     TurkishName = "Lüfer",
-                    Price = "375₺"
+                    Price = 375m
                 },
                 new Food
                 {
@@ -395,7 +395,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 6,
                     Name = "Grilled Köfte",
                     TurkishName = "Köfte Izgara",
-                    Price = "200₺"
+                    Price = 200m
                 },
                 new Food
                 {
@@ -403,7 +403,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 6,
                     Name = "Grilled Köfte with Cheese",
                     TurkishName = "Kaşarlı Köfte Izgara",
-                    Price = "210₺"
+                    Price = 210m
                 },
                 new Food
                 {
@@ -411,7 +411,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 6,
                     Name = "Chicken Shish",
                     TurkishName = "Piliç Izgara",
-                    Price = "130₺"
+                    Price = 130m
                 },
                 new Food
                 {
@@ -419,7 +419,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 6,
                     Name = "Roasting Chicken",
                     TurkishName = "Piliç Kavurma",
-                    Price = "145₺"
+                    Price = 145m
                 },
                 new Food
                 {
@@ -427,7 +427,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 6,
                     Name = "Chicken Julienne with Eggplant Purée",
                     TurkishName = "Beğendili Julyen Piliç",
-                    Price = "145₺"
+                    Price = 145m
                 },
                 new Food
                 {
@@ -435,7 +435,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 6,
                     Name = "Veal Fillet",
                     TurkishName = "Bonfile",
-                    Price = "390₺"
+                    Price = 390m
                 },
                 new Food
                 {
@@ -443,7 +443,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 6,
                     Name = "Veal Fillet with Turkish Cheese",
                     TurkishName = "Kaşarlı Bonfile",
-                    Price = "400₺"
+                    Price = 400m
                 },
                 new Food
                 {
@@ -451,7 +451,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 6,
                     Name = "Steak Fillet Julienne with Eggplant Purée",
                     TurkishName = "Beğendili Julyen Bonfile",
-                    Price = "400₺"
+                    Price = 400m
                 },
                 new Food
                 {
@@ -459,7 +459,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 6,
                     Name = "Mixed Grill",
                     TurkishName = "Karışık Izgara",
-                    Price = "390₺"
+                    Price = 390m
                 },
                 new Food
                 {
@@ -467,7 +467,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 6,
                     Name = "Shepherd's Roasting",
                     TurkishName = "Çoban Kavurma",
-                    Price = "325₺"
+                    Price = 325m
                 },
                 new Food
                 {
@@ -475,7 +475,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 7,
                     Name = "Sütlaç",
                     TurkishName = "Sütlaç",
-                    Price = "55₺"
+                    Price = 55m
                 },
                 new Food
                 {
@@ -483,7 +483,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 7,
                     Name = "Tres Leches Cake",
                     TurkishName = "Trileçe",
-                    Price = "55₺"
+                    Price = 55m
                 },
                 new Food
                 {
@@ -491,7 +491,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 7,
                     Name = "Noah's Pudding",
                     TurkishName = "Aşure",
-                    Price = "55₺"
+                    Price = 55m
                 },
                 new Food
                 {
@@ -499,7 +499,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 7,
                     Name = "Profiterole",
                     TurkishName = "Profiterol",
-                    Price = "55₺"
+                    Price = 55m
                 },
                 new Food
                 {
@@ -507,7 +507,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 7,
                     Name = "Volcanic",
                     TurkishName = "Volkanik",
-                    Price = "80₺"
+                    Price = 80m
                 },
                 new Food
                 {
@@ -515,7 +515,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 7,
                     Name = "Fruit Dessert",
                     TurkishName = "Meyveli Tatlılar",
-                    Price = "60₺"
+                    Price = 60m
                 },
                 new Food
                 {
@@ -523,7 +523,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 7,
                     Name = "Pastries",
                     TurkishName = "Hamur İşi Tatlıları",
-                    Price = "60₺"
+                    Price = 60m
                 },
                 new Food
                 {
@@ -531,7 +531,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 7,
                     Name = "Ice Cream",
                     TurkishName = "Dondurma Porsiyon",
-                    Price = "47,50₺"
+                    Price = 47.50m
                 },
                 new Food
                 {
@@ -539,7 +539,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 7,
                     Name = "Mixed Fruits",
                     TurkishName = "Meyve Tabağı",
-                    Price = "55₺"
+                    Price = 55m
                 },
                 new Food
                 {
@@ -547,7 +547,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 7,
                     Name = "Tahini Bread Roll",
                     TurkishName = "Tahinli Sarma",
-                    Price = "67,50₺"
+                    Price = 67.50m
                 },
                 new Food
                 {
@@ -555,7 +555,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 8,
                     Name = "Canned Soft Drinks",
                     TurkishName = "Meşrubat Çeşitleri",
-                    Price = "55₺"
+                    Price = 55m
                 },
                 new Food
                 {
@@ -563,7 +563,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 8,
                     Name = "Ayran",
                     TurkishName = "Ayran",
-                    Price = "16₺"
+                    Price = 16m
                 },
                 new Food
                 {
@@ -571,7 +571,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 8,
                     Name = "Mineral Water",
                     TurkishName = "Soda",
-                    Price = "16₺"
+                    Price = 16m
                 },
                 new Food
                 {
@@ -579,7 +579,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 8,
                     Name = "Frute Mineral Water",
                     TurkishName = "Meyveli Soda",
-                    Price = "19₺"
+                    Price = 19m
                 },
                 new Food
                 {
@@ -587,7 +587,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 8,
                     Name = "Orange / Pomegranate Juice",
                     TurkishName = "Sıkma Portakal / Nar Suyu",
-                    Price = "55₺"
+                    Price = 55m
                 },
                 new Food
                 {
@@ -595,7 +595,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 8,
                     Name = "Nar Çiçeği Şerbeti",
                     TurkishName = "Nar Çiçeği Şerbeti",
-                    Price = "55₺"
+                    Price = 55m
                 },
                 new Food
                 {
@@ -603,7 +603,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 8,
                     Name = "Tea",
                     TurkishName = "Çay",
-                    Price = "10₺"
+                    Price = 10m
                 },
                 new Food
                 {
@@ -611,7 +611,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 8,
                     Name = "Instant Coffee",
                     TurkishName = "Hazır Kahve",
-                    Price = "40₺"
+                    Price = 40m
                 },
                 new Food
                 {
@@ -619,7 +619,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 8,
                     Name = "Turkish Coffee",
                     TurkishName = "Türk Kahvesi",
-                    Price = "40₺"
+                    Price = 40m
                 },
                 new Food
                 {
@@ -627,7 +627,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 8,
                     Name = "Filter Coffee",
                     TurkishName = "Filtre Kahve",
-                    Price = "47,50₺"
+                    Price = 47.50m
                 },
                 new Food
                 {
@@ -635,7 +635,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     CategoryId = 8,
                     Name = "Water",
                     TurkishName = "Su",
-                    Price = "8₺"
+                    Price = 8m
                 }
             };
         }

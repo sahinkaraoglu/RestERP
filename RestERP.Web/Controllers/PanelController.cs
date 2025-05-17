@@ -2,16 +2,20 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Models;
+using RestERP.Application.Services.Interfaces;
+using RestERP.Domain.Entities;
 
 namespace RestERP.Web.Controllers;
 
 public class PanelController : Controller
 {
     private readonly ILogger<PanelController> _logger;
+    private readonly IFoodService _foodService;
 
-    public PanelController(ILogger<PanelController> logger)
+    public PanelController(ILogger<PanelController> logger, IFoodService foodService)
     {
         _logger = logger;
+        _foodService = foodService;
     }
 
     public IActionResult Index()
@@ -39,9 +43,30 @@ public class PanelController : Controller
     }
 
     [HttpPost]
-    public IActionResult AddMenuItem(MenuItemViewModel model)
+    public async Task<IActionResult> AddMenuItem(MenuItemViewModel model)
     {
-        return Json(new { success = true, message = "Ürün başarıyla eklendi" });
+        try
+        {
+            // ViewModel'i Food entity'sine dönüştür
+            var food = new Food
+            {
+                CategoryId = model.CategoryId,
+                Name = model.Name,
+                TurkishName = model.TurkishName,
+                Description = model.Description,
+                Price = model.Price, // Artık decimal olduğu için doğrudan atıyoruz
+            };
+
+            // Veritabanına kaydet
+            await _foodService.CreateFoodAsync(food);
+
+            return Json(new { success = true, message = "Ürün başarıyla eklendi" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ürün eklenirken hata oluştu");
+            return Json(new { success = false, message = "Ürün eklenirken bir hata oluştu: " + ex.Message });
+        }
     }
 
     public IActionResult Panel()
