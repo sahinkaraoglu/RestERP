@@ -67,7 +67,7 @@
                                 <div class="col-md-6">
                                     <label for="itemPrice" class="form-label">Fiyat (₺)</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="itemPrice" name="Price" required>
+                                        <input type="number" step="0.01" class="form-control" id="itemPrice" name="Price" required>
                                         <span class="input-group-text">₺</span>
                                     </div>
                                 </div>
@@ -235,6 +235,17 @@
             // Form verilerini al
             const formData = new FormData(addItemForm);
             
+            // Zorunlu alanların kontrolü
+            const name = formData.get('Name');
+            const turkishName = formData.get('TurkishName');
+            const categoryId = formData.get('CategoryId');
+            const price = formData.get('Price');
+            
+            if (!name || !turkishName || !categoryId || !price) {
+                alert('Lütfen tüm zorunlu alanları doldurun (Kategori, Türkçe ve İngilizce ürün adı, fiyat)');
+                return;
+            }
+            
             // Form verilerini JSON'a dönüştür
             const jsonData = {};
             for (const [key, value] of formData.entries()) {
@@ -267,10 +278,15 @@
                 body: JSON.stringify(jsonData)
             })
             .then(response => {
-                if (response.ok) {
-                    return response.json();
+                // Status kontrolü
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                throw new Error('Ürün eklenirken bir hata oluştu.');
+                
+                // JSON yanıtını ayrıştır
+                return response.json().catch(err => {
+                    throw new Error('JSON parse hatası: ' + err.message);
+                });
             })
             .then(data => {
                 if (data.success) {
@@ -287,7 +303,8 @@
                 }
             })
             .catch(error => {
-                alert(error.message); // Hata durumunda normal alert göster
+                console.error("Fetch hatası:", error);
+                alert('Hata: ' + error.message); // Hata durumunda normal alert göster
             });
         });
         

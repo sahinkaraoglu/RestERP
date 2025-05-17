@@ -23,13 +23,14 @@ public class PanelController : Controller
         return View();
     }
 
-    public IActionResult Menu()
+    public async Task<IActionResult> Menu()
     {
-        var categories = FoodCategorySeedData.GetFoodCategories();
-        var subCategories = FoodSeedData.GetFood();
+        var foodcategories = FoodCategorySeedData.GetFoodCategories();
         
-        ViewBag.Categories = categories;
-        ViewBag.SubCategories = subCategories;
+        var foods = await _foodService.GetAllFoodsAsync();
+        
+        ViewBag.FoodCategories = foodcategories;
+        ViewBag.Foods = foods;
         
         return View("Menu/Menu");
     }
@@ -43,21 +44,30 @@ public class PanelController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddMenuItem(MenuItemViewModel model)
+    public async Task<IActionResult> AddMenuItem([FromBody] MenuItemViewModel model)
     {
         try
         {
-            // ViewModel'i Food entity'sine dönüştür
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return Json(new { success = false, message = "Model geçersiz: " + string.Join(", ", errors) });
+            }
+            
+            if (model == null || string.IsNullOrEmpty(model.Name) || string.IsNullOrEmpty(model.TurkishName))
+            {
+                return Json(new { success = false, message = "Ürün adı ve Türkçe adı boş olamaz" });
+            }
+            
             var food = new Food
             {
                 CategoryId = model.CategoryId,
                 Name = model.Name,
                 TurkishName = model.TurkishName,
-                Description = model.Description,
-                Price = model.Price, // Artık decimal olduğu için doğrudan atıyoruz
+                Description = model.Description ?? "",
+                Price = model.Price,
             };
 
-            // Veritabanına kaydet
             await _foodService.CreateFoodAsync(food);
 
             return Json(new { success = true, message = "Ürün başarıyla eklendi" });

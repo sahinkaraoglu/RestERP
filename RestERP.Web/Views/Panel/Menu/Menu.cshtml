@@ -1,8 +1,8 @@
 @model dynamic
 @{
     ViewData["Title"] = "Menü Yönetimi";
-    var categories = ViewBag.Categories;
-    var subCategories = ViewBag.SubCategories;
+    var foodcategories = ViewBag.FoodCategories;
+    var foods = ViewBag.Foods;
 }
 
 <div class="dashboard-container">
@@ -29,9 +29,9 @@
             <div class="col-md-12">
                 <div class="category-filter">
                     <button class="filter-btn active" data-category="all">Tümü</button>
-                    @foreach (var category in categories)
+                    @foreach (var food in foodcategories)
                     {
-                        <button class="filter-btn" data-category="@category.Id">@category.TurkishName</button>
+                        <button class="filter-btn" data-category="@food.Id">@food.TurkishName</button>
                     }
                 </div>
             </div>
@@ -45,12 +45,14 @@
                     <input type="text" id="menuSearch" placeholder="Menü içinde ara...">
                 </div>
             </div>
-            <div class="col-md-6 text-end">                <a href="/Panel/MenuAdd" class="btn btn-primary rounded-pill">                    <i class="bi bi-plus-circle"></i> Yeni Ürün Ekle                </a>            </div>
+            <div class="col-md-6 text-end">                
+                <a href="/Panel/MenuAdd" class="btn btn-primary rounded-pill">
+               <i class="bi bi-plus-circle"></i> Yeni Ürün Ekle </a></div>
         </div>
 
         <!-- Menü Öğeleri Listesi -->
         <div class="row g-3" id="menuItemsContainer">
-            @foreach (var category in categories)
+            @foreach (var category in foodcategories)
             {
                 <div class="col-12 menu-category" data-category="@category.Id">
                     <h3 class="category-title">
@@ -72,7 +74,7 @@
                         <i class="bi @categoryIcon"></i> @category.TurkishName
                     </h3>
                     <div class="row g-3">
-                        @foreach (var item in subCategories)
+                        @foreach (var item in foods)
                         {
                             if (item.CategoryId == category.Id)
                             {
@@ -80,7 +82,7 @@
                                     <div class="menu-card">
                                         <div class="menu-card-header">
                                             <span class="menu-name">@item.TurkishName</span>
-                                            <span class="menu-price">@item.Price</span>
+                                            <span class="menu-price">@item.Price.ToString("F2") ₺</span>
                                         </div>
                                         <div class="menu-card-body">
                                             <div class="menu-details">
@@ -148,9 +150,9 @@
                         <label for="itemCategory" class="form-label">Kategori</label>
                         <select class="form-select" id="itemCategory" required>
                             <option value="">Kategori Seçin</option>
-                            @foreach (var category in categories)
+                            @foreach (var food in foodcategories)
                             {
-                                <option value="@category.Id">@category.TurkishName</option>
+                                <option value="@food.Id">@food.TurkishName</option>
                             }
                         </select>
                     </div>
@@ -195,9 +197,9 @@
                         <label for="editItemCategory" class="form-label">Kategori</label>
                         <select class="form-select" id="editItemCategory" required>
                             <option value="">Kategori Seçin</option>
-                            @foreach (var category in categories)
+                            @foreach (var food in foodcategories)
                             {
-                                <option value="@category.Id">@category.TurkishName</option>
+                                <option value="@food.Id">@food.TurkishName</option>
                             }
                         </select>
                     </div>
