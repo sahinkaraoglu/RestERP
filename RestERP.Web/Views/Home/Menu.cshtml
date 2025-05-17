@@ -33,7 +33,16 @@
                             @foreach (var subCategory in subCategories.Where(s => s.CategoryId == category.Id))
                             {
                                 <tr>
-                                    <td class="subcategory-name">@subCategory.TurkishName</td>
+                                    <td class="subcategory-name">
+                                        <div class="sub-item">
+                                            <span>@subCategory.TurkishName</span>
+                                            <div class="quantity-control">
+                                                <button class="quantity-btn minus" onclick="decreaseQuantity(@subCategory.Id)">-</button>
+                                                <span id="quantity-@subCategory.Id" class="quantity-value">1</span>
+                                                <button class="quantity-btn plus" onclick="increaseQuantity(@subCategory.Id)">+</button>
+                                            </div>
+                                        </div>
+                                    </td>
                                     <td class="subcategory-price">@subCategory.Price</td>
                                 </tr>
                             }
@@ -235,6 +244,48 @@
     .category-active .toggle-icon {
         transform: rotate(45deg);
     }
+
+    /* Miktar kontrolleri için stiller */
+    .sub-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
+    }
+
+    .quantity-btn {
+        width: 25px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f1eadd;
+        border: 1px solid #d6c6af;
+        color: #6a563d;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: all 0.2s ease;
+    }
+
+    .quantity-btn:hover {
+        background-color: #e0d8c8;
+    }
+
+    .quantity-value {
+        margin: 0 8px;
+        font-weight: 600;
+        color: #6a563d;
+        min-width: 20px;
+        text-align: center;
+    }
 </style>
 
 <!-- Google Fonts -->
@@ -252,6 +303,22 @@
             container.style.maxHeight = container.scrollHeight + "px";
             header.classList.add('category-active');
         }
+    }
+
+    function increaseQuantity(subCategoryId) {
+        const quantityElement = document.getElementById(`quantity-${subCategoryId}`);
+        let quantity = parseInt(quantityElement.innerText);
+        quantityElement.innerText = quantity + 1;
+        event.stopPropagation();
+    }
+
+    function decreaseQuantity(subCategoryId) {
+        const quantityElement = document.getElementById(`quantity-${subCategoryId}`);
+        let quantity = parseInt(quantityElement.innerText);
+        if (quantity > 1) {
+            quantityElement.innerText = quantity - 1;
+        }
+        event.stopPropagation();
     }
 
     // Sayfa yüklendiğinde tüm kategorileri kapalı hale getir

@@ -13,6 +13,13 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# .NET build output - daha spesifik kurallar
+RestERPDomain/obj/
+
+# .NET build output
+**/[Oo]bj/
+
+
 # Mono auto generated files
 mono_crash.*
 
