@@ -464,14 +464,14 @@
             
             if (category === 'all') {
                 menuCategories.forEach(item => {
-                    (item as HTMLElement).style.display = 'block';
+                    item.style.display = 'block';
                 });
             } else {
                 menuCategories.forEach(item => {
                     if (item.getAttribute('data-category') === category) {
-                        (item as HTMLElement).style.display = 'block';
+                        item.style.display = 'block';
                     } else {
-                        (item as HTMLElement).style.display = 'none';
+                        item.style.display = 'none';
                     }
                 });
             }
@@ -488,9 +488,9 @@
                 const menuDesc = item.querySelector('.menu-desc').textContent.toLowerCase();
                 
                 if (menuName.includes(searchTerm) || menuDesc.includes(searchTerm)) {
-                    (item as HTMLElement).style.display = 'block';
+                    item.style.display = 'block';
                 } else {
-                    (item as HTMLElement).style.display = 'none';
+                    item.style.display = 'none';
                 }
             });
         });
