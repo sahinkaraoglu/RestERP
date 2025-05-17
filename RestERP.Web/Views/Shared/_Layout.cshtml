@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,43 +8,209 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/RestERP.Web.styles.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">RestERP.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Anasayfa</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Menu">Menü</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Panel" asp-action="Index">Panel</a>
-                        </li>
-                    </ul>
+<body class="d-flex flex-column h-100">
+    <header class="restaurant-header">
+        <nav class="custom-navbar">
+            <div class="navbar-container">
+                <div class="navbar-top">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                        <h1>RestERP Restaurant</h1>
+                    </a>
+                    <div class="divider">
+                        <span>✦</span>
+                    </div>
+                </div>
+                <div class="navbar-menu">
+                    <div class="horizontal-menu">
+                        <a class="menu-button" asp-area="" asp-controller="Home" asp-action="Index">Anasayfa</a>
+                        <a class="menu-button" asp-area="" asp-controller="Home" asp-action="Menu">Menü</a>
+                        <a class="menu-button" asp-area="" asp-controller="Panel" asp-action="Index">Panel</a>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container flex-grow-1">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer-slim mt-auto">
         <div class="container">
-            &copy; 2025 - RestERP Modern bir Restoran ERP uygulamasıdır.
+            <div class="footer-content">
+                <div class="divider-small">
+                    <span>❦</span>
+                </div>
+                <p>&copy; 2025 - RestERP Modern bir Restoran ERP uygulamasıdır.</p>
+            </div>
         </div>
     </footer>
+
+    <style>
+        html, body {
+            height: 100%;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f9f6f0;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .flex-grow-1 {
+            flex: 1 0 auto;
+        }
+        
+        .restaurant-header {
+            background-color: #fff;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #e5e0d5;
+            margin-bottom: 30px;
+        }
+        
+        .custom-navbar {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .navbar-container {
+            text-align: center;
+        }
+        
+        .navbar-top {
+            margin-bottom: 15px;
+        }
+        
+        .navbar-brand h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #4a3c2e;
+            margin-bottom: 10px;
+            font-family: 'Lora', serif;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+        
+        .navbar-brand:hover {
+            text-decoration: none;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #d2c4af, transparent);
+        }
+        
+        .divider span {
+            padding: 0 15px;
+            color: #b09a7b;
+            font-size: 1.2rem;
+        }
+        
+        .horizontal-menu {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            width: 100%;
+        }
+        
+        .menu-button {
+            display: inline-block;
+            font-size: 1.2rem;
+            color: #6a563d;
+            font-weight: 500;
+            padding: 8px 20px;
+            margin: 0 15px;
+            text-decoration: none;
+            position: relative;
+            border: 1px solid #d2c4af;
+            border-radius: 4px;
+            background-color: #faf8f3;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-button:hover {
+            color: #4a3c2e;
+            background-color: #f1eadd;
+            border-color: #b09a7b;
+            text-decoration: none;
+        }
+        
+        .footer-slim {
+            background-color: #fff;
+            color: #8c7762;
+            padding: 15px 0;
+            font-family: 'Lora', serif;
+            font-size: 0.9rem;
+            border-top: 1px solid #e5e0d5;
+            flex-shrink: 0;
+        }
+        
+        .footer-content {
+            text-align: center;
+        }
+        
+        .footer-content p {
+            margin: 8px 0;
+        }
+        
+        .divider-small {
+            display: flex;
+            align-items: center;
+            margin: 5px auto;
+            max-width: 200px;
+        }
+        
+        .divider-small::before,
+        .divider-small::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #d2c4af, transparent);
+        }
+        
+        .divider-small span {
+            padding: 0 10px;
+            color: #b09a7b;
+            font-size: 0.9rem;
+        }
+        
+        @@media (max-width: 768px) {
+            .navbar-brand h1 {
+                font-size: 2rem;
+            }
+            
+            .horizontal-menu {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            
+            .menu-button {
+                margin: 5px 10px;
+            }
+        }
+    </style>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
