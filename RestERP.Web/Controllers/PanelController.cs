@@ -13,6 +13,10 @@ public class PanelController : Controller
         _logger = logger;
     }
 
+    public IActionResult Index()
+    {
+        return View();
+    }
 
     public IActionResult Panel()
     {

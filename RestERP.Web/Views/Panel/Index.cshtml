@@ -1,6 +1,6 @@
 @model dynamic
 @{
-    ViewData["Title"] = "Yönetim Paneli";
+    ViewData["Title"] = "Restoran Yönetim Paneli";
 }
 
 <div class="dashboard-container">
@@ -8,167 +8,167 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="dashboard-title">MarketWorld Yönetim Paneli</h1>
-                    <p class="dashboard-subtitle">Online mağazanızı tek yerden yönetin</p>
+                    <h1 class="dashboard-title">RestERP Yönetim Paneli</h1>
+                    <p class="dashboard-subtitle">Restoranınızı tek yerden kolayca yönetin</p>
                 </div>
-               @*  <div class="col-lg-4">
+                <div class="col-lg-4">
                     <div class="quick-stats">
                         <div class="stat-item">
-                            <span class="stat-value">@ViewBag.NewOrdersCount</span>
-                            <span class="stat-label">Yeni Sipariş</span>
+                            <span class="stat-value">12</span>
+                            <span class="stat-label">Bugünkü Sipariş</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-value">₺@ViewBag.TodayRevenue</span>
-                            <span class="stat-label">Bugünkü Gelir</span>
+                            <span class="stat-value">₺2,480</span>
+                            <span class="stat-label">Günlük Gelir</span>
                         </div>
                     </div>
-                </div> *@
+                </div>
             </div>
         </div>
     </div>
 
     <div class="container dashboard-content">
         <div class="row g-3">
-            <!-- Ürün Yönetimi -->
+            <!-- Menü Yönetimi -->
             <div class="col-md-4">
                 <div class="dashboard-card">
-                    <div class="card-icon product-icon">
-                        <i class="bi bi-box-seam"></i>
+                    <div class="card-icon menu-icon">
+                        <i class="bi bi-journal-text"></i>
                     </div>
                     <div class="card-content">
-                        <h3>Ürün Yönetimi</h3>
-                        <p class="card-desc">Ürünleri ekleyin, düzenleyin ve stokları takip edin</p>
+                        <h3>Menü Yönetimi</h3>
+                        <p class="card-desc">Yemek kategorileri ve ürünleri ekleyin, fiyatları düzenleyin</p>
                         <div class="card-stats">
                             <div class="mini-stat">
-                                <span class="mini-stat-value">@ViewBag.ProductsCount</span>
-                                <span class="mini-stat-label">Ürün</span>
+                                <span class="mini-stat-value">48</span>
+                                <span class="mini-stat-label">Menü Ürünü</span>
                             </div>
                             <div class="mini-stat">
-                                <span class="mini-stat-value">@ViewBag.LowStockCount</span>
-                                <span class="mini-stat-label">Stok Az</span>
+                                <span class="mini-stat-value">8</span>
+                                <span class="mini-stat-label">Kategori</span>
                             </div>
                         </div>
-                        <a href="@Url.Action("Products", "Panel")" class="dashboard-btn">Ürünlere Git</a>
+                        <a href="#" class="dashboard-btn">Menü Yönetimi</a>
                     </div>
                 </div>
             </div>
 
-            <!-- Kategori Yönetimi -->
-            <div class="col-md-4">
-                <div class="dashboard-card">
-                    <div class="card-icon category-icon">
-                        <i class="bi bi-grid"></i>
-                    </div>
-                    <div class="card-content">
-                        <h3>Kategori Yönetimi</h3>
-                        <p class="card-desc">Kategorileri düzenleyin ve yenilerini ekleyin</p>
-                        <div class="card-stats">
-                            <div class="mini-stat">
-                                <span class="mini-stat-value">@ViewBag.CategoriesCount</span>
-                                <span class="mini-stat-label">Ana Kategori</span>
-                            </div>
-                            <div class="mini-stat">
-                                <span class="mini-stat-value">@ViewBag.SubCategoriesCount</span>
-                                <span class="mini-stat-label">Alt Kategori</span>
-                            </div>
-                        </div>
-                        <a href="@Url.Action("Categories", "Panel")" class="dashboard-btn">Kategorilere Git</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sipariş Yönetimi -->
+            <!-- Sipariş Takibi -->
             <div class="col-md-4">
                 <div class="dashboard-card">
                     <div class="card-icon order-icon">
-                        <i class="bi bi-cart-check"></i>
+                        <i class="bi bi-receipt"></i>
                     </div>
                     <div class="card-content">
-                        <h3>Sipariş Yönetimi</h3>
-                        <p class="card-desc">Siparişleri görüntüleyin ve durumlarını takip edin</p>
+                        <h3>Sipariş Takibi</h3>
+                        <p class="card-desc">Masa ve paket siparişleri görüntüleyin, durumlarını takip edin</p>
                         <div class="card-stats">
                             <div class="mini-stat">
-                                <span class="mini-stat-value">@ViewBag.NewOrdersCount</span>
-                                <span class="mini-stat-label">Yeni</span>
+                                <span class="mini-stat-value">5</span>
+                                <span class="mini-stat-label">Aktif Masa</span>
                             </div>
                             <div class="mini-stat">
-                                <span class="mini-stat-value">@ViewBag.ShippingOrdersCount</span>
-                                <span class="mini-stat-label">Kargoda</span>
+                                <span class="mini-stat-value">3</span>
+                                <span class="mini-stat-label">Paket Sipariş</span>
                             </div>
                         </div>
-                        <a href="@Url.Action("Orders", "Panel")" class="dashboard-btn">Siparişlere Git</a>
+                        <a href="#" class="dashboard-btn">Siparişleri Yönet</a>
                     </div>
                 </div>
             </div>
 
-            <!-- Kullanıcı Yönetimi -->
+            <!-- Masa Yönetimi -->
             <div class="col-md-4">
                 <div class="dashboard-card">
-                    <div class="card-icon user-icon">
+                    <div class="card-icon table-icon">
+                        <i class="bi bi-grid-3x3"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>Masa Yönetimi</h3>
+                        <p class="card-desc">Masaları düzenleyin, durumlarını kontrol edin</p>
+                        <div class="card-stats">
+                            <div class="mini-stat">
+                                <span class="mini-stat-value">18</span>
+                                <span class="mini-stat-label">Toplam Masa</span>
+                            </div>
+                            <div class="mini-stat">
+                                <span class="mini-stat-value">72%</span>
+                                <span class="mini-stat-label">Doluluk</span>
+                            </div>
+                        </div>
+                        <a href="#" class="dashboard-btn">Masa Planı</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personel Yönetimi -->
+            <div class="col-md-4">
+                <div class="dashboard-card">
+                    <div class="card-icon staff-icon">
                         <i class="bi bi-people"></i>
                     </div>
                     <div class="card-content">
-                        <h3>Kullanıcı Yönetimi</h3>
-                        <p class="card-desc">Kullanıcıları yönetin ve rol atamaları yapın</p>
+                        <h3>Personel Yönetimi</h3>
+                        <p class="card-desc">Personel bilgilerini ve vardiya planlarını düzenleyin</p>
                         <div class="card-stats">
                             <div class="mini-stat">
-                                <span class="mini-stat-value">@ViewBag.TotalUsersCount</span>
-                                <span class="mini-stat-label">Toplam</span>
+                                <span class="mini-stat-value">14</span>
+                                <span class="mini-stat-label">Personel</span>
                             </div>
                             <div class="mini-stat">
-                                <span class="mini-stat-value">@ViewBag.NewUsersCount</span>
-                                <span class="mini-stat-label">Yeni</span>
+                                <span class="mini-stat-value">8</span>
+                                <span class="mini-stat-label">Şu an Aktif</span>
                             </div>
                         </div>
-                        <a href="@Url.Action("Users", "Panel")" class="dashboard-btn">Kullanıcılara Git</a>
+                        <a href="#" class="dashboard-btn">Personel Yönetimi</a>
                     </div>
                 </div>
             </div>
 
-            <!-- Marka Yönetimi -->
+            <!-- Stok Takibi -->
             <div class="col-md-4">
                 <div class="dashboard-card">
-                    <div class="card-icon brand-icon">
-                        <i class="bi bi-award"></i>
+                    <div class="card-icon inventory-icon">
+                        <i class="bi bi-box-seam"></i>
                     </div>
                     <div class="card-content">
-                        <h3>Marka Yönetimi</h3>
-                        <p class="card-desc">Markaları ekleyin ve kategorilerle ilişkilendirin</p>
+                        <h3>Stok Takibi</h3>
+                        <p class="card-desc">Malzeme stoklarını takip edin, kritik seviyeleri belirleyin</p>
                         <div class="card-stats">
                             <div class="mini-stat">
-                                <span class="mini-stat-value">@ViewBag.BrandsCount</span>
-                                <span class="mini-stat-label">Toplam</span>
+                                <span class="mini-stat-value">86</span>
+                                <span class="mini-stat-label">Malzeme</span>
                             </div>
                             <div class="mini-stat">
-                                <span class="mini-stat-value">@ViewBag.TopSellerBrandsCount</span>
-                                <span class="mini-stat-label">Çok Satan</span>
+                                <span class="mini-stat-value">7</span>
+                                <span class="mini-stat-label">Kritik Stok</span>
                             </div>
                         </div>
-                        <a href="@Url.Action("Brands", "Panel")" class="dashboard-btn">Markalara Git</a>
+                        <a href="#" class="dashboard-btn">Stok Durumu</a>
                     </div>
                 </div>
             </div>
-
-            <!-- Raporlar -->
+            
+            <!-- Rezervasyon Yönetimi -->
             <div class="col-md-4">
                 <div class="dashboard-card">
-                    <div class="card-icon report-icon">
-                        <i class="bi bi-graph-up"></i>
+                    <div class="card-icon reservation-icon">
+                        <i class="bi bi-calendar-check"></i>
                     </div>
                     <div class="card-content">
-                        <h3>Raporlar</h3>
-                        <p class="card-desc">Satış raporları ve müşteri analizlerini görüntüleyin</p>
+                        <h3>Rezervasyonlar</h3>
+                        <p class="card-desc">Rezervasyonları yönetin ve masa planı yapın</p>
                         <div class="card-stats">
                             <div class="mini-stat">
-                                <span class="mini-stat-value">₺@ViewBag.MonthlyRevenue</span>
-                                <span class="mini-stat-label">Aylık</span>
+                                <span class="mini-stat-value">8</span>
+                                <span class="mini-stat-label">Bugün</span>
                             </div>
                             <div class="mini-stat">
-                                <span class="mini-stat-value">@ViewBag.MonthlyOrdersCount</span>
-                                <span class="mini-stat-label">Sipariş</span>
+                                <span class="mini-stat-value">17</span>
+                                <span class="mini-stat-label">Yarın</span>
                             </div>
                         </div>
-                        <a href="@Url.Action("Reports", "Panel")" class="dashboard-btn">Raporlara Git</a>
+                        <a href="#" class="dashboard-btn">Rezervasyonlar</a>
                     </div>
                 </div>
             </div>
@@ -178,11 +178,11 @@
 
 <style>
     .dashboard-container {
-        background-color: #f8f9fa;
+        background-color: #f9f7f4;
     }
     
     .dashboard-header {
-        background: linear-gradient(135deg, #2c3e50, #4ca1af);
+        background: linear-gradient(135deg, #5d4b38, #b09a7b);
         color: white;
         padding: 20px 0 15px;
         margin-bottom: 20px;
@@ -253,12 +253,15 @@
         color: white;
     }
     
-    .product-icon { background: linear-gradient(135deg, #4e73df, #224abe); }
-    .category-icon { background: linear-gradient(135deg, #1cc88a, #169a6b); }
-    .order-icon { background: linear-gradient(135deg, #36b9cc, #258391); }
-    .user-icon { background: linear-gradient(135deg, #f6c23e, #dda20a); }
-    .brand-icon { background: linear-gradient(135deg, #e74a3b, #be3529); }
-    .report-icon { background: linear-gradient(135deg, #5a5c69, #373840); }
+    .menu-icon { background: linear-gradient(135deg, #6A3B2B, #B8806D); }
+    .order-icon { background: linear-gradient(135deg, #B8806D, #D9B59C); }
+    .table-icon { background: linear-gradient(135deg, #8D6E63, #A1887F); }
+    .staff-icon { background: linear-gradient(135deg, #b09a7b, #c7b59d); }
+    .inventory-icon { background: linear-gradient(135deg, #5d4b38, #7d6c59); }
+    .report-icon { background: linear-gradient(135deg, #9C786C, #BCAAA4); }
+    .reservation-icon { background: linear-gradient(135deg, #795548, #A1887F); }
+    .customer-icon { background: linear-gradient(135deg, #A98467, #C6AC8F); }
+    .settings-icon { background: linear-gradient(135deg, #6D4C41, #8D6E63); }
     
     .card-content {
         padding: 15px;
@@ -271,6 +274,7 @@
         font-size: 1.1rem;
         margin-bottom: 8px;
         font-weight: 600;
+        color: #5d4b38;
     }
     
     .card-desc {
@@ -288,7 +292,7 @@
     }
     
     .mini-stat {
-        background: #f8f9fa;
+        background: #f9f7f4;
         padding: 6px 10px;
         border-radius: 6px;
         flex: 1;
@@ -298,7 +302,7 @@
         display: block;
         font-size: 0.95rem;
         font-weight: 600;
-        color: #333;
+        color: #5d4b38;
     }
     
     .mini-stat-label {
@@ -313,14 +317,14 @@
         color: white;
         text-decoration: none;
         font-weight: 500;
-        background: #2c3e50;
+        background: #5d4b38;
         transition: all 0.3s ease;
         text-align: center;
         font-size: 0.85rem;
     }
     
     .dashboard-btn:hover {
-        background: #4ca1af;
+        background: #b09a7b;
         transform: translateY(-2px);
         color: white;
     }
@@ -342,3 +346,5 @@
         }
     }
 </style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
