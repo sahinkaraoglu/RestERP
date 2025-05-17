@@ -57,6 +57,7 @@ namespace RestERP.Infrastructure
             // Seed verilerini ekle
             modelBuilder.Entity<FoodCategory>().HasData(FoodCategorySeedData.GetFoodCategories());
             modelBuilder.Entity<Food>().HasData(FoodSeedData.GetFood());
+            modelBuilder.Entity<Table>().HasData(TableSeedData.GetTable());
         }
     }
 }
