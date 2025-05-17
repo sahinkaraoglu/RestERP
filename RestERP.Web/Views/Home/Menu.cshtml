@@ -58,7 +58,13 @@
             <span>❦</span>
         </div>
         <p>Afiyet Olsun</p>
-        <button id="orderButton" class="order-button">Sipariş Ver</button>
+        <div class="order-container">
+            <div class="table-number-container">
+                <label for="tableNumber">Masa No:</label>
+                <input type="number" id="tableNumber" min="1" placeholder="Masa No">
+            </div>
+            <button id="orderButton" class="order-button">Sipariş Ver</button>
+        </div>
     </div>
 </div>
 
@@ -308,6 +314,54 @@
     .order-button:hover {
         background-color: #6a563d;
     }
+
+    /* Masa numarası giriş alanı için stiller */
+    .order-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .table-number-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .table-number-container label {
+        font-weight: 600;
+        color: #6a563d;
+    }
+
+    .table-number-container input {
+        padding: 8px 12px;
+        border: 1px solid #d6c6af;
+        border-radius: 4px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        color: #333;
+        width: 120px;
+        text-align: center;
+    }
+
+    .table-number-container input:focus {
+        outline: none;
+        border-color: #8c7762;
+        box-shadow: 0 0 5px rgba(140, 119, 98, 0.3);
+    }
+
+    @@media (min-width: 768px) {
+        .order-container {
+            flex-direction: row;
+            justify-content: center;
+        }
+        
+        .order-button {
+            margin: 0;
+        }
+    }
 </style>
 
 <!-- Google Fonts -->
@@ -352,7 +406,12 @@
         
         // Sipariş Ver butonuna tıklama işlevi
         document.getElementById('orderButton').addEventListener('click', function() {
-            alert('Siparişiniz alınıyor...');
+            const tableNumber = document.getElementById('tableNumber').value;
+            if (!tableNumber || tableNumber.trim() === '') {
+                alert('Lütfen masa numarası giriniz!');
+                return;
+            }
+            alert(`${tableNumber} numaralı masa için siparişiniz alınıyor...`);
             // Burada sipariş işleme mantığı geliştirilebilir
         });
     });
