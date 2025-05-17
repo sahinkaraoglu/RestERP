@@ -18,18 +18,30 @@ namespace RestERP.Infrastructure.Repositories
         public UnitOfWork(RestERPDbContext context)
         {
             _context = context;
+            _repositories = new Hashtable();
         }
 
         public async Task<int> SaveChangesAsync()
         {
+            // Otomatik olarak oluşturulma ve güncellenme tarih bilgilerini set et
+            foreach (var entry in _context.ChangeTracker.Entries<BaseEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.CreatedDate = DateTime.UtcNow;
+                        break;
+                    case EntityState.Modified:
+                        entry.Entity.UpdatedDate = DateTime.UtcNow;
+                        break;
+                }
+            }
+            
             return await _context.SaveChangesAsync();
         }
 
         public IRepository<T> Repository<T>() where T : BaseEntity
         {
-            if (_repositories == null)
-                _repositories = new Hashtable();
-
             var type = typeof(T).Name;
 
             if (!_repositories.ContainsKey(type))
@@ -52,16 +64,21 @@ namespace RestERP.Infrastructure.Repositories
         {
             try
             {
+                await SaveChangesAsync();
                 await _transaction.CommitAsync();
             }
             catch
             {
-                await _transaction.RollbackAsync();
+                await RollbackTransactionAsync();
                 throw;
             }
             finally
             {
-                await _transaction.DisposeAsync();
+                if (_transaction != null)
+                {
+                    await _transaction.DisposeAsync();
+                    _transaction = null;
+                }
             }
         }
 
@@ -71,13 +88,18 @@ namespace RestERP.Infrastructure.Repositories
             {
                 await _transaction.RollbackAsync();
                 await _transaction.DisposeAsync();
+                _transaction = null;
             }
         }
 
         public void Dispose()
         {
             _context.Dispose();
-            _transaction?.Dispose();
+            if (_transaction != null)
+            {
+                _transaction.Dispose();
+                _transaction = null;
+            }
         }
     }
 } 

@@ -1,8 +1,11 @@
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using RestERP.Application.Services;
+using RestERP.Application.Services.Interfaces;
 using RestERP.Domain.Interfaces;
 using RestERP.Infrastructure;
 using RestERP.Infrastructure.Repositories;
+using RestERP.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +17,13 @@ builder.Services.AddDbContext<RestERPDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Dependency Injection kayıtları
+// Repository ve UnitOfWork kayıtları
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// Servis kayıtları
+builder.Services.AddScoped<IProductService, ProductService>();
+// Diğer servisleri buraya ekleyin
 
 var app = builder.Build();
 
@@ -27,6 +34,9 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// Global exception handling middleware
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

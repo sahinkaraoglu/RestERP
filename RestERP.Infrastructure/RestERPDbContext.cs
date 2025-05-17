@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RestERP.Domain.Entities;
+using RestERP.Infrastructure.Data.SeedData;
 
 namespace RestERP.Infrastructure
 {
@@ -11,6 +12,7 @@ namespace RestERP.Infrastructure
         }
 
         public DbSet<Category> Categories { get; set; }
+        public DbSet<SubCategory> SubCategories { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -52,6 +54,10 @@ namespace RestERP.Infrastructure
             modelBuilder.Entity<Product>()
                 .Property(p => p.Price)
                 .HasPrecision(18, 2);
+                
+            // Seed verilerini ekle
+            modelBuilder.Entity<Category>().HasData(CategorySeedData.GetCategories());
+            modelBuilder.Entity<SubCategory>().HasData(SubCategorySeedData.GetSubCategories());
         }
     }
 }
