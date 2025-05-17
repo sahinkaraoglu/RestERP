@@ -12,9 +12,8 @@
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+
 # Visual Studio ve .NET derleme çıktıları
-[Bb]in/
-[Oo]bj/
 *.cache
 *.AssemblyInfo.cs
 
