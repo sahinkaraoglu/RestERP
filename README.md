@@ -2,6 +2,35 @@
 
 RestERP is a comprehensive Enterprise Resource Planning (ERP) system developed for restaurant businesses. This application is an ASP.NET Core-based web application developed in accordance with Clean Architecture principles.
 
+<div align="center">
+[![.NET Core](https://img.shields.io/badge/-.NET%20Core%208.0-512BD4?style=for-the-badge&logo=.net&logoColor=white)](https://dotnet.microsoft.com/)
+[![EF Core](https://img.shields.io/badge/-EF%20Core-512BD4?style=for-the-badge&logo=.net&logoColor=white)](https://docs.microsoft.com/ef/core/)
+</div>
+
+<div align="center">
+   <div align="center">
+    <table>
+        <tr>
+            <td>
+                <img src="https://github.com/user-attachments/assets/442c3b80-6ec3-4361-a92b-eeba9d05cfa1" alt="HomePage" width="400"/>
+            </td>
+            <td>
+                <img src="https://github.com/user-attachments/assets/fb6a0911-d1f6-4ab6-bda0-20864dcb230f" alt="Menu" width="400"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img src=https://github.com/user-attachments/assets/6430fa8b-d8a6-4750-97af-45b6d45a37db" alt="Login" width="400"/>
+            </td>
+            <td>
+                <img src="https://github.com/user-attachments/assets/bfa94f86-088c-44a1-aa07-d21fd3fa05e1" alt="Management" width="400"/>
+            </td>
+        </tr>
+    </table>
+</div>
+</div>
+
+
 ## Project Structure
 
 The project has a layered architecture in line with Clean Architecture principles:
