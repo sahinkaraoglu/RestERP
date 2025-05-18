@@ -32,6 +32,8 @@
     </div>
 </div>
 
+<div class="spacer"></div>
+
 <style>
     .hero-section {
         position: relative;
@@ -116,6 +118,7 @@
     .welcome-section {
         padding: 60px 0;
         background-color: #fff;
+        margin-bottom: 60px;
     }
     
     .welcome-content {
@@ -160,6 +163,11 @@
         font-size: 1.2rem;
     }
     
+    .spacer {
+        height: 40px;
+        clear: both;
+    }
+    
     @@media (max-width: 768px) {
         .hero-section {
             height: 70vh;
@@ -177,6 +185,14 @@
             padding: 10px 20px;
             margin: 5px;
             font-size: 0.9rem;
+        }
+        
+        .welcome-section {
+            margin-bottom: 40px;
+        }
+        
+        .spacer {
+            height: 30px;
         }
     }
 </style>
