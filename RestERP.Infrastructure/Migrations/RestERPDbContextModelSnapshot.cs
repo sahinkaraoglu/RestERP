@@ -168,6 +168,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 1,
                             CategoryId = 1,
+                            Description = "Çeşitli peynirler, zeytinler, domatesler, salatalıklar ve ekmeklerle servis edilen geleneksel bir Türk kahvaltısı.",
                             IsDeleted = false,
                             Name = "Turkish Breakfast Spread",
                             Price = 200m,
@@ -177,6 +178,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 2,
                             CategoryId = 1,
+                            Description = "Kişi başı serpme usulü sunulan zengin kahvaltı tabağı. Çeşitli peynirler, reçeller, bal, kaymak ve diğer kahvaltılıklar içerir.",
                             IsDeleted = false,
                             Name = "Mixed Breakfast (Per Person)",
                             Price = 300m,
@@ -186,6 +188,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 3,
                             CategoryId = 1,
+                            Description = "Çeşitli yerel ve ithal peynirlerden oluşan seçki. Taze ekmek ile servis edilir.",
                             IsDeleted = false,
                             Name = "Cheese Platter",
                             Price = 70m,
@@ -195,6 +198,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 4,
                             CategoryId = 1,
+                            Description = "Farklı yörelerden toplanmış yeşil ve siyah zeytinler.",
                             IsDeleted = false,
                             Name = "Olive Platter",
                             Price = 47.50m,
@@ -204,6 +208,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 5,
                             CategoryId = 1,
+                            Description = "Taze yumurtalardan hazırlanan sade omlet.",
                             IsDeleted = false,
                             Name = "Omelette",
                             Price = 47.50m,
@@ -213,6 +218,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 6,
                             CategoryId = 1,
+                            Description = "Kaşar peyniri ile hazırlanmış lezzetli omlet.",
                             IsDeleted = false,
                             Name = "Omelette with Gorgonzola Cheese",
                             Price = 55m,
@@ -222,6 +228,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 7,
                             CategoryId = 1,
+                            Description = "Peynir, domates, biber ve diğer malzemelerle hazırlanmış karışık omlet.",
                             IsDeleted = false,
                             Name = "Mixed Omelette",
                             Price = 80m,
@@ -231,6 +238,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 8,
                             CategoryId = 1,
+                            Description = "Domates, yeşil biber ve yumurta ile hazırlanan geleneksel Türk kahvaltı yemeği.",
                             IsDeleted = false,
                             Name = "Scrambled Eggs with Tomatoes and Green Pepper",
                             Price = 62.50m,
@@ -240,6 +248,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 9,
                             CategoryId = 1,
+                            Description = "Kızarmış sucuk parçaları ile pişirilmiş yumurta.",
                             IsDeleted = false,
                             Name = "Scrambled Eggs with Garlic Sausages",
                             Price = 80m,
@@ -249,6 +258,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 10,
                             CategoryId = 1,
+                            Description = "Karadeniz bölgesine özgü, mısır unu ve eritilmiş peynir ile hazırlanan geleneksel yemek.",
                             IsDeleted = false,
                             Name = "Melted Cheese and Cornmeal",
                             Price = 100m,
@@ -258,6 +268,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 11,
                             CategoryId = 1,
+                            Description = "İnce dilimlenmiş pastırma ile pişirilmiş yumurta.",
                             IsDeleted = false,
                             Name = "Scrambled Eggs with Pastrami",
                             Price = 75m,
@@ -267,6 +278,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 12,
                             CategoryId = 1,
+                            Description = "Sahanda kızartılmış dilimlenmiş sucuk.",
                             IsDeleted = false,
                             Name = "Fried Garlic Sausage",
                             Price = 85m,
@@ -276,6 +288,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 13,
                             CategoryId = 1,
+                            Description = "Kızarmış taze patates.",
                             IsDeleted = false,
                             Name = "French Fries",
                             Price = 40m,
@@ -285,6 +298,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 14,
                             CategoryId = 1,
+                            Description = "İçi peynirli mini kalem börekleri.",
                             IsDeleted = false,
                             Name = "Rolled Pastry",
                             Price = 40m,
@@ -294,6 +308,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 15,
                             CategoryId = 1,
+                            Description = "Taze kaymak ve organik bal ile servis edilir.",
                             IsDeleted = false,
                             Name = "Honey & Clotted Cream",
                             Price = 60m,
@@ -303,6 +318,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 16,
                             CategoryId = 1,
+                            Description = "Taze tereyağı porsiyonu.",
                             IsDeleted = false,
                             Name = "A Serving of Butter",
                             Price = 47.50m,
@@ -312,6 +328,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 17,
                             CategoryId = 1,
+                            Description = "Doğranmış domates, salatalık ve yeşilliklerden oluşan söğüş tabağı.",
                             IsDeleted = false,
                             Name = "Tomato and Cucumber",
                             Price = 47.50m,
@@ -321,6 +338,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 18,
                             CategoryId = 1,
+                            Description = "Mevsim meyvelerinden oluşan tabak.",
                             IsDeleted = false,
                             Name = "Fruit Platter",
                             Price = 55m,
@@ -330,6 +348,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 19,
                             CategoryId = 2,
+                            Description = "Pirinç ve baharatlarla doldurulmuş taze biberler.",
                             IsDeleted = false,
                             Name = "Stuffed Peppers",
                             Price = 57.50m,
@@ -339,6 +358,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 20,
                             CategoryId = 2,
+                            Description = "Özel sos ile hazırlanmış patlıcan yemeği.",
                             IsDeleted = false,
                             Name = "Sauced Aubergine",
                             Price = 57.50m,
@@ -348,6 +368,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 21,
                             CategoryId = 2,
+                            Description = "Zeytinyağlı enginar yemeği.",
                             IsDeleted = false,
                             Name = "Artichoke",
                             Price = 57.50m,
@@ -357,6 +378,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 22,
                             CategoryId = 2,
+                            Description = "Zeytinyağlı taze fasulye yemeği.",
                             IsDeleted = false,
                             Name = "Green Beans",
                             Price = 57.50m,
@@ -366,6 +388,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 23,
                             CategoryId = 2,
+                            Description = "Pirinç ve baharatlarla doldurulmuş asma yaprağı sarması.",
                             IsDeleted = false,
                             Name = "Stuffed Vine Leaves",
                             Price = 57.50m,
@@ -375,6 +398,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 24,
                             CategoryId = 2,
+                            Description = "Çeşitli zeytinyağlı yemeklerden oluşan tabak.",
                             IsDeleted = false,
                             Name = "Assorted Olive Oil Dish Platter",
                             Price = 80m,
@@ -384,6 +408,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 25,
                             CategoryId = 3,
+                            Description = "Taze patateslerden hazırlanmış kızartma.",
                             IsDeleted = false,
                             Name = "Fresh Fries",
                             Price = 40m,
@@ -393,6 +418,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 26,
                             CategoryId = 3,
+                            Description = "İçi pastırma ile doldurulmuş çıtır börek.",
                             IsDeleted = false,
                             Name = "Pastrami Pastry",
                             Price = 67.50m,
@@ -402,6 +428,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 27,
                             CategoryId = 3,
+                            Description = "Fırında kaşar peyniri ile gratine edilmiş mantar.",
                             IsDeleted = false,
                             Name = "Mushroom Gratin",
                             Price = 75m,
@@ -411,6 +438,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 28,
                             CategoryId = 3,
+                            Description = "Tereyağında kavrulmuş taze mantarlar.",
                             IsDeleted = false,
                             Name = "Fried Mushrooms",
                             Price = 55m,
@@ -420,6 +448,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 29,
                             CategoryId = 3,
+                            Description = "İnce doğranmış dil balığından hazırlanan özel sote.",
                             IsDeleted = false,
                             Name = "Julienne Sole Fish",
                             Price = 210m,
@@ -429,6 +458,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 30,
                             CategoryId = 4,
+                            Description = "550-650 gr ağırlığında ızgara çipura balığı.",
                             IsDeleted = false,
                             Name = "Grilled Sea Bream 550 - 650 gr.",
                             Price = 550m,
@@ -438,6 +468,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 31,
                             CategoryId = 4,
+                            Description = "300-350 gr ağırlığında ızgara çipura balığı.",
                             IsDeleted = false,
                             Name = "Grilled Sea Bream 300 - 350 gr.",
                             Price = 310m,
@@ -447,6 +478,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 32,
                             CategoryId = 4,
+                            Description = "Un ile kaplanıp kızartılmış mezgit balığı.",
                             IsDeleted = false,
                             Name = "Fried Whiting Fish",
                             Price = 260m,
@@ -456,6 +488,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 33,
                             CategoryId = 4,
+                            Description = "Fesleğen sosu ile servis edilen ızgara somon balığı.",
                             IsDeleted = false,
                             Name = "Pan Seared Salmon",
                             Price = 415m,
@@ -465,6 +498,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 34,
                             CategoryId = 4,
+                            Description = "Filetolanmış levrek balığı.",
                             IsDeleted = false,
                             Name = "Sea Bass Filleted",
                             Price = 400m,
@@ -474,6 +508,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 35,
                             CategoryId = 4,
+                            Description = "550-650 gr ağırlığında ızgara levrek balığı.",
                             IsDeleted = false,
                             Name = "Grilled Sea Bass 550 - 650 gr.",
                             Price = 550m,
@@ -483,6 +518,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 36,
                             CategoryId = 4,
+                            Description = "300-350 gr ağırlığında ızgara levrek balığı.",
                             IsDeleted = false,
                             Name = "Grilled Sea Bass 300 - 350 gr.",
                             Price = 300m,
@@ -492,6 +528,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 37,
                             CategoryId = 4,
+                            Description = "Kiremit üzerinde özel soslar ile pişirilmiş levrek balığı.",
                             IsDeleted = false,
                             Name = "Sea Bass on the Clay Tile",
                             Price = 415m,
@@ -501,6 +538,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 38,
                             CategoryId = 4,
+                            Description = "Taze ızgara somon balığı.",
                             IsDeleted = false,
                             Name = "Broiled Salmon Steak",
                             Price = 400m,
@@ -510,6 +548,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 39,
                             CategoryId = 4,
+                            Description = "Izgara edilmiş dil balığı.",
                             IsDeleted = false,
                             Name = "Grilled Sole Fish",
                             Price = 270m,
@@ -519,6 +558,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 40,
                             CategoryId = 4,
+                            Description = "Özel soslar ile kavrulmuş somon balığı.",
                             IsDeleted = false,
                             Name = "Baked Salmon",
                             Price = 415m,
@@ -528,6 +568,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 41,
                             CategoryId = 5,
+                            Description = "Mevsiminde taze istavrit balığı.",
                             IsDeleted = false,
                             Name = "Horse Mackerel",
                             Price = 285m,
@@ -537,6 +578,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 42,
                             CategoryId = 5,
+                            Description = "Taze sarıkanat balığı.",
                             IsDeleted = false,
                             Name = "Blue Fish",
                             Price = 295m,
@@ -546,6 +588,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 43,
                             CategoryId = 5,
+                            Description = "Mevsiminde taze palamut balığı.",
                             IsDeleted = false,
                             Name = "Bonito",
                             Price = 340m,
@@ -555,6 +598,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 44,
                             CategoryId = 5,
+                            Description = "Mısır unu ile kaplanıp kızartılmış hamsi balığı.",
                             IsDeleted = false,
                             Name = "Fried Anchovies",
                             Price = 250m,
@@ -564,6 +608,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 45,
                             CategoryId = 5,
+                            Description = "Taze mezgit balığı.",
                             IsDeleted = false,
                             Name = "Whiting Fish",
                             Price = 270m,
@@ -573,6 +618,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 46,
                             CategoryId = 5,
+                            Description = "Taze tekir balığı.",
                             IsDeleted = false,
                             Name = "Red Mullet",
                             Price = 290m,
@@ -582,6 +628,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 47,
                             CategoryId = 5,
+                            Description = "Mevsiminde taze lüfer balığı.",
                             IsDeleted = false,
                             Name = "Loufer",
                             Price = 375m,
@@ -591,6 +638,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 48,
                             CategoryId = 6,
+                            Description = "Özel baharatlarla hazırlanmış ızgara köfte.",
                             IsDeleted = false,
                             Name = "Grilled Köfte",
                             Price = 200m,
@@ -600,6 +648,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 49,
                             CategoryId = 6,
+                            Description = "Kaşar peyniri ile servis edilen ızgara köfte.",
                             IsDeleted = false,
                             Name = "Grilled Köfte with Cheese",
                             Price = 210m,
@@ -609,6 +658,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 50,
                             CategoryId = 6,
+                            Description = "Özel marine edilmiş tavuk şiş.",
                             IsDeleted = false,
                             Name = "Chicken Shish",
                             Price = 130m,
@@ -618,6 +668,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 51,
                             CategoryId = 6,
+                            Description = "Özel baharatlarla kavurulmuş tavuk parçaları.",
                             IsDeleted = false,
                             Name = "Roasting Chicken",
                             Price = 145m,
@@ -627,6 +678,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 52,
                             CategoryId = 6,
+                            Description = "Közlenmiş patlıcan ezmesi üzerinde julyen doğranmış tavuk parçaları.",
                             IsDeleted = false,
                             Name = "Chicken Julienne with Eggplant Purée",
                             Price = 145m,
@@ -636,6 +688,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 53,
                             CategoryId = 6,
+                            Description = "Tercihe göre pişirilmiş dana bonfile.",
                             IsDeleted = false,
                             Name = "Veal Fillet",
                             Price = 390m,
@@ -645,6 +698,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 54,
                             CategoryId = 6,
+                            Description = "Kaşar peyniri ile servis edilen dana bonfile.",
                             IsDeleted = false,
                             Name = "Veal Fillet with Turkish Cheese",
                             Price = 400m,
@@ -654,6 +708,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 55,
                             CategoryId = 6,
+                            Description = "Közlenmiş patlıcan ezmesi üzerinde julyen doğranmış dana bonfile.",
                             IsDeleted = false,
                             Name = "Steak Fillet Julienne with Eggplant Purée",
                             Price = 400m,
@@ -663,6 +718,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 56,
                             CategoryId = 6,
+                            Description = "Köfte, pirzola, tavuk ve diğer etlerin ızgara karışımı.",
                             IsDeleted = false,
                             Name = "Mixed Grill",
                             Price = 390m,
@@ -672,6 +728,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 57,
                             CategoryId = 6,
+                            Description = "Sebzeler ile hazırlanmış özel kavurma.",
                             IsDeleted = false,
                             Name = "Shepherd's Roasting",
                             Price = 325m,
@@ -681,6 +738,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 58,
                             CategoryId = 7,
+                            Description = "Geleneksel fırında pişirilmiş sütlaç.",
                             IsDeleted = false,
                             Name = "Sütlaç",
                             Price = 55m,
@@ -690,6 +748,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 59,
                             CategoryId = 7,
+                            Description = "Üç farklı süt ile hazırlanmış özel tatlı.",
                             IsDeleted = false,
                             Name = "Tres Leches Cake",
                             Price = 55m,
@@ -699,6 +758,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 60,
                             CategoryId = 7,
+                            Description = "Geleneksel aşure tatlısı.",
                             IsDeleted = false,
                             Name = "Noah's Pudding",
                             Price = 55m,
@@ -708,6 +768,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 61,
                             CategoryId = 7,
+                            Description = "Çikolata sosu ile servis edilen profiterol.",
                             IsDeleted = false,
                             Name = "Profiterole",
                             Price = 55m,
@@ -717,6 +778,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 62,
                             CategoryId = 7,
+                            Description = "Sıcak çikolata sosu ile servis edilen özel tatlı.",
                             IsDeleted = false,
                             Name = "Volcanic",
                             Price = 80m,
@@ -726,6 +788,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 63,
                             CategoryId = 7,
+                            Description = "Mevsim meyveleriyle hazırlanmış tatlı çeşitleri.",
                             IsDeleted = false,
                             Name = "Fruit Dessert",
                             Price = 60m,
@@ -735,6 +798,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 64,
                             CategoryId = 7,
+                            Description = "Geleneksel hamur işi tatlılar.",
                             IsDeleted = false,
                             Name = "Pastries",
                             Price = 60m,
@@ -744,6 +808,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 65,
                             CategoryId = 7,
+                            Description = "Çeşitli aromalarda dondurma porsiyonu.",
                             IsDeleted = false,
                             Name = "Ice Cream",
                             Price = 47.50m,
@@ -753,6 +818,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 66,
                             CategoryId = 7,
+                            Description = "Mevsim meyvelerinden hazırlanmış meyve tabağı.",
                             IsDeleted = false,
                             Name = "Mixed Fruits",
                             Price = 55m,
@@ -762,6 +828,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 67,
                             CategoryId = 7,
+                            Description = "Tahin ile hazırlanmış geleneksel tatlı.",
                             IsDeleted = false,
                             Name = "Tahini Bread Roll",
                             Price = 67.50m,
@@ -771,6 +838,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 68,
                             CategoryId = 8,
+                            Description = "Kutu içecek çeşitleri.",
                             IsDeleted = false,
                             Name = "Canned Soft Drinks",
                             Price = 55m,
@@ -780,6 +848,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 69,
                             CategoryId = 8,
+                            Description = "Geleneksel yoğurt içeceği.",
                             IsDeleted = false,
                             Name = "Ayran",
                             Price = 16m,
@@ -789,6 +858,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 70,
                             CategoryId = 8,
+                            Description = "Maden suyu.",
                             IsDeleted = false,
                             Name = "Mineral Water",
                             Price = 16m,
@@ -798,6 +868,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 71,
                             CategoryId = 8,
+                            Description = "Çeşitli aromalarda meyveli maden suyu.",
                             IsDeleted = false,
                             Name = "Frute Mineral Water",
                             Price = 19m,
@@ -807,6 +878,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 72,
                             CategoryId = 8,
+                            Description = "Taze sıkılmış portakal veya nar suyu.",
                             IsDeleted = false,
                             Name = "Orange / Pomegranate Juice",
                             Price = 55m,
@@ -816,6 +888,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 73,
                             CategoryId = 8,
+                            Description = "Geleneksel nar çiçeği şerbeti.",
                             IsDeleted = false,
                             Name = "Nar Çiçeği Şerbeti",
                             Price = 55m,
@@ -825,6 +898,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 74,
                             CategoryId = 8,
+                            Description = "Demli Türk çayı.",
                             IsDeleted = false,
                             Name = "Tea",
                             Price = 10m,
@@ -834,6 +908,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 75,
                             CategoryId = 8,
+                            Description = "Nescafe, sade veya sütlü olarak servis edilir.",
                             IsDeleted = false,
                             Name = "Instant Coffee",
                             Price = 40m,
@@ -843,6 +918,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 76,
                             CategoryId = 8,
+                            Description = "Geleneksel köpüklü Türk kahvesi.",
                             IsDeleted = false,
                             Name = "Turkish Coffee",
                             Price = 40m,
@@ -852,6 +928,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 77,
                             CategoryId = 8,
+                            Description = "Taze çekilmiş kahve çekirdeklerinden hazırlanmış filtre kahve.",
                             IsDeleted = false,
                             Name = "Filter Coffee",
                             Price = 47.50m,
@@ -861,6 +938,7 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 78,
                             CategoryId = 8,
+                            Description = "0.5L içme suyu.",
                             IsDeleted = false,
                             Name = "Water",
                             Price = 8m,

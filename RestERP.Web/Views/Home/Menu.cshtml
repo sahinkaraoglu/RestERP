@@ -36,7 +36,10 @@
                                 <tr>
                                     <td class="subcategory-name">
                                         <div class="sub-item">
-                                            <span>@subCategory.TurkishName</span>
+                                            <div class="food-info">
+                                                <span class="food-title">@subCategory.TurkishName</span>
+                                                <span class="food-description">@subCategory.Description</span>
+                                            </div>
                                             <div class="quantity-control">
                                                 <button class="quantity-btn minus" onclick="decreaseQuantity(@subCategory.Id)">-</button>
                                                 <span id="quantity-@subCategory.Id" class="quantity-value">0</span>
@@ -45,38 +48,39 @@
                                         </div>
                                     </td>
                                     <td class="subcategory-price">@subCategory.Price ₺</td>
-                                    @if(category.Id == 1) {
-                                        <td class="subcategory-image">
-                                            @{
-                                                var breakfastImages = new Dictionary<int, (string Path, string Alt)>
-                                                {
-                                                    { 1, ("/img/Food/Breakfast/KahvaltiTabagi.jpg", "Kahvaltı Tabağı") },
-                                                    { 2, ("/img/Food/Breakfast/SerpmeKahvalti.jpg", "Serpme Kahvaltı") },
-                                                    { 3, ("/img/Food/Breakfast/PeynirTabagi.jpeg", "Peynir Tabağı") },
-                                                    { 4, ("/img/Food/Breakfast/ZeytinTabagi.jpeg", "Zeytin Tabağı") },
-                                                    { 5, ("/img/Food/Breakfast/Omlet.jpg", "Omlet") },
-                                                    { 6, ("/img/Food/Breakfast/KasarliOmlet.jpg", "Kaşarlı Omlet") },
-                                                    { 7, ("/img/Food/Breakfast/KarisikOmlet.jpg", "Karışık Omlet") },
-                                                    { 8, ("/img/Food/Breakfast/Menemen.jpg", "Menemen") },
-                                                    { 9, ("/img/Food/Breakfast/SucukluYumurta.jpeg", "Sucuklu Yumurta") },
-                                                    { 10, ("/img/Food/Breakfast/Mihlama.jpg", "Mıhlama") },
-                                                    { 11, ("/img/Food/Breakfast/PastirmaliYumurta.jpg", "Pastırmalı Yumurta") },
-                                                    { 12, ("/img/Food/Breakfast/SahandaSucuk.jpg", "Sahanda Sucuk") },
-                                                    { 13, ("/img/Food/Breakfast/PatatesTava.jpg", "Patates Tava") },
-                                                    { 14, ("/img/Food/Breakfast/MiniKalemBoregi.jpg", "Mini Kalem Boreği") },
-                                                    { 15, ("/img/Food/Breakfast/BalKaymak.jpg", "Bal Kaymak") },
-                                                    { 16, ("/img/Food/Breakfast/TereyagiPorsiyonu.jpg", "Tereyağı Porsiyonu") },
-                                                    { 17, ("/img/Food/Breakfast/SogusTabagi.jpg", "Söğüş Tabağı") },
-                                                    { 18, ("/img/Food/Breakfast/MeyveTabagi.jpg", "Meyve Tabağı") }
-                                                };
+                                    <td class="subcategory-image">
+                                        @if(category.Id == 1) 
+                                        {
+                                            var breakfastImages = new Dictionary<int, (string Path, string Alt)>
+                                            {
+                                                { 1, ("/img/Food/Breakfast/KahvaltiTabagi.jpg", "Kahvaltı Tabağı") },
+                                                { 2, ("/img/Food/Breakfast/SerpmeKahvalti.jpg", "Serpme Kahvaltı") },
+                                                { 3, ("/img/Food/Breakfast/PeynirTabagi.jpeg", "Peynir Tabağı") },
+                                                { 4, ("/img/Food/Breakfast/ZeytinTabagi.jpeg", "Zeytin Tabağı") },
+                                                { 5, ("/img/Food/Breakfast/Omlet.jpg", "Omlet") },
+                                                { 6, ("/img/Food/Breakfast/KasarliOmlet.jpg", "Kaşarlı Omlet") },
+                                                { 7, ("/img/Food/Breakfast/KarisikOmlet.jpg", "Karışık Omlet") },
+                                                { 8, ("/img/Food/Breakfast/Menemen.jpg", "Menemen") },
+                                                { 9, ("/img/Food/Breakfast/SucukluYumurta.jpeg", "Sucuklu Yumurta") },
+                                                { 10, ("/img/Food/Breakfast/Mihlama.jpg", "Mıhlama") },
+                                                { 11, ("/img/Food/Breakfast/PastirmaliYumurta.jpg", "Pastırmalı Yumurta") },
+                                                { 12, ("/img/Food/Breakfast/SahandaSucuk.jpg", "Sahanda Sucuk") },
+                                                { 13, ("/img/Food/Breakfast/PatatesTava.jpg", "Patates Tava") },
+                                                { 14, ("/img/Food/Breakfast/MiniKalemBoregi.jpg", "Mini Kalem Boreği") },
+                                                { 15, ("/img/Food/Breakfast/BalKaymak.jpg", "Bal Kaymak") },
+                                                { 16, ("/img/Food/Breakfast/TereyagiPorsiyonu.jpg", "Tereyağı Porsiyonu") },
+                                                { 17, ("/img/Food/Breakfast/SogusTabagi.jpg", "Söğüş Tabağı") },
+                                                { 18, ("/img/Food/Breakfast/MeyveTabagi.jpg", "Meyve Tabağı") }
+                                            };
 
-                                                if (breakfastImages.TryGetValue(subCategory.Id, out var imageInfo))
-                                                {
+                                            if (breakfastImages.TryGetValue(subCategory.Id, out var imageInfo))
+                                            {
+                                                <div class="food-image-container">
                                                     <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
-                                                }
+                                                </div>
                                             }
-                                        </td>
-                                    }
+                                        }
+                                    </td>
                                 </tr>
                             }
                         </tbody>
@@ -337,12 +341,13 @@
     .subcategory-table {
         width: 100%;
         border-collapse: separate;
-        border-spacing: 0 6px;
+        border-spacing: 0 12px;
         margin-top: 8px;
     }
 
     .subcategory-table tr {
         transition: background-color 0.3s;
+        border-bottom: 1px solid #f1eadd;
     }
 
     .subcategory-table tr:hover {
@@ -350,31 +355,47 @@
     }
 
     .subcategory-name {
-        padding: 6px 12px;
+        padding: 10px 12px;
         font-size: 1rem;
         color: #5c4c3a;
         font-weight: 500;
+        width: 60%;
     }
 
     .subcategory-price {
         text-align: right;
-        padding: 6px 12px;
+        padding: 10px 12px;
         font-weight: 600;
         color: #8c7762;
         white-space: nowrap;
+        width: 15%;
     }
 
     .subcategory-image {
-        padding: 6px;
+        padding: 10px;
         text-align: right;
+        width: 25%;
+        vertical-align: middle;
+    }
+
+    .food-image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .food-image {
-        width: 170px;
-        height: 135px;
+        width: 150px;
+        height: 120px;
         object-fit: cover;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 6px;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .food-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     }
 
     .menu-footer {
@@ -410,8 +431,57 @@
         }
         
         .food-image {
-            width: 125px;
-            height: 95px;
+            width: 120px;
+            height: 90px;
+        }
+        
+        .subcategory-table {
+            border-spacing: 0 8px;
+        }
+        
+        .subcategory-name {
+            width: 50%;
+        }
+        
+        .subcategory-price {
+            width: 20%;
+        }
+        
+        .subcategory-image {
+            width: 30%;
+        }
+    }
+    
+    @@media (max-width: 576px) {
+        .subcategory-table tr {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e5ded2;
+            padding-bottom: 10px;
+        }
+        
+        .subcategory-name {
+            width: 70%;
+            order: 1;
+        }
+        
+        .subcategory-price {
+            width: 30%;
+            order: 2;
+            text-align: right;
+        }
+        
+        .subcategory-image {
+            width: 100%;
+            order: 3;
+            text-align: center;
+            padding-top: 5px;
+        }
+        
+        .food-image {
+            width: 180px;
+            height: 140px;
         }
     }
 
@@ -426,6 +496,23 @@
         align-items: center;
         width: 100%;
     }
+    
+    .food-info {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .food-title {
+        font-weight: 600;
+        color: #5c4c3a;
+        margin-bottom: 5px;
+    }
+    
+    .food-description {
+        font-size: 0.85rem;
+        color: #8c7762;
+        font-style: italic;
+    }
 
     .quantity-control {
         display: flex;
@@ -434,8 +521,8 @@
     }
 
     .quantity-btn {
-        width: 22px;
-        height: 22px;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -445,7 +532,7 @@
         font-size: 1rem;
         font-weight: bold;
         cursor: pointer;
-        border-radius: 3px;
+        border-radius: 4px;
         transition: all 0.2s ease;
     }
 
@@ -454,10 +541,10 @@
     }
 
     .quantity-value {
-        margin: 0 6px;
+        margin: 0 8px;
         font-weight: 600;
         color: #6a563d;
-        min-width: 18px;
+        min-width: 20px;
         text-align: center;
     }
     
