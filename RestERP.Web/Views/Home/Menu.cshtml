@@ -4,6 +4,7 @@
 
 @using RestERP.Infrastructure.Data.SeedData
 @using RestERP.Domain.Entities
+@using System.Collections.Generic
 
 <div class="restaurant-menu">
     <div class="menu-header">
@@ -46,77 +47,33 @@
                                     <td class="subcategory-price">@subCategory.Price ₺</td>
                                     @if(category.Id == 1) {
                                         <td class="subcategory-image">
-                                            @if (subCategory.Id == 1)
-                                            {
-                                                <img src="/img/Food/Breakfast/KahvaltiTabagi.jpg" alt="Kahvaltı Tabağı" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 2)
-                                            {
-                                                <img src="/img/Food/Breakfast/SerpmeKahvalti.jpg" alt="Serpme Kahvaltı" class="food-image">
-                                            }
-                                            @if(subCategory.Id == 3)
-                                            {
-                                                <img src="/img/Food/Breakfast/PeynirTabagi.jpeg" alt="Peynir Tabağı" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 4)
-                                            {
-                                                <img src="/img/Food/Breakfast/ZeytinTabagi.jpeg" alt="Zeytin Tabağı" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 5)
-                                            {
-                                                <img src="/img/Food/Breakfast/Omlet.jpg" alt="Omlet" class="food-image">
-                                            }                                            
-                                            @if (subCategory.Id == 6)
-                                            {
-                                                <img src="/img/Food/Breakfast/KasarliOmlet.jpg" alt="Kaşarlı Omlet" class="food-image">
-                                            }                                            
-                                            @if (subCategory.Id == 7)
-                                            {
-                                                <img src="/img/Food/Breakfast/KarisikOmlet.jpg" alt="Karışık Omlet" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 8)
-                                            {
-                                                <img src="/img/Food/Breakfast/Menemen.jpg" alt="Menemen" class="food-image">
-                                            }                                            
-                                            @if (subCategory.Id == 9)
-                                            {
-                                                <img src="/img/Food/Breakfast/SucukluYumurta.jpeg" alt="Sucuklu Yumurta" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 10)
-                                            {
-                                                <img src="/img/Food/Breakfast/Mihlama.jpg" alt="Mıhlama" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 11)
-                                            {
-                                                <img src="/img/Food/Breakfast/PastirmaliYumurta.jpg" alt="Pastırmalı Yumurta" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 12)
-                                            {
-                                                <img src="/img/Food/Breakfast/SahandaSucuk.jpg" alt="Sahanda Sucuk" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 13)
-                                            {
-                                                <img src="/img/Food/Breakfast/PatatesTava.jpg" alt="Patates Tava" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 14)
-                                            {
-                                                <img src="/img/Food/Breakfast/MiniKalemBoregi.jpg" alt="Mini Kalem Boreği" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 15)
-                                            {
-                                                <img src="/img/Food/Breakfast/BalKaymak.jpg" alt="Bal Kaymak" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 16)
-                                            {
-                                                <img src="/img/Food/Breakfast/TereyagiPorsiyonu.jpg" alt="Tereyağı Porsiyonu" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 17)
-                                            {
-                                                <img src="/img/Food/Breakfast/SogusTabagi.jpg" alt="Söğüş Tabağı" class="food-image">
-                                            }
-                                            @if (subCategory.Id == 18)
-                                            {
-                                                <img src="/img/Food/Breakfast/MeyveTabagi.jpg" alt="Meyve Tabağı" class="food-image">
+                                            @{
+                                                var breakfastImages = new Dictionary<int, (string Path, string Alt)>
+                                                {
+                                                    { 1, ("/img/Food/Breakfast/KahvaltiTabagi.jpg", "Kahvaltı Tabağı") },
+                                                    { 2, ("/img/Food/Breakfast/SerpmeKahvalti.jpg", "Serpme Kahvaltı") },
+                                                    { 3, ("/img/Food/Breakfast/PeynirTabagi.jpeg", "Peynir Tabağı") },
+                                                    { 4, ("/img/Food/Breakfast/ZeytinTabagi.jpeg", "Zeytin Tabağı") },
+                                                    { 5, ("/img/Food/Breakfast/Omlet.jpg", "Omlet") },
+                                                    { 6, ("/img/Food/Breakfast/KasarliOmlet.jpg", "Kaşarlı Omlet") },
+                                                    { 7, ("/img/Food/Breakfast/KarisikOmlet.jpg", "Karışık Omlet") },
+                                                    { 8, ("/img/Food/Breakfast/Menemen.jpg", "Menemen") },
+                                                    { 9, ("/img/Food/Breakfast/SucukluYumurta.jpeg", "Sucuklu Yumurta") },
+                                                    { 10, ("/img/Food/Breakfast/Mihlama.jpg", "Mıhlama") },
+                                                    { 11, ("/img/Food/Breakfast/PastirmaliYumurta.jpg", "Pastırmalı Yumurta") },
+                                                    { 12, ("/img/Food/Breakfast/SahandaSucuk.jpg", "Sahanda Sucuk") },
+                                                    { 13, ("/img/Food/Breakfast/PatatesTava.jpg", "Patates Tava") },
+                                                    { 14, ("/img/Food/Breakfast/MiniKalemBoregi.jpg", "Mini Kalem Boreği") },
+                                                    { 15, ("/img/Food/Breakfast/BalKaymak.jpg", "Bal Kaymak") },
+                                                    { 16, ("/img/Food/Breakfast/TereyagiPorsiyonu.jpg", "Tereyağı Porsiyonu") },
+                                                    { 17, ("/img/Food/Breakfast/SogusTabagi.jpg", "Söğüş Tabağı") },
+                                                    { 18, ("/img/Food/Breakfast/MeyveTabagi.jpg", "Meyve Tabağı") }
+                                                };
+
+                                                if (breakfastImages.TryGetValue(subCategory.Id, out var imageInfo))
+                                                {
+                                                    <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
+                                                }
                                             }
                                         </td>
                                     }
