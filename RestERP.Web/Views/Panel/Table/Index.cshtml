@@ -233,11 +233,46 @@
         const modal = document.getElementById('tableModal');
         const tableNumber = document.getElementById('tableNumber');
         const closeBtn = document.querySelector('.close-btn');
+        const viewOrderBtn = document.querySelector('.view-btn');
         
         window.handleTableClick = function(number) {
             tableNumber.textContent = number;
             modal.style.display = 'block';
+            
+            // Masaya ait sipariş olup olmadığını kontrol et
+            const tableKey = 'order_table_' + number;
+            const orderData = localStorage.getItem(tableKey);
+            
+            // Siparişleri görüntüle butonunun durumunu güncelle
+            if (orderData) {
+                viewOrderBtn.disabled = false;
+                viewOrderBtn.style.opacity = '1';
+            } else {
+                viewOrderBtn.disabled = true;
+                viewOrderBtn.style.opacity = '0.5';
+            }
         }
+        
+        // Siparişleri görüntüle butonuna tıklandığında
+        viewOrderBtn.addEventListener('click', function() {
+            const number = tableNumber.textContent;
+            const tableKey = 'order_table_' + number;
+            const orderDataStr = localStorage.getItem(tableKey);
+            
+            if (orderDataStr) {
+                // Sipariş verisini al ve onaylandı olarak işaretle
+                const orderData = JSON.parse(orderDataStr);
+                orderData.confirmed = true;
+                
+                // Güncellenmiş veriyi localStorage'a geri kaydet
+                localStorage.setItem(tableKey, JSON.stringify(orderData));
+                
+                // Sipariş sayfasına yönlendir
+                window.location.href = '/Order/Index?orderData=' + encodeURIComponent(JSON.stringify(orderData));
+            } else {
+                alert('Bu masaya ait sipariş bulunmamaktadır.');
+            }
+        });
         
         closeBtn.addEventListener('click', function() {
             modal.style.display = 'none';
@@ -249,13 +284,25 @@
             }
         });
         
-        // Demo amaçlı: rastgele masaları dolu gösterme
-        const tableStatuses = document.querySelectorAll('.table-status');
-        const randomStatus = ['available', 'occupied', 'reserved'];
+        // Masa durumunu güncelle
+        function updateTableStatuses() {
+            const tableItems = document.querySelectorAll('.table-item');
+            
+            tableItems.forEach((tableItem, index) => {
+                const tableNumber = index + 1;
+                const tableKey = 'order_table_' + tableNumber;
+                const orderData = localStorage.getItem(tableKey);
+                
+                const statusElement = tableItem.querySelector('.table-status');
+                
+                if (orderData) {
+                    // Siparişi olan masayı dolu göster
+                    statusElement.className = 'table-status occupied';
+                }
+            });
+        }
         
-        tableStatuses.forEach(status => {
-            const random = Math.floor(Math.random() * 3);
-            status.className = 'table-status ' + randomStatus[random];
-        });
+        // Sayfa yüklendiğinde masa durumlarını güncelle
+        updateTableStatuses();
     });
 </script> 

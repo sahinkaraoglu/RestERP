@@ -14,6 +14,10 @@
         <h2>Masa No: <span id="tableNumber"></span></h2>
     </div>
 
+    <div class="order-confirmed-message">
+        Siparişiniz onaylandı ve hazırlanmak üzere mutfağa iletildi.
+    </div>
+
     <div class="order-content">
         <table class="order-items-table">
             <thead>
@@ -50,6 +54,16 @@
         <button id="cancelOrderBtn" class="cancel-button">İptal Et</button>
     </div>
 
+    <div class="previous-orders" id="previousOrders">
+        <div class="divider">
+            <span>✧</span>
+        </div>
+        <h3>Önceki Siparişler</h3>
+        <div id="previousOrdersList">
+            <!-- Eski siparişler buraya eklenecek -->
+        </div>
+    </div>
+
     <div class="order-footer">
         <div class="divider">
             <span>❦</span>
@@ -67,9 +81,9 @@
     }
 
     .order-details-container {
-        max-width: 900px;
-        margin: 40px auto;
-        padding: 40px;
+        max-width: 700px;
+        margin: 20px auto;
+        padding: 25px;
         background-color: #fff;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         border: 1px solid #e5e0d5;
@@ -79,31 +93,31 @@
     .order-details-container::before {
         content: '';
         position: absolute;
-        top: 12px;
-        left: 12px;
-        right: 12px;
-        bottom: 12px;
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
         border: 1px solid #e0d8c8;
         pointer-events: none;
     }
 
     .order-header {
         text-align: center;
-        margin-bottom: 40px;
+        margin-bottom: 25px;
         position: relative;
     }
 
     .order-header h1 {
-        font-size: 2.8rem;
+        font-size: 2.2rem;
         font-weight: 600;
         color: #4a3c2e;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         font-family: 'Lora', serif;
         letter-spacing: 1px;
     }
 
     .order-header h2 {
-        font-size: 2rem;
+        font-size: 1.6rem;
         font-weight: 400;
         color: #8c7762;
         margin-top: 5px;
@@ -113,7 +127,7 @@
     .divider {
         display: flex;
         align-items: center;
-        margin: 15px 0;
+        margin: 12px 0;
     }
 
     .divider::before,
@@ -131,19 +145,19 @@
     }
 
     .order-content {
-        padding: 20px 10px;
+        padding: 15px 10px;
     }
 
     .order-items-table {
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
     }
 
     .order-items-table th {
         background-color: #f8f4ec;
-        padding: 12px 15px;
+        padding: 10px 12px;
         text-align: left;
         font-weight: 600;
         color: #6a563d;
@@ -151,7 +165,7 @@
     }
 
     .order-items-table td {
-        padding: 12px 15px;
+        padding: 8px 12px;
         border-bottom: 1px solid #f1eadd;
     }
 
@@ -161,40 +175,40 @@
 
     .order-summary {
         background-color: #f8f4ec;
-        padding: 20px;
+        padding: 15px;
         border-radius: 5px;
-        margin-top: 20px;
+        margin-top: 15px;
     }
 
     .summary-item {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 10px;
-        font-size: 1.1rem;
+        margin-bottom: 8px;
+        font-size: 1rem;
     }
 
     .summary-item.total {
-        margin-top: 15px;
-        padding-top: 15px;
+        margin-top: 12px;
+        padding-top: 12px;
         border-top: 1px solid #e0d8c8;
         font-weight: 600;
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         color: #4a3c2e;
     }
 
     .order-actions {
         display: flex;
         justify-content: center;
-        gap: 20px;
-        margin-top: 30px;
+        gap: 15px;
+        margin-top: 20px;
     }
 
     .confirm-button, .cancel-button {
-        padding: 12px 30px;
+        padding: 10px 25px;
         border: none;
         border-radius: 5px;
         font-family: 'Montserrat', sans-serif;
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -221,29 +235,40 @@
 
     .order-footer {
         text-align: center;
-        margin-top: 50px;
+        margin-top: 30px;
     }
 
     .order-footer p {
-        margin-top: 10px;
-        font-size: 1.3rem;
+        margin-top: 8px;
+        font-size: 1.2rem;
         color: #8c7762;
         font-family: 'Lora', serif;
         font-style: italic;
     }
 
+    .order-confirmed-message {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        text-align: center;
+        padding: 12px;
+        border-radius: 5px;
+        margin: 15px 0;
+        font-weight: 500;
+        display: none;
+    }
+
     @@media (max-width: 768px) {
         .order-details-container {
-            padding: 20px;
-            margin: 20px;
+            padding: 15px;
+            margin: 15px;
         }
 
         .order-header h1 {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
         }
 
         .order-header h2 {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
         }
 
         .order-actions {
@@ -252,8 +277,69 @@
 
         .confirm-button, .cancel-button {
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
+    }
+
+    /* Özet modu için stiller */
+    .summary-mode .order-items-table thead,
+    .summary-mode .order-items-table tbody {
+        display: none;
+    }
+
+    .summary-mode .order-confirmed-message {
+        display: block;
+    }
+
+    .previous-orders {
+        margin-top: 40px;
+        padding-top: 20px;
+    }
+
+    .previous-orders h3 {
+        font-size: 1.6rem;
+        color: #8c7762;
+        text-align: center;
+        margin-bottom: 20px;
+        font-family: 'Lora', serif;
+    }
+
+    .previous-order-item {
+        background-color: #f8f4ec;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-left: 4px solid #8c7762;
+    }
+
+    .previous-order-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+    .previous-order-items {
+        margin-top: 8px;
+        font-size: 0.9rem;
+    }
+
+    .previous-order-items ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .previous-order-items li {
+        padding: 4px 0;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .previous-order-total {
+        margin-top: 8px;
+        text-align: right;
+        font-weight: 600;
+        color: #4a3c2e;
     }
 </style>
 
@@ -265,6 +351,8 @@
         // URL'den parametreleri al
         const urlParams = new URLSearchParams(window.location.search);
         const orderData = JSON.parse(decodeURIComponent(urlParams.get('orderData')));
+        
+        console.log('Gelen sipariş verisi:', orderData);
         
         if (orderData && orderData.tableNumber && orderData.items) {
             // Masa numarasını göster
@@ -298,16 +386,94 @@
             
             // Onay butonuna işlev ekle
             document.getElementById('confirmOrderBtn').addEventListener('click', function() {
-                alert('Siparişiniz onaylandı! Kısa sürede hazırlanacaktır.');
-                // Burada sipariş onaylama API çağrısı yapılabilir
+                // Sipariş verilerini hazırla
+                const orderPayload = {
+                    tableNumber: parseInt(orderData.tableNumber),
+                    total: total,
+                    items: orderData.items.map(item => ({
+                        productId: item.id || 1, // Eğer id yoksa varsayılan olarak 1 kullan
+                        name: item.name,
+                        quantity: item.quantity,
+                        price: item.price
+                    }))
+                };
+                
+                // API'ye sipariş verisini gönder
+                fetch('/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderPayload)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Sipariş kaydedilirken bir hata oluştu');
+                })
+                .then(data => {
+                    console.log('Sipariş başarıyla kaydedildi:', data);
+                    
+                    // Siparişi localStorage'a kaydet
+                    const tableKey = 'order_table_' + orderData.tableNumber;
+                    const newOrder = {
+                        ...orderData,
+                        orderId: data.orderId,
+                        orderNumber: data.orderNumber,
+                        confirmed: true,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    // Önceki siparişleri al
+                    const savedOrdersStr = localStorage.getItem('table_orders_' + orderData.tableNumber);
+                    let savedOrders = savedOrdersStr ? JSON.parse(savedOrdersStr) : [];
+                    
+                    // Yeni siparişi ekle
+                    savedOrders.push(newOrder);
+                    
+                    // Siparişleri kaydet
+                    localStorage.setItem('table_orders_' + orderData.tableNumber, JSON.stringify(savedOrders));
+                    localStorage.setItem(tableKey, JSON.stringify(newOrder));
+                    
+                    // Sipariş onaylandı mesajını göster ve ekranı özet moduna geçir
+                    document.querySelector('.order-details-container').classList.add('summary-mode');
+                    
+                    // Onay butonunu gizle, iptal butonunu "Geri Dön" olarak değiştir
+                    this.style.display = 'none';
+                    const cancelBtn = document.getElementById('cancelOrderBtn');
+                    cancelBtn.textContent = 'Geri Dön';
+                    
+                    // Önceki siparişleri güncelle
+                    loadPreviousOrders(orderData.tableNumber);
+                })
+                .catch(error => {
+                    console.error('Sipariş kaydedilemedi:', error);
+                    alert('Sipariş kaydedilirken bir hata oluştu: ' + error.message);
+                });
             });
             
             // İptal butonuna işlev ekle
             document.getElementById('cancelOrderBtn').addEventListener('click', function() {
+                if (this.textContent === 'Geri Dön') {
+                    window.location.href = '/Panel/Table';
+                    return;
+                }
+                
                 if (confirm('Siparişi iptal etmek istediğinize emin misiniz?')) {
                     window.location.href = '/Home/Menu';
                 }
             });
+
+            // Eğer sipariş daha önce onaylanmışsa özet modunu göster
+            if (orderData.confirmed) {
+                document.querySelector('.order-details-container').classList.add('summary-mode');
+                document.getElementById('confirmOrderBtn').style.display = 'none';
+                document.getElementById('cancelOrderBtn').textContent = 'Geri Dön';
+            }
+            
+            // Önceki siparişleri yükle
+            loadPreviousOrders(orderData.tableNumber);
         } else {
             // Sipariş verisi yoksa hata mesajı göster
             const orderContent = document.querySelector('.order-content');
@@ -331,4 +497,71 @@
             document.head.appendChild(style);
         }
     });
+    
+    // Önceki siparişleri yükleyen fonksiyon
+    function loadPreviousOrders(tableNumber) {
+        const savedOrdersStr = localStorage.getItem('table_orders_' + tableNumber);
+        if (!savedOrdersStr) return;
+        
+        const savedOrders = JSON.parse(savedOrdersStr);
+        if (savedOrders.length === 0) return;
+        
+        const previousOrdersList = document.getElementById('previousOrdersList');
+        previousOrdersList.innerHTML = '';
+        
+        // En yeni siparişler üstte olacak şekilde sırala
+        const sortedOrders = [...savedOrders].sort((a, b) => {
+            const dateA = a.timestamp ? new Date(a.timestamp) : new Date(0);
+            const dateB = b.timestamp ? new Date(b.timestamp) : new Date(0);
+            return dateB - dateA;
+        });
+        
+        sortedOrders.forEach((order, index) => {
+            if (index === 0 && !order.timestamp) {
+                // İlk sipariş ve zaman damgası yoksa, şimdi ekle
+                order.timestamp = new Date().toISOString();
+            }
+            
+            const orderDate = order.timestamp ? new Date(order.timestamp) : new Date();
+            const formattedDate = orderDate.toLocaleString('tr-TR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            let totalAmount = 0;
+            order.items.forEach(item => {
+                totalAmount += item.price * item.quantity;
+            });
+            
+            const orderDiv = document.createElement('div');
+            orderDiv.className = 'previous-order-item';
+            
+            let orderItemsHtml = '<ul>';
+            order.items.forEach(item => {
+                orderItemsHtml += `<li><span>${item.name} x ${item.quantity}</span> <span>${(item.price * item.quantity).toFixed(2)} ₺</span></li>`;
+            });
+            orderItemsHtml += '</ul>';
+            
+            orderDiv.innerHTML = `
+                <div class="previous-order-header">
+                    <span>Sipariş: ${order.orderNumber || 'Onaylanmamış'}</span>
+                    <span>${formattedDate}</span>
+                </div>
+                <div class="previous-order-items">
+                    ${orderItemsHtml}
+                </div>
+                <div class="previous-order-total">
+                    Toplam: ${totalAmount.toFixed(2)} ₺
+                </div>
+            `;
+            
+            previousOrdersList.appendChild(orderDiv);
+        });
+        
+        // Tüm siparişleri güncellenmiş timestamp'lerle kaydedelim
+        localStorage.setItem('table_orders_' + tableNumber, JSON.stringify(sortedOrders));
+    }
 </script>

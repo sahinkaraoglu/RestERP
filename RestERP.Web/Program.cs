@@ -21,10 +21,11 @@ builder.Services.AddDbContext<RestERPDbContext>(options =>
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-// Servis kayıtları
-builder.Services.AddScoped<IFoodService, FoodService>();
-builder.Services.AddScoped<ITableService, TableService>();
-// Diğer servisleri buraya ekleyin
+// Servisleri kaydet
+builder.Services.AddTransient<ITableService, TableService>();
+builder.Services.AddTransient<IFoodService, FoodService>();
+builder.Services.AddTransient<IFoodCategoryService, FoodCategoryService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
 
 var app = builder.Build();
 
