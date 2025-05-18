@@ -120,7 +120,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                 new Food
                 {
                     Id = 14,
-                    CategoryId = 4,
+                    CategoryId = 1,
                     Name = "Rolled Pastry",
                     TurkishName = "Mini Kalem Böreği",
                     Price = 40m

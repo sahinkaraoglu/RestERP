@@ -18,9 +18,18 @@ public class PanelController : Controller
         _foodService = foodService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var menuItemCount = (await _foodService.GetAllFoodsAsync()).Count();
+        var foodCategories = FoodCategorySeedData.GetFoodCategories();
+        var categoryCount = foodCategories.Count();
+        
+        var model = new 
+        {
+            MenuItemCount = menuItemCount,
+            CategoryCount = categoryCount
+        };
+        return View(model);
     }
 
     public async Task<IActionResult> Menu()
