@@ -11,11 +11,13 @@ public class PanelController : Controller
 {
     private readonly ILogger<PanelController> _logger;
     private readonly IFoodService _foodService;
+    private readonly ITableService _tableService;
 
-    public PanelController(ILogger<PanelController> logger, IFoodService foodService)
+    public PanelController(ILogger<PanelController> logger, IFoodService foodService, ITableService tableService)
     {
         _logger = logger;
         _foodService = foodService;
+        _tableService = tableService;
     }
 
     public async Task<IActionResult> Index()
@@ -24,10 +26,23 @@ public class PanelController : Controller
         var foodCategories = FoodCategorySeedData.GetFoodCategories();
         var categoryCount = foodCategories.Count();
         
+        var tables = await _tableService.GetAllTablesAsync();
+        var totalTables = tables.Count();
+        
+        var occupiedTables = tables.Count(t => t.IsOccupied == true);
+        
+        int tableOccupancyPercentage = 0;
+        if (totalTables > 0)
+        {
+            tableOccupancyPercentage = (int)Math.Round((double)occupiedTables / totalTables * 100);
+        }
+        
         var model = new 
         {
             MenuItemCount = menuItemCount,
-            CategoryCount = categoryCount
+            CategoryCount = categoryCount,
+            TotalTables = totalTables,
+            TableOccupancyPercentage = tableOccupancyPercentage
         };
         return View(model);
     }
@@ -147,7 +162,6 @@ public class PanelController : Controller
                 ModelState.AddModelError("Price", "Fiyat sıfırdan büyük olmalıdır.");
             }
 
-            // Description alanı için hata varsa modelstate'den kaldır
             if (ModelState.ContainsKey("Description"))
             {
                 ModelState.Remove("Description");
@@ -158,7 +172,6 @@ public class PanelController : Controller
                 var foodcategories = FoodCategorySeedData.GetFoodCategories();
                 ViewBag.FoodCategories = foodcategories;
                 
-                // Geri döndürülecek modeli oluştur
                 var updatedFood = new Food
                 {
                     Id = Id,
@@ -173,7 +186,6 @@ public class PanelController : Controller
                 return View("Menu/MenuUpdate");
             }
             
-            // Mevcut yemeği veritabanından al
             var existingFood = await _foodService.GetFoodByIdAsync(Id);
             if (existingFood == null)
             {
@@ -181,14 +193,12 @@ public class PanelController : Controller
                 return RedirectToAction("Menu");
             }
             
-            // Değerleri güncelle
             existingFood.CategoryId = CategoryId;
             existingFood.Name = Name;
             existingFood.TurkishName = TurkishName;
             existingFood.Description = Description;
             existingFood.Price = Price;
             
-            // Veritabanını güncelle
             await _foodService.UpdateFoodAsync(existingFood);
             
             TempData["SuccessMessage"] = "Ürün başarıyla güncellendi.";
@@ -202,7 +212,6 @@ public class PanelController : Controller
             var foodcategories = FoodCategorySeedData.GetFoodCategories();
             ViewBag.FoodCategories = foodcategories;
             
-            // Hata durumunda geri döndürülecek modeli oluştur
             var updatedFood = new Food
             {
                 Id = Id,

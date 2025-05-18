@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RestERP.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate1 : Migration
+    public partial class Migration1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -238,7 +238,7 @@ namespace RestERP.Infrastructure.Migrations
                     { 11, 1, null, null, null, false, "Scrambled Eggs with Pastrami", 75m, "Pastırmalı Yumurta", null, null },
                     { 12, 1, null, null, null, false, "Fried Garlic Sausage", 85m, "Sahanda Sucuk", null, null },
                     { 13, 1, null, null, null, false, "French Fries", 40m, "Patates Tava", null, null },
-                    { 14, 4, null, null, null, false, "Rolled Pastry", 40m, "Mini Kalem Böreği", null, null },
+                    { 14, 1, null, null, null, false, "Rolled Pastry", 40m, "Mini Kalem Böreği", null, null },
                     { 15, 1, null, null, null, false, "Honey & Clotted Cream", 60m, "Bal & Kaymak", null, null },
                     { 16, 1, null, null, null, false, "A Serving of Butter", 47.50m, "Tereyağı Porsiyonu", null, null },
                     { 17, 1, null, null, null, false, "Tomato and Cucumber", 47.50m, "Söğüş Tabağı", null, null },

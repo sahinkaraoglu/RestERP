@@ -20,7 +20,29 @@ public class OrderController : Controller
 
     public IActionResult Index()
     {
+        // Doğrudan erişim için kullanıcıyı masa sayfasına yönlendir
+        if (!Request.Query.ContainsKey("orderData"))
+        {
+            return View();
+        }
+        
         return View();
+    }
+
+    // Aktif siparişleri listeleyen sayfa
+    public async Task<IActionResult> ActiveOrders()
+    {
+        try
+        {
+            var activeOrders = await _orderService.GetActiveOrdersAsync();
+            return View(activeOrders);
+        }
+        catch (System.Exception ex)
+        {
+            _logger.LogError(ex, "Aktif siparişler listelenirken hata oluştu");
+            TempData["ErrorMessage"] = "Aktif siparişler listelenirken bir hata oluştu: " + ex.Message;
+            return View("Error");
+        }
     }
 
     [HttpPost]

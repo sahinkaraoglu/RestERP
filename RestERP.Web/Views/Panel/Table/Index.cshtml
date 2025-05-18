@@ -304,6 +304,7 @@
         const tableNumber = document.getElementById('tableNumber');
         const closeBtn = document.querySelector('.close-btn');
         const viewOrderBtn = document.querySelector('.view-btn');
+        const checkoutBtn = document.querySelector('.checkout-btn');
         
         window.handleTableClick = function(number) {
             tableNumber.textContent = number;
@@ -317,11 +318,37 @@
             if (orderData) {
                 viewOrderBtn.disabled = false;
                 viewOrderBtn.style.opacity = '1';
+                checkoutBtn.disabled = false;
+                checkoutBtn.style.opacity = '1';
             } else {
                 viewOrderBtn.disabled = true;
                 viewOrderBtn.style.opacity = '0.5';
+                checkoutBtn.disabled = true;
+                checkoutBtn.style.opacity = '0.5';
             }
         }
+        
+        // Hesap Kapat butonuna tıklandığında
+        checkoutBtn.addEventListener('click', function() {
+            const number = tableNumber.textContent;
+            const tableKey = 'order_table_' + number;
+            const orderDataStr = localStorage.getItem(tableKey);
+            
+            if (orderDataStr) {
+                // Sipariş verisini al ve onaylandı olarak işaretle
+                const orderData = JSON.parse(orderDataStr);
+                orderData.confirmed = true;
+                orderData.checkoutInProgress = true;
+                
+                // Güncellenmiş veriyi localStorage'a geri kaydet
+                localStorage.setItem(tableKey, JSON.stringify(orderData));
+                
+                // Sipariş sayfasına yönlendir
+                window.location.href = '/Order/Index?orderData=' + encodeURIComponent(JSON.stringify(orderData));
+            } else {
+                alert('Bu masaya ait sipariş bulunmamaktadır.');
+            }
+        });
         
         // Siparişleri görüntüle butonuna tıklandığında
         viewOrderBtn.addEventListener('click', function() {

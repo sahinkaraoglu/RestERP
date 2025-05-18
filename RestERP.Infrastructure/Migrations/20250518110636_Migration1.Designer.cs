@@ -12,8 +12,8 @@ using RestERP.Infrastructure;
 namespace RestERP.Infrastructure.Migrations
 {
     [DbContext(typeof(RestERPDbContext))]
-    [Migration("20250517220302_InitialCreate1")]
-    partial class InitialCreate1
+    [Migration("20250518110636_Migration1")]
+    partial class Migration1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -287,7 +287,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 14,
-                            CategoryId = 4,
+                            CategoryId = 1,
                             IsDeleted = false,
                             Name = "Rolled Pastry",
                             Price = 40m,
@@ -1186,7 +1186,7 @@ namespace RestERP.Infrastructure.Migrations
             modelBuilder.Entity("RestERP.Domain.Entities.Food", b =>
                 {
                     b.HasOne("RestERP.Domain.Entities.FoodCategory", "Category")
-                        .WithMany("SubCategories")
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1211,11 +1211,6 @@ namespace RestERP.Infrastructure.Migrations
                     b.Navigation("Food");
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("RestERP.Domain.Entities.FoodCategory", b =>
-                {
-                    b.Navigation("SubCategories");
                 });
 
             modelBuilder.Entity("RestERP.Domain.Entities.Order", b =>

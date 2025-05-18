@@ -284,7 +284,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 14,
-                            CategoryId = 4,
+                            CategoryId = 1,
                             IsDeleted = false,
                             Name = "Rolled Pastry",
                             Price = 40m,

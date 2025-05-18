@@ -1,5 +1,6 @@
 using RestERP.Application.Services.Interfaces;
 using RestERP.Domain.Entities;
+using RestERP.Domain.Enums;
 using RestERP.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,16 @@ namespace RestERP.Application.Services
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
             return await _unitOfWork.Repository<Order>().GetAllAsync();
+        }
+
+        public async Task<IEnumerable<Order>> GetActiveOrdersAsync()
+        {
+            // Aktif sipariş statüsündeki siparişleri filtreler
+            // New, InProgress, Ready statüsündeki siparişler aktif kabul edilir
+            return await _unitOfWork.Repository<Order>().GetAsync(o => 
+                o.Status == OrderStatus.New || 
+                o.Status == OrderStatus.InProgress || 
+                o.Status == OrderStatus.Ready);
         }
 
         public async Task<Order> GetOrderByIdAsync(int id)
