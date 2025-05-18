@@ -28,34 +28,68 @@
                         <h5 class="card-title">Ürün Bilgileri</h5>
                     </div>
                     <div class="card-body">
-                        <form id="updateItemForm" action="/Panel/MenuUpdatePost" method="post">
-                            <input type="hidden" id="editItemId" name="Id" value="@food.Id">
-                            <div class="mb-3">
-                                <label for="editItemCategory" class="form-label">Kategori</label>
-                                <select class="form-select" id="editItemCategory" name="CategoryId" required>
-                                    <option value="">Kategori Seçin</option>
-                                    @foreach (var foods in foodcategories)
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
                                     {
-                                        <option value="@food.Id">@food.TurkishName</option>
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        <!-- Form başlangıcı -->
+                        <form method="post" action="/Panel/MenuUpdatePost">
+                            <!-- Gizli alan - ID -->
+                            <input type="hidden" name="Id" value="@food.Id" />
+                            
+                            <!-- Kategori -->
+                            <div class="mb-3">
+                                <label class="form-label">Kategori</label>
+                                <select class="form-select" name="CategoryId" required>
+                                    <option value="">Kategori Seçin</option>
+                                    @foreach (var category in foodcategories)
+                                    {
+                                        if (category.Id == food.CategoryId)
+                                        {
+                                            <option value="@category.Id" selected>@category.TurkishName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@category.Id">@category.TurkishName</option>
+                                        }
                                     }
                                 </select>
+                                <div class="invalid-feedback">Lütfen bir kategori seçin.</div>
                             </div>
+                            
+                            <!-- Türkçe Ad -->
                             <div class="mb-3">
-                                <label for="editItemName" class="form-label">Ürün Adı (Türkçe)</label>
-                                <input type="text" class="form-control" id="editItemName" name="TurkishName" value="@food.TurkishName" required>
+                                <label class="form-label">Ürün Adı (Türkçe)</label>
+                                <input type="text" class="form-control" name="TurkishName" value="@food.TurkishName" required>
                             </div>
+                            
+                            <!-- İngilizce Ad -->
                             <div class="mb-3">
-                                <label for="editItemNameEn" class="form-label">Ürün Adı (İngilizce)</label>
-                                <input type="text" class="form-control" id="editItemNameEn" name="Name" value="@food.Name" required>
+                                <label class="form-label">Ürün Adı (İngilizce)</label>
+                                <input type="text" class="form-control" name="Name" value="@food.Name" required>
                             </div>
+                            
+                            <!-- Açıklama -->
                             <div class="mb-3">
-                                <label for="editItemDesc" class="form-label">Açıklama</label>
-                                <textarea class="form-control" id="editItemDesc" name="Description" rows="2">@food.Description</textarea>
+                                <label class="form-label">Açıklama</label>
+                                <textarea class="form-control" name="Description" rows="2">@food.Description</textarea>
                             </div>
+                            
+                            <!-- Fiyat -->
                             <div class="mb-3">
-                                <label for="editItemPrice" class="form-label">Fiyat (₺)</label>
-                                <input type="text" class="form-control" id="editItemPrice" name="Price" value="@food.Price.ToString("F2")" required>
+                                <label class="form-label">Fiyat (₺)</label>
+                                <input type="text" class="form-control" name="Price" value="@food.Price.ToString("F2")" required>
                             </div>
+                            
+                            <!-- Butonlar -->
                             <div class="d-flex justify-content-between">
                                 <a href="/Panel/Menu" class="btn btn-secondary">İptal</a>
                                 <button type="submit" class="btn btn-primary">Güncelle</button>
@@ -148,7 +182,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Fiyat alanı için sadece sayı ve nokta girilebilmesi
-        const priceInput = document.getElementById('editItemPrice');
+        const priceInput = document.querySelector('input[name="Price"]');
         priceInput.addEventListener('input', function() {
             this.value = this.value.replace(/[^0-9.]/g, '');
         });

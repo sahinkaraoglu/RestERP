@@ -23,7 +23,25 @@ public class PanelController : Controller
         return View();
     }
 
-        public async Task<IActionResult> Menu()    {        var foodcategories = FoodCategorySeedData.GetFoodCategories();                var foods = await _foodService.GetAllFoodsAsync();                ViewBag.FoodCategories = foodcategories;        ViewBag.Foods = foods;                return View("Menu/Menu");    }        public async Task<IActionResult> MenuUpdate(int id)    {        var foodcategories = FoodCategorySeedData.GetFoodCategories();        var food = await _foodService.GetFoodByIdAsync(id);                if (food == null)        {            return RedirectToAction("Menu");        }                ViewBag.FoodCategories = foodcategories;        ViewBag.Food = food;                return View("Menu/MenuUpdate");    }        [HttpPost]    public async Task<IActionResult> MenuUpdatePost(Food updatedFood)    {        try        {            if (!ModelState.IsValid)            {                var foodcategories = FoodCategorySeedData.GetFoodCategories();                ViewBag.FoodCategories = foodcategories;                ViewBag.Food = updatedFood;                return View("Menu/MenuUpdate");            }                        await _foodService.UpdateFoodAsync(updatedFood);                        return RedirectToAction("Menu");        }        catch (Exception ex)        {            _logger.LogError(ex, "Ürün güncellenirken hata oluştu");            ModelState.AddModelError("", "Ürün güncellenirken bir hata oluştu: " + ex.Message);                        var foodcategories = FoodCategorySeedData.GetFoodCategories();            ViewBag.FoodCategories = foodcategories;            ViewBag.Food = updatedFood;            return View("Menu/MenuUpdate");        }    }
+    public async Task<IActionResult> Menu()
+    {
+        try
+        {
+            var foodcategories = FoodCategorySeedData.GetFoodCategories();
+            var foods = await _foodService.GetAllFoodsAsync();
+            
+            ViewBag.FoodCategories = foodcategories;
+            ViewBag.Foods = foods;
+            
+            return View("Menu/Menu");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Menü sayfası açılırken hata oluştu");
+            TempData["ErrorMessage"] = "Menü sayfası açılırken bir hata oluştu: " + ex.Message;
+            return View("Error");
+        }
+    }
 
     public IActionResult MenuAdd()
     {
@@ -66,6 +84,128 @@ public class PanelController : Controller
         {
             _logger.LogError(ex, "Ürün eklenirken hata oluştu");
             return Json(new { success = false, message = "Ürün eklenirken bir hata oluştu: " + ex.Message });
+        }
+    }
+
+    public async Task<IActionResult> MenuUpdate(int id)
+    {
+        try
+        {
+            var foodcategories = FoodCategorySeedData.GetFoodCategories();
+            var food = await _foodService.GetFoodByIdAsync(id);
+            
+            if (food == null)
+            {
+                TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
+                return RedirectToAction("Menu");
+            }
+            
+            ViewBag.FoodCategories = foodcategories;
+            ViewBag.Food = food;
+            
+            return View("Menu/MenuUpdate");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ürün güncelleme sayfası açılırken hata oluştu");
+            TempData["ErrorMessage"] = "Ürün güncelleme sayfası açılırken bir hata oluştu: " + ex.Message;
+            return RedirectToAction("Menu");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> MenuUpdatePost(int Id, int CategoryId, string Name, string TurkishName, string? Description, decimal Price)
+    {
+        try
+        {
+            if (CategoryId <= 0)
+            {
+                ModelState.AddModelError("CategoryId", "Kategori seçimi zorunludur.");
+            }
+            
+            if (string.IsNullOrEmpty(Name))
+            {
+                ModelState.AddModelError("Name", "İngilizce ürün adı zorunludur.");
+            }
+            
+            if (string.IsNullOrEmpty(TurkishName))
+            {
+                ModelState.AddModelError("TurkishName", "Türkçe ürün adı zorunludur.");
+            }
+            
+            if (Price <= 0)
+            {
+                ModelState.AddModelError("Price", "Fiyat sıfırdan büyük olmalıdır.");
+            }
+
+            // Description alanı için hata varsa modelstate'den kaldır
+            if (ModelState.ContainsKey("Description"))
+            {
+                ModelState.Remove("Description");
+            }
+            
+            if (!ModelState.IsValid)
+            {
+                var foodcategories = FoodCategorySeedData.GetFoodCategories();
+                ViewBag.FoodCategories = foodcategories;
+                
+                // Geri döndürülecek modeli oluştur
+                var updatedFood = new Food
+                {
+                    Id = Id,
+                    CategoryId = CategoryId,
+                    Name = Name,
+                    TurkishName = TurkishName,
+                    Description = Description,
+                    Price = Price
+                };
+                
+                ViewBag.Food = updatedFood;
+                return View("Menu/MenuUpdate");
+            }
+            
+            // Mevcut yemeği veritabanından al
+            var existingFood = await _foodService.GetFoodByIdAsync(Id);
+            if (existingFood == null)
+            {
+                TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
+                return RedirectToAction("Menu");
+            }
+            
+            // Değerleri güncelle
+            existingFood.CategoryId = CategoryId;
+            existingFood.Name = Name;
+            existingFood.TurkishName = TurkishName;
+            existingFood.Description = Description;
+            existingFood.Price = Price;
+            
+            // Veritabanını güncelle
+            await _foodService.UpdateFoodAsync(existingFood);
+            
+            TempData["SuccessMessage"] = "Ürün başarıyla güncellendi.";
+            return RedirectToAction("Menu");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ürün güncellenirken hata oluştu");
+            ModelState.AddModelError("", "Ürün güncellenirken bir hata oluştu: " + ex.Message);
+            
+            var foodcategories = FoodCategorySeedData.GetFoodCategories();
+            ViewBag.FoodCategories = foodcategories;
+            
+            // Hata durumunda geri döndürülecek modeli oluştur
+            var updatedFood = new Food
+            {
+                Id = Id,
+                CategoryId = CategoryId,
+                Name = Name ?? "",
+                TurkishName = TurkishName ?? "",
+                Description = Description,
+                Price = Price
+            };
+            
+            ViewBag.Food = updatedFood;
+            return View("Menu/MenuUpdate");
         }
     }
 
