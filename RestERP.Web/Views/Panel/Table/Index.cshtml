@@ -1,0 +1,261 @@
+@{
+    ViewData["Title"] = "Masa Yönetimi";
+}
+
+<div class="tables-container">
+    <div class="tables-header">
+        <h1>Masa Yönetimi</h1>
+        <p>Restoran masalarınızı kolayca yönetin ve takip edin</p>
+    </div>
+    
+    <div class="tables-grid">
+        <div class="table-item" onclick="handleTableClick(1)">
+            <div class="table-box">
+                <h2>MASA 1</h2>
+                <div class="table-status available"></div>
+            </div>
+        </div>
+        
+        <div class="table-item" onclick="handleTableClick(2)">
+            <div class="table-box">
+                <h2>MASA 2</h2>
+                <div class="table-status available"></div>
+            </div>
+        </div>
+        
+        <div class="table-item" onclick="handleTableClick(3)">
+            <div class="table-box">
+                <h2>MASA 3</h2>
+                <div class="table-status available"></div>
+            </div>
+        </div>
+        
+        <div class="table-item" onclick="handleTableClick(4)">
+            <div class="table-box">
+                <h2>MASA 4</h2>
+                <div class="table-status available"></div>
+            </div>
+        </div>
+        
+        <div class="table-item" onclick="handleTableClick(5)">
+            <div class="table-box">
+                <h2>MASA 5</h2>
+                <div class="table-status available"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="tableModal" class="table-modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2>MASA <span id="tableNumber"></span></h2>
+        <div class="table-actions">
+            <button class="action-btn order-btn">Sipariş Al</button>
+            <button class="action-btn checkout-btn">Hesap Kapat</button>
+            <button class="action-btn view-btn">Siparişleri Görüntüle</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tables-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    
+    .tables-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .tables-header h1 {
+        font-size: 2.2rem;
+        color: #5d4b38;
+        margin-bottom: 10px;
+    }
+    
+    .tables-header p {
+        color: #8c7762;
+        font-size: 1.1rem;
+    }
+    
+    .tables-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+    }
+    
+    .table-item {
+        width: 200px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    
+    .table-item:hover {
+        transform: translateY(-5px);
+    }
+    
+    .table-box {
+        border: 2px solid #5d4b38;
+        height: 120px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    
+    .table-box h2 {
+        font-size: 1.4rem;
+        color: #5d4b38;
+        margin: 0;
+        text-align: center;
+    }
+    
+    .table-status {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    .table-status.available {
+        background-color: #4CAF50;
+    }
+    
+    .table-status.occupied {
+        background-color: #FF5722;
+    }
+    
+    .table-status.reserved {
+        background-color: #FFC107;
+    }
+    
+    /* Modal Styles */
+    .table-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 30px;
+        width: 400px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        position: relative;
+        border-radius: 8px;
+    }
+    
+    .close-btn {
+        position: absolute;
+        right: 20px;
+        top: 15px;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #8c7762;
+    }
+    
+    .table-actions {
+        margin-top: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .action-btn {
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+    
+    .order-btn {
+        background-color: #5d4b38;
+        color: white;
+    }
+    
+    .order-btn:hover {
+        background-color: #4a3c2e;
+    }
+    
+    .checkout-btn {
+        background-color: #b09a7b;
+        color: white;
+    }
+    
+    .checkout-btn:hover {
+        background-color: #9c8769;
+    }
+    
+    .view-btn {
+        background-color: #f1eadd;
+        color: #5d4b38;
+        border: 1px solid #d6c6af;
+    }
+    
+    .view-btn:hover {
+        background-color: #e0d8c8;
+    }
+    
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .tables-grid {
+            gap: 15px;
+        }
+        
+        .table-item {
+            width: calc(50% - 15px);
+        }
+        
+        .modal-content {
+            width: 90%;
+            margin: 20% auto;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('tableModal');
+        const tableNumber = document.getElementById('tableNumber');
+        const closeBtn = document.querySelector('.close-btn');
+        
+        window.handleTableClick = function(number) {
+            tableNumber.textContent = number;
+            modal.style.display = 'block';
+        }
+        
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // Demo amaçlı: rastgele masaları dolu gösterme
+        const tableStatuses = document.querySelectorAll('.table-status');
+        const randomStatus = ['available', 'occupied', 'reserved'];
+        
+        tableStatuses.forEach(status => {
+            const random = Math.floor(Math.random() * 3);
+            status.className = 'table-status ' + randomStatus[random];
+        });
+    });
+</script> 

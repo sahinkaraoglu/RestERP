@@ -23,6 +23,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Servis kayıtları
 builder.Services.AddScoped<IFoodService, FoodService>();
+builder.Services.AddScoped<ITableService, TableService>();
 // Diğer servisleri buraya ekleyin
 
 var app = builder.Build();
