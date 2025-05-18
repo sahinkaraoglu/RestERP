@@ -44,6 +44,82 @@
                                         </div>
                                     </td>
                                     <td class="subcategory-price">@subCategory.Price ₺</td>
+                                    @if(category.Id == 1) {
+                                        <td class="subcategory-image">
+                                            @if (subCategory.Id == 1)
+                                            {
+                                                <img src="/img/Food/Breakfast/KahvaltiTabagi.jpg" alt="Kahvaltı Tabağı" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 2)
+                                            {
+                                                <img src="/img/Food/Breakfast/SerpmeKahvalti.jpg" alt="Serpme Kahvaltı" class="food-image">
+                                            }
+                                            @if(subCategory.Id == 3)
+                                            {
+                                                <img src="/img/Food/Breakfast/PeynirTabagi.jpeg" alt="Peynir Tabağı" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 4)
+                                            {
+                                                <img src="/img/Food/Breakfast/ZeytinTabagi.jpeg" alt="Zeytin Tabağı" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 5)
+                                            {
+                                                <img src="/img/Food/Breakfast/Omlet.jpg" alt="Omlet" class="food-image">
+                                            }                                            
+                                            @if (subCategory.Id == 6)
+                                            {
+                                                <img src="/img/Food/Breakfast/KasarliOmlet.jpg" alt="Kaşarlı Omlet" class="food-image">
+                                            }                                            
+                                            @if (subCategory.Id == 7)
+                                            {
+                                                <img src="/img/Food/Breakfast/KarisikOmlet.jpg" alt="Karışık Omlet" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 8)
+                                            {
+                                                <img src="/img/Food/Breakfast/Menemen.jpg" alt="Menemen" class="food-image">
+                                            }                                            
+                                            @if (subCategory.Id == 9)
+                                            {
+                                                <img src="/img/Food/Breakfast/SucukluYumurta.jpeg" alt="Sucuklu Yumurta" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 10)
+                                            {
+                                                <img src="/img/Food/Breakfast/Mihlama.jpg" alt="Mıhlama" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 11)
+                                            {
+                                                <img src="/img/Food/Breakfast/PastirmaliYumurta.jpg" alt="Pastırmalı Yumurta" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 12)
+                                            {
+                                                <img src="/img/Food/Breakfast/SahandaSucuk.jpg" alt="Sahanda Sucuk" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 13)
+                                            {
+                                                <img src="/img/Food/Breakfast/PatatesTava.jpg" alt="Patates Tava" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 14)
+                                            {
+                                                <img src="/img/Food/Breakfast/MiniKalemBoregi.jpg" alt="Mini Kalem Boreği" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 15)
+                                            {
+                                                <img src="/img/Food/Breakfast/BalKaymak.jpg" alt="Bal Kaymak" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 16)
+                                            {
+                                                <img src="/img/Food/Breakfast/TereyagiPorsiyonu.jpg" alt="Tereyağı Porsiyonu" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 17)
+                                            {
+                                                <img src="/img/Food/Breakfast/SogusTabagi.jpg" alt="Söğüş Tabağı" class="food-image">
+                                            }
+                                            @if (subCategory.Id == 18)
+                                            {
+                                                <img src="/img/Food/Breakfast/MeyveTabagi.jpg" alt="Meyve Tabağı" class="food-image">
+                                            }
+                                        </td>
+                                    }
                                 </tr>
                             }
                         </tbody>
@@ -215,6 +291,19 @@
         white-space: nowrap;
     }
 
+    .subcategory-image {
+        padding: 6px;
+        text-align: right;
+    }
+
+    .food-image {
+        width: 170px;
+        height: 135px;
+        object-fit: cover;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
     .menu-footer {
         text-align: center;
         margin-top: 50px;
@@ -245,6 +334,11 @@
 
         .category-header h3 {
             font-size: 1.3rem;
+        }
+        
+        .food-image {
+            width: 125px;
+            height: 95px;
         }
     }
 
