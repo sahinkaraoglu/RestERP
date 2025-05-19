@@ -12,12 +12,18 @@ public class PanelController : Controller
     private readonly ILogger<PanelController> _logger;
     private readonly IFoodService _foodService;
     private readonly ITableService _tableService;
+    private readonly IEmployeeService _employeeService;
 
-    public PanelController(ILogger<PanelController> logger, IFoodService foodService, ITableService tableService)
+    public PanelController(
+        ILogger<PanelController> logger, 
+        IFoodService foodService, 
+        ITableService tableService,
+        IEmployeeService employeeService)
     {
         _logger = logger;
         _foodService = foodService;
         _tableService = tableService;
+        _employeeService = employeeService;
     }
 
     public async Task<IActionResult> Index()
@@ -36,13 +42,19 @@ public class PanelController : Controller
         {
             tableOccupancyPercentage = (int)Math.Round((double)occupiedTables / totalTables * 100);
         }
+
+        var employees = await _employeeService.GetAllEmployeesAsync();
+        var totalEmployees = employees.Count();
+        var activeEmployees = employees.Count(e => e.IsActive);
         
         var model = new 
         {
             MenuItemCount = menuItemCount,
             CategoryCount = categoryCount,
             TotalTables = totalTables,
-            TableOccupancyPercentage = tableOccupancyPercentage
+            TableOccupancyPercentage = tableOccupancyPercentage,
+            TotalEmployees = totalEmployees,
+            ActiveEmployees = activeEmployees
         };
         return View(model);
     }

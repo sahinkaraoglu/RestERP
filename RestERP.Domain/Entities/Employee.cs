@@ -13,6 +13,5 @@ namespace RestERP.Domain.Entities
         public string? Email { get; set; }
         public EmployeeRole Role { get; set; } = EmployeeRole.Waiter;
         public bool IsActive { get; set; } = true;
-        public EmployeeRole EmployeeRole { get; set; } 
     }
 } 
