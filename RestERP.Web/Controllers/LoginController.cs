@@ -35,6 +35,46 @@ namespace RestERP.Web.Controllers
             return View();
         }
 
+        private string GenerateJwtToken(ApplicationUser user)
+        {
+            try
+            {
+                var key = _configuration["Jwt:Key"];
+                if (string.IsNullOrEmpty(key))
+                {
+                    throw new InvalidOperationException("JWT anahtarı yapılandırılmamış.");
+                }
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
+                    new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                    new Claim("FirstName", user.FirstName ?? string.Empty),
+                    new Claim("LastName", user.LastName ?? string.Empty)
+                };
+
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+                var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+                var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:ExpiryInDays"] ?? "7"));
+
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["Jwt:Issuer"],
+                    audience: _configuration["Jwt:Audience"],
+                    claims: claims,
+                    expires: expires,
+                    signingCredentials: creds
+                );
+
+                return new JwtSecurityTokenHandler().WriteToken(token);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "JWT token oluşturulurken hata oluştu");
+                throw;
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password, bool rememberMe)
         {
@@ -56,7 +96,22 @@ namespace RestERP.Web.Controllers
                 var result = await _signInManager.PasswordSignInAsync(username, password, rememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Index", "Home");
+                    // JWT token oluştur
+                    var token = GenerateJwtToken(user);
+
+                    // Token'ı cookie'ye kaydet
+                    var cookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Strict,
+                        Expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:ExpiryInDays"] ?? "7"))
+                    };
+
+                    Response.Cookies.Append("JWT", token, cookieOptions);
+
+                    // Başarılı giriş sonrası Home/Index'e yönlendir
+                    return RedirectToAction("Index", "Home", new { area = "" });
                 }
 
                 if (result.IsLockedOut)
@@ -70,7 +125,7 @@ namespace RestERP.Web.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Giriş işlemi sırasında hata oluştu. Kullanıcı: {username}");
+                _logger.LogError(ex, "Giriş işlemi sırasında hata oluştu");
                 ModelState.AddModelError(string.Empty, "Giriş işlemi sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.");
                 return View("Index");
             }
@@ -81,7 +136,6 @@ namespace RestERP.Web.Controllers
         {
             await _signInManager.SignOutAsync();
             Response.Cookies.Delete("JWT");
-            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
             return RedirectToAction("Index", "Home");
         }
 
@@ -106,15 +160,27 @@ namespace RestERP.Web.Controllers
                 {
                     UserName = username,
                     Email = email,
-                    FirstName = null,
-                    LastName = null,
-                    IsActive = true
+                    IsActive = true,
+                    CreatedDate = DateTime.Now
                 };
 
                 var result = await _userManager.CreateAsync(user, password);
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    // JWT token oluştur
+                    var token = GenerateJwtToken(user);
+
+                    // Token'ı cookie'ye kaydet
+                    var cookieOptions = new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Strict,
+                        Expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:ExpiryInDays"] ?? "7"))
+                    };
+
+                    Response.Cookies.Append("JWT", token, cookieOptions);
+
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -127,10 +193,7 @@ namespace RestERP.Web.Controllers
             }
             catch (Exception ex)
             {
-                // Hata detaylarını logla
-                _logger.LogError(ex, "Kayıt işlemi sırasında hata oluştu");
-                
-                // Kullanıcıya genel bir hata mesajı göster
+                _logger.LogError(ex, $"Kayıt işlemi sırasında hata oluştu. Kullanıcı: {username}");
                 ModelState.AddModelError(string.Empty, "Kayıt işlemi sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.");
                 return View();
             }
