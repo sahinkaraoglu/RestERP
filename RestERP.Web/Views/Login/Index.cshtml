@@ -2,6 +2,16 @@
     ViewData["Title"] = "Giriş";
 }
 
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
 <div class="login-container">
     <div class="login-card">
         <div class="login-header">

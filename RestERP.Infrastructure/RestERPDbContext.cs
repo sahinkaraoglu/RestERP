@@ -1,10 +1,11 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RestERP.Domain.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 
 namespace RestERP.Infrastructure
 {
-    public class RestERPDbContext : DbContext
+    public class RestERPDbContext : IdentityDbContext<ApplicationUser>
     {
         public RestERPDbContext(DbContextOptions<RestERPDbContext> options)
             : base(options)
@@ -19,45 +20,45 @@ namespace RestERP.Infrastructure
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Table> Tables { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
 
             // Entity konfigürasyonları burada yapılacak
             
             // OrderItem konfigürasyonu
-            modelBuilder.Entity<OrderItem>()
+            builder.Entity<OrderItem>()
                 .Property(oi => oi.UnitPrice)
                 .HasPrecision(18, 2);
                 
-            modelBuilder.Entity<OrderItem>()
+            builder.Entity<OrderItem>()
                 .Property(oi => oi.TotalPrice)
                 .HasPrecision(18, 2);
                 
-            modelBuilder.Entity<OrderItem>()
+            builder.Entity<OrderItem>()
                 .HasOne(oi => oi.Order)
                 .WithMany(o => o.OrderItems)
                 .HasForeignKey(oi => oi.OrderId);
                 
-            modelBuilder.Entity<OrderItem>()
+            builder.Entity<OrderItem>()
                 .HasOne(oi => oi.Food)
                 .WithMany()
                 .HasForeignKey(oi => oi.ProductId);
             
             // Order konfigürasyonu
-            modelBuilder.Entity<Order>()
+            builder.Entity<Order>()
                 .Property(o => o.TotalAmount)
                 .HasPrecision(18, 2);
             
             // Product konfigürasyonu
-            modelBuilder.Entity<Food>()
+            builder.Entity<Food>()
                 .Property(p => p.Price)
                 .HasPrecision(18, 2);
                 
             // Seed verilerini ekle
-            modelBuilder.Entity<FoodCategory>().HasData(FoodCategorySeedData.GetFoodCategories());
-            modelBuilder.Entity<Food>().HasData(FoodSeedData.GetFood());
-            modelBuilder.Entity<Table>().HasData(TableSeedData.GetTable());
+            builder.Entity<FoodCategory>().HasData(FoodCategorySeedData.GetFoodCategories());
+            builder.Entity<Food>().HasData(FoodSeedData.GetFood());
+            builder.Entity<Table>().HasData(TableSeedData.GetTable());
         }
     }
 }
