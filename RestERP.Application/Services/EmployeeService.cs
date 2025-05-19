@@ -48,7 +48,13 @@ namespace RestERP.Application.Services
             if (existingEmployee == null)
                 return false;
 
-            await _unitOfWork.Repository<Employee>().UpdateAsync(employee);
+            existingEmployee.Name = employee.Name;
+            existingEmployee.Phone = employee.Phone;
+            existingEmployee.Email = employee.Email;
+            existingEmployee.Role = employee.Role;
+            existingEmployee.IsActive = employee.IsActive;
+
+            await _unitOfWork.Repository<Employee>().UpdateAsync(existingEmployee);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }

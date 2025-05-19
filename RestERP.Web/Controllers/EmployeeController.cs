@@ -38,6 +38,33 @@ namespace RestERP.Web.Controllers
             return View();
         }
 
+        public IActionResult EmployeeAdd()
+        {
+            return View("~/Views/Panel/Employee/EmployeeAdd.cshtml");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EmployeeAdd(Employee employee)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View("~/Views/Panel/Employee/EmployeeAdd.cshtml", employee);
+                }
+
+                await _employeeService.CreateEmployeeAsync(employee);
+                TempData["SuccessMessage"] = "Personel başarıyla oluşturuldu.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Personel oluşturulurken hata oluştu");
+                ModelState.AddModelError("", "Personel oluşturulurken bir hata oluştu: " + ex.Message);
+                return View("~/Views/Panel/Employee/EmployeeAdd.cshtml", employee);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(Employee employee)
         {
@@ -77,6 +104,105 @@ namespace RestERP.Web.Controllers
             {
                 _logger.LogError(ex, "Personel düzenleme sayfası açılırken hata oluştu. Id: {Id}", id);
                 TempData["ErrorMessage"] = "Personel düzenleme sayfası açılırken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        public async Task<IActionResult> EmployeeUpdate(int id)
+        {
+            try
+            {
+                var employee = await _employeeService.GetEmployeeByIdAsync(id);
+                if (employee == null)
+                {
+                    TempData["ErrorMessage"] = "Personel bulunamadı.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View("~/Views/Panel/Employee/EmployeeUpdate.cshtml", employee);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Personel düzenleme sayfası açılırken hata oluştu. Id: {Id}", id);
+                TempData["ErrorMessage"] = "Personel düzenleme sayfası açılırken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EmployeeUpdate(int id, Employee employee)
+        {
+            try
+            {
+                if (id != employee.Id)
+                {
+                    TempData["ErrorMessage"] = "ID uyuşmazlığı.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    return View("~/Views/Panel/Employee/EmployeeUpdate.cshtml", employee);
+                }
+
+                var result = await _employeeService.UpdateEmployeeAsync(employee);
+                if (!result)
+                {
+                    TempData["ErrorMessage"] = "Personel güncellenirken bir hata oluştu.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                TempData["SuccessMessage"] = "Personel başarıyla güncellendi.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Personel güncellenirken hata oluştu. Id: {Id}", id);
+                ModelState.AddModelError("", "Personel güncellenirken bir hata oluştu: " + ex.Message);
+                return View("~/Views/Panel/Employee/EmployeeUpdate.cshtml", employee);
+            }
+        }
+
+        public async Task<IActionResult> EmployeeDelete(int id)
+        {
+            try
+            {
+                var employee = await _employeeService.GetEmployeeByIdAsync(id);
+                if (employee == null)
+                {
+                    TempData["ErrorMessage"] = "Personel bulunamadı.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View("~/Views/Panel/Employee/EmployeeDelete.cshtml", employee);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Personel silme sayfası açılırken hata oluştu. Id: {Id}", id);
+                TempData["ErrorMessage"] = "Personel silme sayfası açılırken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EmployeeDelete(int id, Employee employee)
+        {
+            try
+            {
+                var result = await _employeeService.DeleteEmployeeAsync(id);
+                if (!result)
+                {
+                    TempData["ErrorMessage"] = "Personel silinirken bir hata oluştu.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                TempData["SuccessMessage"] = "Personel başarıyla silindi.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Personel silinirken hata oluştu. Id: {Id}", id);
+                TempData["ErrorMessage"] = "Personel silinirken bir hata oluştu: " + ex.Message;
                 return RedirectToAction(nameof(Index));
             }
         }

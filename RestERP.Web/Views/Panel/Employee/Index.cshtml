@@ -12,7 +12,7 @@
                     <p class="employee-subtitle">Personel bilgilerini ve vardiya planlarını yönetin</p>
                 </div>
                 <div class="col-lg-4">
-                    <a href="@Url.Action("Create")" class="btn btn-primary add-employee-btn">
+                    <a href="@Url.Action("EmployeeAdd", "Employee")" class="btn btn-primary add-employee-btn">
                         <i class="bi bi-plus-circle"></i> Yeni Personel Ekle
                     </a>
                 </div>
@@ -73,10 +73,10 @@
                                             }
                                         </td>
                                         <td>
-                                            <a href="@Url.Action("Edit", new { id = employee.Id })" class="btn btn-sm btn-info">
+                                            <a href="@Url.Action("EmployeeUpdate", "Employee", new { id = employee.Id })" class="btn btn-sm btn-info">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <a href="@Url.Action("Delete", new { id = employee.Id })" class="btn btn-sm btn-danger">
+                                            <a href="@Url.Action("EmployeeDelete", "Employee", new { id = employee.Id })" class="btn btn-sm btn-danger">
                                                 <i class="bi bi-trash"></i>
                                             </a>
                                         </td>

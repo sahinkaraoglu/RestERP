@@ -1,0 +1,162 @@
+@model RestERP.Domain.Entities.Employee
+@{
+    ViewData["Title"] = "Yeni Personel Ekle";
+}
+
+<div class="employee-container">
+    <div class="employee-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="employee-title">Yeni Personel Ekle</h1>
+                    <p class="employee-subtitle">Yeni personel bilgilerini girin</p>
+                </div>
+                <div class="col-lg-4">
+                    <a href="@Url.Action("Index", "Employee")" class="btn btn-secondary add-employee-btn">
+                        <i class="bi bi-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container employee-content">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-body">
+                        <form asp-action="EmployeeAdd" method="post">
+                            <div class="mb-3">
+                                <label asp-for="Name" class="form-label">Ad Soyad</label>
+                                <input asp-for="Name" class="form-control" required />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Phone" class="form-label">Telefon</label>
+                                <input asp-for="Phone" class="form-control" />
+                                <span asp-validation-for="Phone" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label">E-posta</label>
+                                <input asp-for="Email" type="email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Role" class="form-label">Pozisyon</label>
+                                <select asp-for="Role" class="form-select" asp-items="Html.GetEnumSelectList<RestERP.Domain.Enums.EmployeeRole>()">
+                                </select>
+                                <span asp-validation-for="Role" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                                    <label asp-for="IsActive" class="form-check-label">Aktif</label>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .employee-container {
+        background-color: #f9f7f4;
+        min-height: 100vh;
+    }
+    
+    .employee-header {
+        background: linear-gradient(135deg, #b09a7b, #c7b59d);
+        color: white;
+        padding: 20px 0;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .employee-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+    
+    .employee-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .add-employee-btn {
+        background: white;
+        color: #b09a7b;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .add-employee-btn:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+        color: #b09a7b;
+    }
+    
+    .employee-content {
+        padding: 20px 0;
+    }
+    
+    .card {
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: #5d4b38;
+    }
+    
+    .form-control, .form-select {
+        border: 1px solid #e0d6c8;
+        border-radius: 6px;
+        padding: 0.6rem 1rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #b09a7b;
+        box-shadow: 0 0 0 0.2rem rgba(176, 154, 123, 0.25);
+    }
+    
+    .btn-primary {
+        background: #b09a7b;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background: #9a8570;
+        transform: translateY(-2px);
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
