@@ -1,0 +1,177 @@
+@{
+    ViewData["Title"] = "Kayıt Ol";
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h2>RestERP</h2>
+            <div class="divider">
+                <span>✦</span>
+            </div>
+            <p class="login-subtitle">Yeni Hesap Oluştur</p>
+        </div>
+        
+        <div class="login-form">
+            <form method="post" asp-controller="Login" asp-action="SignUp">
+                <div class="form-group">
+                    <label for="username">Kullanıcı Adı</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">E-posta</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Şifre</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Şifre Tekrar</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                
+                <button type="submit" class="btn login-btn">Kayıt Ol</button>
+            </form>
+            
+            <div class="login-footer">
+                <p class="text-center mb-3">Zaten hesabınız var mı?</p>
+                <a href="@Url.Action("Index", "Login")" class="btn signup-btn">Giriş Yap</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 250px);
+        padding: 40px 20px;
+    }
+    
+    .login-card {
+        background-color: #fffcf7;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        width: 100%;
+        max-width: 450px;
+        padding: 40px;
+        border: 1px solid #f0e9df;
+    }
+    
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .login-header h2 {
+        font-family: 'Lora', serif;
+        font-size: 2.2rem;
+        font-weight: 500;
+        color: #5d4b38;
+        margin-bottom: 12px;
+    }
+    
+    .login-subtitle {
+        font-size: 1rem;
+        color: #9b8977;
+        margin-top: 12px;
+    }
+    
+    .login-form .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .login-form label {
+        color: #6a563d;
+        font-weight: 500;
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+        display: block;
+    }
+    
+    .login-form .form-control {
+        background-color: #fdfaf5;
+        border: 1px solid #e6dfd4;
+        border-radius: 6px;
+        padding: 12px 15px;
+        height: auto;
+        font-size: 1rem;
+        color: #5a5348;
+        transition: all 0.3s ease;
+    }
+    
+    .login-form .form-control:focus {
+        background-color: #ffffff;
+        border-color: #d6c8b4;
+        box-shadow: 0 0 0 0.2rem rgba(214, 200, 180, 0.25);
+    }
+    
+    .login-btn {
+        background-color: #6a563d;
+        border: none;
+        color: #fff;
+        font-weight: 500;
+        padding: 12px 20px;
+        font-size: 1rem;
+        border-radius: 6px;
+        width: 100%;
+        margin-top: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .login-btn:hover {
+        background-color: #5d4b38;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .login-footer {
+        text-align: center;
+        margin-top: 25px;
+    }
+    
+    .signup-btn {
+        background-color: #fff;
+        border: 1px solid #6a563d;
+        color: #6a563d;
+        font-weight: 500;
+        padding: 10px 20px;
+        font-size: 0.95rem;
+        border-radius: 6px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    
+    .signup-btn:hover {
+        background-color: #fdfaf5;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    @@media (max-width: 576px) {
+        .login-card {
+            padding: 30px 20px;
+        }
+        
+        .login-header h2 {
+            font-size: 1.8rem;
+        }
+    }
+</style> 
