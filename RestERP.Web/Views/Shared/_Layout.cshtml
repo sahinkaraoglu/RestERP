@@ -33,7 +33,7 @@
                             <a class="menu-button" asp-area="" asp-controller="Panel" asp-action="Index">Panel</a>
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <span class="user-welcome">Hoş geldin, @User.Identity.Name!</span>
+                                <span class="user-welcome">Hoş geldin, @User.Identity.Name</span>
                                 <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
                                     <button type="submit" class="menu-button logout-btn">Çıkış Yap</button>
                                 </form>
