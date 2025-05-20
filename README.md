@@ -1,6 +1,6 @@
 # RestERP - Restaurant Management System - SOON!
 
-RestERP is a comprehensive Enterprise Resource Planning (ERP) system developed for restaurant businesses. This application is built with **.NET Core 8.0** and follows Clean Architecture principles.
+RestERP is a comprehensive Enterprise Resource Planning (ERP) system developed for restaurant businesses. This application is built with **.NET Core 9.0** and follows Clean Architecture principles.
 
 <div align="center">
    <div align="center">
@@ -111,6 +111,6 @@ The project uses Generic Repository and Unit of Work pattern, providing:
 ## 🚀 Getting Started
 
 ### Prerequisites
-- .NET Core 8.0 SDK
+- .NET Core 9.0 SDK
 - Visual Studio 2022
 - SQL Server 2019 or later
