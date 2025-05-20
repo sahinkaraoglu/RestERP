@@ -142,6 +142,25 @@
                                                 </div>
                                             }
                                         }
+
+                                        else if (category.Id == 5) // Mevsim Balıkları
+                                        {
+                                            var typesofSeosonalFishImages = new Dictionary<int, (string Path, string Alt)>
+                                            {
+                                                { 41, ("/img/Food/SeasonalFish/istavrit.jpg", "İstavrit") },
+                                                { 42, ("/img/Food/SeasonalFish/sarikanat.jpg", "Sarıkanat") },
+                                                { 43, ("/img/Food/SeasonalFish/palamut.jpg", "Palamut") },
+                                                { 44, ("/img/Food/SeasonalFish/hamsitava.jpg", "Hamsi Tava") },
+
+
+                                            };
+                                            if (typesofSeosonalFishImages.TryGetValue(subCategory.Id, out var imageInfo))
+                                            {
+                                                <div class="food-image-container">
+                                                    <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
+                                                </div>
+                                            }
+                                        }
                                     </td>
                                 </tr>
                             }
