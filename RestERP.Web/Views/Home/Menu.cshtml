@@ -84,10 +84,58 @@
                                         {
                                             var oliveOilImages = new Dictionary<int, (string Path, string Alt)>
                                             {
-                                                { 19, ("/img/Food/OliveOilDishes/biberdolmasi.jpg", "Biber Dolması") }
+                                                { 19, ("/img/Food/OliveOilDishes/biberdolmasi.jpg", "Biber Dolması") },
+                                                { 20, ("/img/Food/OliveOilDishes/soslupatlican.jpg", "Soslu Patlıcan") },
+                                                { 21, ("/img/Food/OliveOilDishes/enginar.jpg", "Enginar") },
+                                                { 22, ("/img/Food/OliveOilDishes/tazefasulye.jpg", "Taze Fasulye") },
+                                                { 23, ("/img/Food/OliveOilDishes/yapraksarma.jpg", "Yaprak Sarma") },
+                                                { 24, ("/img/Food/OliveOilDishes/zeytinyagitabagi.jpg", "Zeytinyağı Tabağı") }
                                             };
 
                                             if (oliveOilImages.TryGetValue(subCategory.Id, out var imageInfo))
+                                            {
+                                                <div class="food-image-container">
+                                                    <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
+                                                </div>
+                                            }
+                                        }
+
+                                        else if (category.Id == 3) // Ara Sıcaklar Yemekler kategorisi
+                                        {
+                                            var hotAppetizersImages = new Dictionary<int, (string Path, string Alt)>
+                                            {
+                                                { 25, ("/img/Food/HotAppetizers/patatestava.jpg", "Patates Tava") },
+                                                { 26, ("/img/Food/HotAppetizers/pacangaboregi.jpg", "Paçanga Böreği") },
+                                                { 27, ("/img/Food/HotAppetizers/mantargraten.jpg", "Mantar Graten") },
+                                                { 28, ("/img/Food/HotAppetizers/mantarkavurma.jpg", "Mantar Kavurma") },
+                                                { 29, ("/img/Food/HotAppetizers/julyendilbaligi.jpg", "Julyen Dil Balığı") },
+                                            };
+                                            if (hotAppetizersImages.TryGetValue(subCategory.Id, out var imageInfo))
+                                            {
+                                                <div class="food-image-container">
+                                                    <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
+                                                </div>
+                                            }
+                                        }
+
+                                        else if (category.Id == 4) // Balık Çeşitleri kategorisi
+                                        {
+                                            var typesofFishImages = new Dictionary<int, (string Path, string Alt)>
+                                            {
+                                                { 30, ("/img/Food/TypesofFish/cipuraizgara.jpg", "Çipura Izgara") },
+                                                { 31, ("/img/Food/TypesofFish/cipuraizgarabuyuk.jpg", "Çipura Izgara Büyük Boy") },
+                                                { 32, ("/img/Food/TypesofFish/mezgittava.jpg", "Mezgit Tava") },
+                                                { 33, ("/img/Food/TypesofFish/feslegenlisomonizgara.jpg", "Fesleğen Soslu Somon") },
+                                                { 34, ("/img/Food/TypesofFish/levrekfileto.jpg", "Levrek Fileto") },
+                                                { 35, ("/img/Food/TypesofFish/levrekizgara.jpg", "Levrek Izgara") },
+                                                { 36, ("/img/Food/TypesofFish/levrekizgarabuyuk.jpg", "Levrek Izgara Büyük Boy") },
+                                                { 37, ("/img/Food/TypesofFish/kiremittelevrek.jpg", "Kiremitte Levrek") },
+                                                { 38, ("/img/Food/TypesofFish/somonizgara.jpg", "Somon Izgara") },
+                                                { 39, ("/img/Food/TypesofFish/dilbaligiizgara.jpg", "Dil Balığı Izgara") },
+                                                { 40, ("/img/Food/TypesofFish/somonkavurma.jpg", "Somon Kavurma") },
+
+                                            };
+                                            if (typesofFishImages.TryGetValue(subCategory.Id, out var imageInfo))
                                             {
                                                 <div class="food-image-container">
                                                     <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
