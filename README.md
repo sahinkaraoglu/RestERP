@@ -28,7 +28,7 @@ The project has a layered architecture in line with Clean Architecture principle
 ## 🛠️ Technologies
 
 ### Core Framework
-- **.NET Core 8.0**: Modern, cross-platform framework
+- **.NET Core 9.0**: Modern, cross-platform framework
 - **ASP.NET Core MVC**: Web application framework
 - **Entity Framework Core**: ORM (Object-Relational Mapping) tool
 - **SQL Server**: Database
