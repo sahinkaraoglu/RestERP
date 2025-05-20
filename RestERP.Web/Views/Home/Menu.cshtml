@@ -80,6 +80,20 @@
                                                 </div>
                                             }
                                         }
+                                        else if(category.Id == 2) // Zeytinyağlı Yemekler kategorisi
+                                        {
+                                            var oliveOilImages = new Dictionary<int, (string Path, string Alt)>
+                                            {
+                                                { 19, ("/img/Food/OliveOilDishes/biberdolmasi.jpg", "Biber Dolması") }
+                                            };
+
+                                            if (oliveOilImages.TryGetValue(subCategory.Id, out var imageInfo))
+                                            {
+                                                <div class="food-image-container">
+                                                    <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
+                                                </div>
+                                            }
+                                        }
                                     </td>
                                 </tr>
                             }
