@@ -14,7 +14,7 @@ RestERP is a comprehensive Enterprise Resource Planning (ERP) system developed f
 </div>
 </div>
 
-## ��️ Project Structure
+## Project Structure
 
 The project has a layered architecture in line with Clean Architecture principles:
 
