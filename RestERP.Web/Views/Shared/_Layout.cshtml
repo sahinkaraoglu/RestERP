@@ -24,23 +24,25 @@
                 </div>
                 <div class="navbar-menu">
                     <div class="horizontal-menu">
-                        <a class="menu-button" asp-area="" asp-controller="Home" asp-action="Index">Anasayfa</a>
-                        <a class="menu-button" asp-area="" asp-controller="Home" asp-action="Menu">Menü</a>
-                        <a class="menu-button" asp-area="" asp-controller="Order" asp-action="ActiveOrders">Sipariş</a>
-                        <a class="menu-button" asp-area="" asp-controller="Panel" asp-action="Index">Panel</a>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <div class="user-menu">
+                        <div class="menu-group-left">
+                            <a class="menu-button" asp-area="" asp-controller="Home" asp-action="Index">Anasayfa</a>
+                            <a class="menu-button" asp-area="" asp-controller="Home" asp-action="Menu">Menü</a>
+                            <a class="menu-button" asp-area="" asp-controller="Order" asp-action="ActiveOrders">Sipariş</a>
+                        </div>
+                        <div class="menu-group-right">
+                            <a class="menu-button" asp-area="" asp-controller="Panel" asp-action="Index">Panel</a>
+                            @if (User.Identity.IsAuthenticated)
+                            {
                                 <span class="user-welcome">Hoş geldin, @User.Identity.Name!</span>
                                 <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
                                     <button type="submit" class="menu-button logout-btn">Çıkış Yap</button>
                                 </form>
-                            </div>
-                        }
-                        else
-                        {
-                            <a class="menu-button" asp-area="" asp-controller="Login" asp-action="Index">Giriş</a>
-                        }
+                            }
+                            else
+                            {
+                                <a class="menu-button" asp-area="" asp-controller="Login" asp-action="Index">Giriş</a>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -160,10 +162,17 @@
         .horizontal-menu {
             display: flex;
             flex-direction: row;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             margin: 10px 0;
             width: 100%;
+        }
+        
+        .menu-group-left, .menu-group-right {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
         }
         
         .menu-button {
@@ -246,18 +255,12 @@
             font-size: 0.9rem;
         }
         
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-left: auto;
-        }
-
         .user-welcome {
             color: #6a563d;
             font-size: 1rem;
             font-weight: 500;
             white-space: nowrap;
+            margin-right: 5px;
         }
 
         .logout-btn {
@@ -285,11 +288,14 @@
             }
             
             .horizontal-menu {
-                display: flex;
-                flex-direction: row;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .menu-group-left, .menu-group-right {
                 justify-content: center;
-                flex-wrap: wrap;
-                margin: 8px 0;
+                width: 100%;
+                margin-bottom: 5px;
             }
             
             .menu-button {
@@ -314,13 +320,6 @@
             
             .map-container iframe {
                 height: 200px;
-            }
-            
-            .user-menu {
-                margin-left: 0;
-                margin-top: 10px;
-                justify-content: center;
-                width: 100%;
             }
         }
     </style>
