@@ -2,6 +2,11 @@
 
 RestERP is a comprehensive Enterprise Resource Planning (ERP) system developed for restaurant businesses. This application is an ASP.NET Core-based web application developed in accordance with Clean Architecture principles.
 
+
+# RestERP - Restaurant Management System
+
+RestERP is a comprehensive Enterprise Resource Planning (ERP) system developed for restaurant businesses. This application is built with **.NET Core 8.0** and follows Clean Architecture principles.
+
 <div align="center">
    <div align="center">
     <table>
@@ -14,7 +19,7 @@ RestERP is a comprehensive Enterprise Resource Planning (ERP) system developed f
 </div>
 </div>
 
-## 🏗️ Project Structure
+## ��️ Project Structure
 
 The project has a layered architecture in line with Clean Architecture principles:
 
@@ -27,10 +32,17 @@ The project has a layered architecture in line with Clean Architecture principle
 
 ## 🛠️ Technologies
 
+### Core Framework
+- **.NET Core 8.0**: Modern, cross-platform framework
 - **ASP.NET Core MVC**: Web application framework
 - **Entity Framework Core**: ORM (Object-Relational Mapping) tool
 - **SQL Server**: Database
 - **Repository Pattern & Unit of Work**: Data access layer pattern
+
+### Development Tools
+- **Visual Studio 2022**: Primary IDE
+- **Git**: Version control
+- **Azure DevOps**: CI/CD pipeline
 
 ## ✨ Core Features
 
@@ -50,7 +62,7 @@ The project has a layered architecture in line with Clean Architecture principle
 ### 👨‍💼 Employee Management
 - Employee records and role assignments
 
-### �� Table Management
+### Table Management
 - Table status tracking
 - Table-based order viewing
 
@@ -100,3 +112,10 @@ The project uses Generic Repository and Unit of Work pattern, providing:
 - Prevention of code duplication
 - Increased testability
 - Simplified transaction management
+
+## 🚀 Getting Started
+
+### Prerequisites
+- .NET Core 8.0 SDK
+- Visual Studio 2022
+- SQL Server 2019 or later
