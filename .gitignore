@@ -377,3 +377,88 @@ FodyWeavers.xsd
 **/obj/Debug/net*/staticwebassets.*
 **/obj/Release/net*/staticwebassets/
 **/obj/Release/net*/staticwebassets.*
+
+
+# Node.js için ek kurallar
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm
+.yarn-integrity
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# IDE ve Editör dosyaları
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+*.sublime-workspace
+*.sublime-project
+
+# Ortam değişkenleri ve hassas bilgiler
+.env
+.env.local
+.env.*.local
+appsettings.*.json
+!appsettings.json
+!appsettings.Example.json
+*.pfx
+*.key
+*.pem
+
+# Frontend build çıktıları
+**/wwwroot/dist/
+**/wwwroot/build/
+**/wwwroot/node_modules/
+**/wwwroot/.angular/
+**/wwwroot/.next/
+**/wwwroot/.nuxt/
+**/wwwroot/.output/
+
+# Geçici dosyalar
+*.tmp
+*.temp
+.temp/
+.tmp/
+*.bak
+*.swp
+*~
+
+# Log dosyaları
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test coverage
+coverage/
+.nyc_output/
+coverage.*
+*.coverage
+*.coveragexml
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Database
+*.mdf
+*.ldf
+*.ndf
+*.bak
+*.trn
+*.log
+*.ldf
+*.mdf
+*.ndf
+*.bak
+*.trn
+*.log
