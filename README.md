@@ -3,15 +3,23 @@
 RestERP is a comprehensive Enterprise Resource Planning (ERP) system developed for restaurant businesses. This application is built with **.NET Core 9.0** and follows Clean Architecture principles.
 
 <div align="center">
-   <div align="center">
     <table>
         <tr>
             <td>
-                <img src="https://github.com/user-attachments/assets/9a1214bd-2772-48dc-81a9-474f6c58d589" alt="HomePage" width="%100"/>
+                <img src="https://github.com/user-attachments/assets/9a1214bd-2772-48dc-81a9-474f6c58d589" alt="mainpage" width="400"/>
+            </td>
+            <td>
+                <img src="https://github.com/user-attachments/assets/40f36f92-aae3-4131-b013-e1bf24ee0f15" alt="management" width="400"/>
+            </td>
+        <tr>
+            <td>
+                <img src="https://github.com/user-attachments/assets/74c4cadd-49ca-43e6-8060-00a5ba1af2b2" alt="category" width="400"/>
+            </td>
+            <td>
+                <img src="https://github.com/user-attachments/assets/81eaf971-96bb-4d21-ac66-956578259a7a" alt="panel" width="400"/>
             </td>
         </tr>
     </table>
-</div>
 </div>
 
 ## Project Structure
