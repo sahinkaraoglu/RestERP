@@ -16,7 +16,7 @@ RestERP is a comprehensive Enterprise Resource Planning (ERP) system developed f
                 <img src="https://github.com/user-attachments/assets/74c4cadd-49ca-43e6-8060-00a5ba1af2b2" alt="menu" width="400"/>
             </td>
             <td>
-                <img src="https://github.com/user-attachments/assets/e6948046-08e8-4aa4-b57e-4ed42ef4c27f" alt="login" width="400"/>
+                <img src="https://github.com/user-attachments/assets/8db0fe5f-c4d0-41a5-abc3-c5aa52bf1d85" alt="login" width="400"/>
             </td>
         </tr>
     </table>
