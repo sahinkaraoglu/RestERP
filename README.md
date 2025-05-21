@@ -33,11 +33,11 @@ The project has a layered architecture in line with Clean Architecture principle
 - **Entity Framework Core**: ORM (Object-Relational Mapping) tool
 - **SQL Server**: Database
 - **Repository Pattern & Unit of Work**: Data access layer pattern
+- **In-Memory Caching**: Optimizes performance by caching frequently accessed data
 
 ### Development Tools
 - **Visual Studio 2022**: Primary IDE
 - **Git**: Version control
-- **Azure DevOps**: CI/CD pipeline
 
 ## ✨ Core Features
 
@@ -107,6 +107,14 @@ The project uses Generic Repository and Unit of Work pattern, providing:
 - Prevention of code duplication
 - Increased testability
 - Simplified transaction management
+
+## 🚀 Performance Optimizations
+
+### Memory Caching Strategy
+- Implementation of ASP.NET Core's built-in Memory Cache
+- Caching for frequently accessed data like food categories, food items, and images
+- Different cache durations based on data change frequency
+- Manual cache invalidation capabilities for data consistency
 
 ## 🚀 Getting Started
 
