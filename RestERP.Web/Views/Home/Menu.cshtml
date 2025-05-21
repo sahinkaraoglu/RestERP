@@ -2,9 +2,9 @@
     ViewData["Title"] = "Menüler";
 }
 
-@using RestERP.Infrastructure.Data.SeedData
 @using RestERP.Domain.Entities
 @using System.Collections.Generic
+@using System.Linq
 
 <div class="restaurant-menu">
     <div class="menu-header">
@@ -17,12 +17,15 @@
 
     <div class="menu-container">
         @{
-            var categories = FoodCategorySeedData.GetFoodCategories();
-            var subCategories = FoodSeedData.GetFood();
+            var categories = ViewBag.Categories as List<FoodCategory>;
+            var allFoods = ViewBag.Foods as List<Food>;
+            var allImages = ViewBag.Images as List<Image>;
         }
 
         @foreach (var category in categories)
         {
+            var categoryFoods = allFoods.Where(f => f.CategoryId == category.Id).ToList();
+            
             <div class="category">
                 <div class="category-header" onclick="toggleCategory(@category.Id)">
                     <h3>@category.TurkishName</h3>
@@ -31,7 +34,7 @@
                 <div class="subcategory-container" id="category-@category.Id">
                     <table class="subcategory-table">
                         <tbody>
-                            @foreach (var subCategory in subCategories.Where(s => s.CategoryId == category.Id))
+                            @foreach (var subCategory in categoryFoods)
                             {
                                 <tr>
                                     <td class="subcategory-name">
@@ -49,119 +52,12 @@
                                     </td>
                                     <td class="subcategory-price">@subCategory.Price ₺</td>
                                     <td class="subcategory-image">
-                                        @if(category.Id == 1) 
-                                        {
-                                            var breakfastImages = new Dictionary<int, (string Path, string Alt)>
-                                            {
-                                                { 1, ("/img/Food/Breakfast/KahvaltiTabagi.jpg", "Kahvaltı Tabağı") },
-                                                { 2, ("/img/Food/Breakfast/SerpmeKahvalti.jpg", "Serpme Kahvaltı") },
-                                                { 3, ("/img/Food/Breakfast/PeynirTabagi.jpeg", "Peynir Tabağı") },
-                                                { 4, ("/img/Food/Breakfast/ZeytinTabagi.jpeg", "Zeytin Tabağı") },
-                                                { 5, ("/img/Food/Breakfast/Omlet.jpg", "Omlet") },
-                                                { 6, ("/img/Food/Breakfast/KasarliOmlet.jpg", "Kaşarlı Omlet") },
-                                                { 7, ("/img/Food/Breakfast/KarisikOmlet.jpg", "Karışık Omlet") },
-                                                { 8, ("/img/Food/Breakfast/Menemen.jpg", "Menemen") },
-                                                { 9, ("/img/Food/Breakfast/SucukluYumurta.jpeg", "Sucuklu Yumurta") },
-                                                { 10, ("/img/Food/Breakfast/Mihlama.jpg", "Mıhlama") },
-                                                { 11, ("/img/Food/Breakfast/PastirmaliYumurta.jpg", "Pastırmalı Yumurta") },
-                                                { 12, ("/img/Food/Breakfast/SahandaSucuk.jpg", "Sahanda Sucuk") },
-                                                { 13, ("/img/Food/Breakfast/PatatesTava.jpg", "Patates Tava") },
-                                                { 14, ("/img/Food/Breakfast/MiniKalemBoregi.jpg", "Mini Kalem Boreği") },
-                                                { 15, ("/img/Food/Breakfast/BalKaymak.jpg", "Bal Kaymak") },
-                                                { 16, ("/img/Food/Breakfast/TereyagiPorsiyonu.jpg", "Tereyağı Porsiyonu") },
-                                                { 17, ("/img/Food/Breakfast/SogusTabagi.jpg", "Söğüş Tabağı") },
-                                                { 18, ("/img/Food/Breakfast/MeyveTabagi.jpg", "Meyve Tabağı") }
-                                            };
-
-                                            if (breakfastImages.TryGetValue(subCategory.Id, out var imageInfo))
+                                        @{
+                                            var foodImage = allImages.FirstOrDefault(i => i.FoodId == subCategory.Id);
+                                            if (foodImage != null)
                                             {
                                                 <div class="food-image-container">
-                                                    <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
-                                                </div>
-                                            }
-                                        }
-                                        else if(category.Id == 2) // Zeytinyağlı Yemekler kategorisi
-                                        {
-                                            var oliveOilImages = new Dictionary<int, (string Path, string Alt)>
-                                            {
-                                                { 19, ("/img/Food/OliveOilDishes/biberdolmasi.jpg", "Biber Dolması") },
-                                                { 20, ("/img/Food/OliveOilDishes/soslupatlican.jpg", "Soslu Patlıcan") },
-                                                { 21, ("/img/Food/OliveOilDishes/enginar.jpg", "Enginar") },
-                                                { 22, ("/img/Food/OliveOilDishes/tazefasulye.jpg", "Taze Fasulye") },
-                                                { 23, ("/img/Food/OliveOilDishes/yapraksarma.jpg", "Yaprak Sarma") },
-                                                { 24, ("/img/Food/OliveOilDishes/zeytinyagitabagi.jpg", "Zeytinyağı Tabağı") }
-                                            };
-
-                                            if (oliveOilImages.TryGetValue(subCategory.Id, out var imageInfo))
-                                            {
-                                                <div class="food-image-container">
-                                                    <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
-                                                </div>
-                                            }
-                                        }
-
-                                        else if (category.Id == 3) // Ara Sıcaklar Yemekler kategorisi
-                                        {
-                                            var hotAppetizersImages = new Dictionary<int, (string Path, string Alt)>
-                                            {
-                                                { 25, ("/img/Food/HotAppetizers/patatestava.jpg", "Patates Tava") },
-                                                { 26, ("/img/Food/HotAppetizers/pacangaboregi.jpg", "Paçanga Böreği") },
-                                                { 27, ("/img/Food/HotAppetizers/mantargraten.jpg", "Mantar Graten") },
-                                                { 28, ("/img/Food/HotAppetizers/mantarkavurma.jpg", "Mantar Kavurma") },
-                                                { 29, ("/img/Food/HotAppetizers/julyendilbaligi.jpg", "Julyen Dil Balığı") },
-                                            };
-                                            if (hotAppetizersImages.TryGetValue(subCategory.Id, out var imageInfo))
-                                            {
-                                                <div class="food-image-container">
-                                                    <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
-                                                </div>
-                                            }
-                                        }
-
-                                        else if (category.Id == 4) // Balık Çeşitleri kategorisi
-                                        {
-                                            var typesofFishImages = new Dictionary<int, (string Path, string Alt)>
-                                            {
-                                                { 30, ("/img/Food/TypesofFish/cipuraizgara.jpg", "Çipura Izgara") },
-                                                { 31, ("/img/Food/TypesofFish/cipuraizgarabuyuk.jpg", "Çipura Izgara Büyük Boy") },
-                                                { 32, ("/img/Food/TypesofFish/mezgittava.jpg", "Mezgit Tava") },
-                                                { 33, ("/img/Food/TypesofFish/feslegenlisomonizgara.jpg", "Fesleğen Soslu Somon") },
-                                                { 34, ("/img/Food/TypesofFish/levrekfileto.jpg", "Levrek Fileto") },
-                                                { 35, ("/img/Food/TypesofFish/levrekizgara.jpg", "Levrek Izgara") },
-                                                { 36, ("/img/Food/TypesofFish/levrekizgarabuyuk.jpg", "Levrek Izgara Büyük Boy") },
-                                                { 37, ("/img/Food/TypesofFish/kiremittelevrek.jpg", "Kiremitte Levrek") },
-                                                { 38, ("/img/Food/TypesofFish/somonizgara.jpg", "Somon Izgara") },
-                                                { 39, ("/img/Food/TypesofFish/dilbaligiizgara.jpg", "Dil Balığı Izgara") },
-                                                { 40, ("/img/Food/TypesofFish/somonkavurma.jpg", "Somon Kavurma") },
-                                               
-
-                                            };
-                                            if (typesofFishImages.TryGetValue(subCategory.Id, out var imageInfo))
-                                            {
-                                                <div class="food-image-container">
-                                                    <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
-                                                </div>
-                                            }
-                                        }
-
-                                        else if (category.Id == 5) // Mevsim Balıkları
-                                        {
-                                            var typesofSeosonalFishImages = new Dictionary<int, (string Path, string Alt)>
-                                            {
-                                                { 41, ("/img/Food/SeasonalFish/istavrit.jpg", "İstavrit") },
-                                                { 42, ("/img/Food/SeasonalFish/sarikanat.jpg", "Sarıkanat") },
-                                                { 43, ("/img/Food/SeasonalFish/palamut.jpg", "Palamut") },
-                                                { 44, ("/img/Food/SeasonalFish/hamsitava.jpg", "Hamsi Tava") },
-                                                { 45, ("/img/Food/SeasonalFish/mezgit.jpg", "Mezgit") },
-                                                { 46, ("/img/Food/SeasonalFish/tekir.jpg", "Tekir") },
-                                                { 47, ("/img/Food/SeasonalFish/lufer.jpg", "Lüfer") },
-
-
-                                            };
-                                            if (typesofSeosonalFishImages.TryGetValue(subCategory.Id, out var imageInfo))
-                                            {
-                                                <div class="food-image-container">
-                                                    <img src="@imageInfo.Path" alt="@imageInfo.Alt" class="food-image">
+                                                    <img src="@foodImage.Path"  class="food-image">
                                                 </div>
                                             }
                                         }

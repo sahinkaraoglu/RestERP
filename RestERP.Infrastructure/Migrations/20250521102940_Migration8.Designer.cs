@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestERP.Infrastructure;
 
@@ -11,9 +12,11 @@ using RestERP.Infrastructure;
 namespace RestERP.Infrastructure.Migrations
 {
     [DbContext(typeof(RestERPDbContext))]
-    partial class RestERPDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250521102940_Migration8")]
+    partial class Migration8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1262,6 +1265,10 @@ namespace RestERP.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Alt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long?>("CreatedById")
                         .HasColumnType("bigint");
 
@@ -1294,6 +1301,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            Alt = "Kahvaltı Tabağı",
                             FoodId = 1,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/KahvaltiTabagi.jpg"
@@ -1301,6 +1309,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
+                            Alt = "Serpme Kahvaltı",
                             FoodId = 2,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/SerpmeKahvalti.jpg"
@@ -1308,6 +1317,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
+                            Alt = "Peynir Tabağı",
                             FoodId = 3,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/PeynirTabagi.jpeg"
@@ -1315,6 +1325,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 4,
+                            Alt = "Zeytin Tabağı",
                             FoodId = 4,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/ZeytinTabagi.jpeg"
@@ -1322,6 +1333,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 5,
+                            Alt = "Omlet",
                             FoodId = 5,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/Omlet.jpg"
@@ -1329,6 +1341,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 6,
+                            Alt = "Kaşarlı Omlet",
                             FoodId = 6,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/KasarliOmlet.jpg"
@@ -1336,6 +1349,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 7,
+                            Alt = "Karışık Omlet",
                             FoodId = 7,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/KarisikOmlet.jpg"
@@ -1343,6 +1357,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 8,
+                            Alt = "Menemen",
                             FoodId = 8,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/Menemen.jpg"
@@ -1350,6 +1365,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 9,
+                            Alt = "Sucuklu Yumurta",
                             FoodId = 9,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/SucukluYumurta.jpeg"
@@ -1357,6 +1373,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 10,
+                            Alt = "Mıhlama",
                             FoodId = 10,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/Mihlama.jpg"
@@ -1364,6 +1381,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 11,
+                            Alt = "Pastırmalı Yumurta",
                             FoodId = 11,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/PastirmaliYumurta.jpg"
@@ -1371,6 +1389,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 12,
+                            Alt = "Sahanda Sucuk",
                             FoodId = 12,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/SahandaSucuk.jpg"
@@ -1378,6 +1397,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 13,
+                            Alt = "Patates Tava",
                             FoodId = 13,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/PatatesTava.jpg"
@@ -1385,6 +1405,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 14,
+                            Alt = "Mini Kalem Boreği",
                             FoodId = 14,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/MiniKalemBoregi.jpg"
@@ -1392,6 +1413,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 15,
+                            Alt = "Bal Kaymak",
                             FoodId = 15,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/BalKaymak.jpg"
@@ -1399,6 +1421,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 16,
+                            Alt = "Tereyağı Porsiyonu",
                             FoodId = 16,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/TereyagiPorsiyonu.jpg"
@@ -1406,6 +1429,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 17,
+                            Alt = "Söğüş Tabağı",
                             FoodId = 17,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/SogusTabagi.jpg"
@@ -1413,6 +1437,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 18,
+                            Alt = "Meyve Tabağı",
                             FoodId = 18,
                             IsDeleted = false,
                             Path = "/img/Food/Breakfast/MeyveTabagi.jpg"
@@ -1420,6 +1445,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 19,
+                            Alt = "Biber Dolması",
                             FoodId = 19,
                             IsDeleted = false,
                             Path = "/img/Food/OliveOilDishes/biberdolmasi.jpg"
@@ -1427,6 +1453,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 20,
+                            Alt = "Soslu Patlıcan",
                             FoodId = 20,
                             IsDeleted = false,
                             Path = "/img/Food/OliveOilDishes/soslupatlican.jpg"
@@ -1434,6 +1461,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 21,
+                            Alt = "Enginar",
                             FoodId = 21,
                             IsDeleted = false,
                             Path = "/img/Food/OliveOilDishes/enginar.jpg"
@@ -1441,6 +1469,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 22,
+                            Alt = "Taze Fasulye",
                             FoodId = 22,
                             IsDeleted = false,
                             Path = "/img/Food/OliveOilDishes/tazefasulye.jpg"
@@ -1448,6 +1477,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 23,
+                            Alt = "Yaprak Sarma",
                             FoodId = 23,
                             IsDeleted = false,
                             Path = "/img/Food/OliveOilDishes/yapraksarma.jpg"
@@ -1455,6 +1485,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 24,
+                            Alt = "Zeytinyağı Tabağı",
                             FoodId = 24,
                             IsDeleted = false,
                             Path = "/img/Food/OliveOilDishes/zeytinyagitabagi.jpg"
@@ -1462,6 +1493,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 25,
+                            Alt = "Patates Tava",
                             FoodId = 25,
                             IsDeleted = false,
                             Path = "/img/Food/HotAppetizers/patatestava.jpg"
@@ -1469,6 +1501,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 26,
+                            Alt = "Paçanga Böreği",
                             FoodId = 26,
                             IsDeleted = false,
                             Path = "/img/Food/HotAppetizers/pacangaboregi.jpg"
@@ -1476,6 +1509,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 27,
+                            Alt = "Mantar Graten",
                             FoodId = 27,
                             IsDeleted = false,
                             Path = "/img/Food/HotAppetizers/mantargraten.jpg"
@@ -1483,6 +1517,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 28,
+                            Alt = "Mantar Kavurma",
                             FoodId = 28,
                             IsDeleted = false,
                             Path = "/img/Food/HotAppetizers/mantarkavurma.jpg"
@@ -1490,6 +1525,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 29,
+                            Alt = "Julyen Dil Balığı",
                             FoodId = 29,
                             IsDeleted = false,
                             Path = "/img/Food/HotAppetizers/julyendilbaligi.jpg"
@@ -1497,6 +1533,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 30,
+                            Alt = "Çipura Izgara",
                             FoodId = 30,
                             IsDeleted = false,
                             Path = "/img/Food/TypesofFish/cipuraizgara.jpg"
@@ -1504,6 +1541,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 31,
+                            Alt = "Çipura Izgara Büyük Boy",
                             FoodId = 31,
                             IsDeleted = false,
                             Path = "/img/Food/TypesofFish/cipuraizgarabuyuk.jpg"
@@ -1511,6 +1549,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 32,
+                            Alt = "Mezgit Tava",
                             FoodId = 32,
                             IsDeleted = false,
                             Path = "/img/Food/TypesofFish/mezgittava.jpg"
@@ -1518,6 +1557,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 33,
+                            Alt = "Fesleğen Soslu Somon",
                             FoodId = 33,
                             IsDeleted = false,
                             Path = "/img/Food/TypesofFish/feslegenlisomonizgara.jpg"
@@ -1525,6 +1565,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 34,
+                            Alt = "Levrek Fileto",
                             FoodId = 34,
                             IsDeleted = false,
                             Path = "/img/Food/TypesofFish/levrekfileto.jpg"
@@ -1532,6 +1573,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 35,
+                            Alt = "Levrek Izgara",
                             FoodId = 35,
                             IsDeleted = false,
                             Path = "/img/Food/TypesofFish/levrekizgara.jpg"
@@ -1539,6 +1581,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 36,
+                            Alt = "Levrek Izgara Büyük Boy",
                             FoodId = 36,
                             IsDeleted = false,
                             Path = "/img/Food/TypesofFish/levrekizgarabuyuk.jpg"
@@ -1546,6 +1589,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 37,
+                            Alt = "Kiremitte Levrek",
                             FoodId = 37,
                             IsDeleted = false,
                             Path = "/img/Food/TypesofFish/kiremittelevrek.jpg"
@@ -1553,6 +1597,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 38,
+                            Alt = "Somon Izgara",
                             FoodId = 38,
                             IsDeleted = false,
                             Path = "/img/Food/TypesofFish/somonizgara.jpg"
@@ -1560,6 +1605,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 39,
+                            Alt = "Dil Balığı Izgara",
                             FoodId = 39,
                             IsDeleted = false,
                             Path = "/img/Food/TypesofFish/dilbaligiizgara.jpg"
@@ -1567,6 +1613,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 40,
+                            Alt = "Somon Kavurma",
                             FoodId = 40,
                             IsDeleted = false,
                             Path = "/img/Food/TypesofFish/somonkavurma.jpg"
@@ -1574,6 +1621,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 41,
+                            Alt = "İstavrit",
                             FoodId = 41,
                             IsDeleted = false,
                             Path = "/img/Food/SeasonalFish/istavrit.jpg"
@@ -1581,6 +1629,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 42,
+                            Alt = "Sarıkanat",
                             FoodId = 42,
                             IsDeleted = false,
                             Path = "/img/Food/SeasonalFish/sarikanat.jpg"
@@ -1588,6 +1637,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 43,
+                            Alt = "Palamut",
                             FoodId = 43,
                             IsDeleted = false,
                             Path = "/img/Food/SeasonalFish/palamut.jpg"
@@ -1595,6 +1645,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 44,
+                            Alt = "Hamsi Tava",
                             FoodId = 44,
                             IsDeleted = false,
                             Path = "/img/Food/SeasonalFish/hamsitava.jpg"
@@ -1602,6 +1653,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 45,
+                            Alt = "Mezgit",
                             FoodId = 45,
                             IsDeleted = false,
                             Path = "/img/Food/SeasonalFish/mezgit.jpg"
@@ -1609,6 +1661,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 46,
+                            Alt = "Tekir",
                             FoodId = 46,
                             IsDeleted = false,
                             Path = "/img/Food/SeasonalFish/tekir.jpg"
@@ -1616,6 +1669,7 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 47,
+                            Alt = "Lüfer",
                             FoodId = 47,
                             IsDeleted = false,
                             Path = "/img/Food/SeasonalFish/lufer.jpg"

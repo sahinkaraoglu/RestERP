@@ -16,5 +16,6 @@ namespace RestERP.Domain.Entities
         [ForeignKey("CategoryId")]
         public FoodCategory Category { get; set; }
         
+        public ICollection<Image> Images { get; set; } = new List<Image>();
     }
 } 

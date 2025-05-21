@@ -19,6 +19,7 @@ namespace RestERP.Infrastructure
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Table> Tables { get; set; }
+        public DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -59,6 +60,7 @@ namespace RestERP.Infrastructure
             builder.Entity<FoodCategory>().HasData(FoodCategorySeedData.GetFoodCategories());
             builder.Entity<Food>().HasData(FoodSeedData.GetFood());
             builder.Entity<Table>().HasData(TableSeedData.GetTable());
+            builder.Entity<Image>().HasData(ImageSeedData.GetImages());
         }
     }
 }

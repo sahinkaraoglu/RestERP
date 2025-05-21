@@ -10,11 +10,14 @@ using RestERP.Domain.Interfaces;
 using RestERP.Infrastructure;
 using RestERP.Infrastructure.Repositories;
 using RestERP.Web.Middleware;
+using RestERP.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddMemoryCache();
 
 // Veritabanı bağlantısı
 builder.Services.AddDbContext<RestERPDbContext>(options =>
@@ -69,6 +72,7 @@ builder.Services.AddTransient<IFoodService, FoodService>();
 builder.Services.AddTransient<IFoodCategoryService, FoodCategoryService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IEmployeeService, EmployeeService>();
+builder.Services.AddTransient<FoodCacheService>();
 
 var app = builder.Build();
 

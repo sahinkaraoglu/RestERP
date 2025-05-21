@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestERP.Infrastructure;
 
@@ -11,9 +12,11 @@ using RestERP.Infrastructure;
 namespace RestERP.Infrastructure.Migrations
 {
     [DbContext(typeof(RestERPDbContext))]
-    partial class RestERPDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250521102657_Migration7")]
+    partial class Migration7
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1262,6 +1265,10 @@ namespace RestERP.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Alt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long?>("CreatedById")
                         .HasColumnType("bigint");
 
@@ -1289,337 +1296,6 @@ namespace RestERP.Infrastructure.Migrations
                     b.HasIndex("FoodId");
 
                     b.ToTable("Images");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            FoodId = 1,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/KahvaltiTabagi.jpg"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            FoodId = 2,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/SerpmeKahvalti.jpg"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            FoodId = 3,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/PeynirTabagi.jpeg"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            FoodId = 4,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/ZeytinTabagi.jpeg"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            FoodId = 5,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/Omlet.jpg"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            FoodId = 6,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/KasarliOmlet.jpg"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            FoodId = 7,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/KarisikOmlet.jpg"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            FoodId = 8,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/Menemen.jpg"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            FoodId = 9,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/SucukluYumurta.jpeg"
-                        },
-                        new
-                        {
-                            Id = 10,
-                            FoodId = 10,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/Mihlama.jpg"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            FoodId = 11,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/PastirmaliYumurta.jpg"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            FoodId = 12,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/SahandaSucuk.jpg"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            FoodId = 13,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/PatatesTava.jpg"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            FoodId = 14,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/MiniKalemBoregi.jpg"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            FoodId = 15,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/BalKaymak.jpg"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            FoodId = 16,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/TereyagiPorsiyonu.jpg"
-                        },
-                        new
-                        {
-                            Id = 17,
-                            FoodId = 17,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/SogusTabagi.jpg"
-                        },
-                        new
-                        {
-                            Id = 18,
-                            FoodId = 18,
-                            IsDeleted = false,
-                            Path = "/img/Food/Breakfast/MeyveTabagi.jpg"
-                        },
-                        new
-                        {
-                            Id = 19,
-                            FoodId = 19,
-                            IsDeleted = false,
-                            Path = "/img/Food/OliveOilDishes/biberdolmasi.jpg"
-                        },
-                        new
-                        {
-                            Id = 20,
-                            FoodId = 20,
-                            IsDeleted = false,
-                            Path = "/img/Food/OliveOilDishes/soslupatlican.jpg"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            FoodId = 21,
-                            IsDeleted = false,
-                            Path = "/img/Food/OliveOilDishes/enginar.jpg"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            FoodId = 22,
-                            IsDeleted = false,
-                            Path = "/img/Food/OliveOilDishes/tazefasulye.jpg"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            FoodId = 23,
-                            IsDeleted = false,
-                            Path = "/img/Food/OliveOilDishes/yapraksarma.jpg"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            FoodId = 24,
-                            IsDeleted = false,
-                            Path = "/img/Food/OliveOilDishes/zeytinyagitabagi.jpg"
-                        },
-                        new
-                        {
-                            Id = 25,
-                            FoodId = 25,
-                            IsDeleted = false,
-                            Path = "/img/Food/HotAppetizers/patatestava.jpg"
-                        },
-                        new
-                        {
-                            Id = 26,
-                            FoodId = 26,
-                            IsDeleted = false,
-                            Path = "/img/Food/HotAppetizers/pacangaboregi.jpg"
-                        },
-                        new
-                        {
-                            Id = 27,
-                            FoodId = 27,
-                            IsDeleted = false,
-                            Path = "/img/Food/HotAppetizers/mantargraten.jpg"
-                        },
-                        new
-                        {
-                            Id = 28,
-                            FoodId = 28,
-                            IsDeleted = false,
-                            Path = "/img/Food/HotAppetizers/mantarkavurma.jpg"
-                        },
-                        new
-                        {
-                            Id = 29,
-                            FoodId = 29,
-                            IsDeleted = false,
-                            Path = "/img/Food/HotAppetizers/julyendilbaligi.jpg"
-                        },
-                        new
-                        {
-                            Id = 30,
-                            FoodId = 30,
-                            IsDeleted = false,
-                            Path = "/img/Food/TypesofFish/cipuraizgara.jpg"
-                        },
-                        new
-                        {
-                            Id = 31,
-                            FoodId = 31,
-                            IsDeleted = false,
-                            Path = "/img/Food/TypesofFish/cipuraizgarabuyuk.jpg"
-                        },
-                        new
-                        {
-                            Id = 32,
-                            FoodId = 32,
-                            IsDeleted = false,
-                            Path = "/img/Food/TypesofFish/mezgittava.jpg"
-                        },
-                        new
-                        {
-                            Id = 33,
-                            FoodId = 33,
-                            IsDeleted = false,
-                            Path = "/img/Food/TypesofFish/feslegenlisomonizgara.jpg"
-                        },
-                        new
-                        {
-                            Id = 34,
-                            FoodId = 34,
-                            IsDeleted = false,
-                            Path = "/img/Food/TypesofFish/levrekfileto.jpg"
-                        },
-                        new
-                        {
-                            Id = 35,
-                            FoodId = 35,
-                            IsDeleted = false,
-                            Path = "/img/Food/TypesofFish/levrekizgara.jpg"
-                        },
-                        new
-                        {
-                            Id = 36,
-                            FoodId = 36,
-                            IsDeleted = false,
-                            Path = "/img/Food/TypesofFish/levrekizgarabuyuk.jpg"
-                        },
-                        new
-                        {
-                            Id = 37,
-                            FoodId = 37,
-                            IsDeleted = false,
-                            Path = "/img/Food/TypesofFish/kiremittelevrek.jpg"
-                        },
-                        new
-                        {
-                            Id = 38,
-                            FoodId = 38,
-                            IsDeleted = false,
-                            Path = "/img/Food/TypesofFish/somonizgara.jpg"
-                        },
-                        new
-                        {
-                            Id = 39,
-                            FoodId = 39,
-                            IsDeleted = false,
-                            Path = "/img/Food/TypesofFish/dilbaligiizgara.jpg"
-                        },
-                        new
-                        {
-                            Id = 40,
-                            FoodId = 40,
-                            IsDeleted = false,
-                            Path = "/img/Food/TypesofFish/somonkavurma.jpg"
-                        },
-                        new
-                        {
-                            Id = 41,
-                            FoodId = 41,
-                            IsDeleted = false,
-                            Path = "/img/Food/SeasonalFish/istavrit.jpg"
-                        },
-                        new
-                        {
-                            Id = 42,
-                            FoodId = 42,
-                            IsDeleted = false,
-                            Path = "/img/Food/SeasonalFish/sarikanat.jpg"
-                        },
-                        new
-                        {
-                            Id = 43,
-                            FoodId = 43,
-                            IsDeleted = false,
-                            Path = "/img/Food/SeasonalFish/palamut.jpg"
-                        },
-                        new
-                        {
-                            Id = 44,
-                            FoodId = 44,
-                            IsDeleted = false,
-                            Path = "/img/Food/SeasonalFish/hamsitava.jpg"
-                        },
-                        new
-                        {
-                            Id = 45,
-                            FoodId = 45,
-                            IsDeleted = false,
-                            Path = "/img/Food/SeasonalFish/mezgit.jpg"
-                        },
-                        new
-                        {
-                            Id = 46,
-                            FoodId = 46,
-                            IsDeleted = false,
-                            Path = "/img/Food/SeasonalFish/tekir.jpg"
-                        },
-                        new
-                        {
-                            Id = 47,
-                            FoodId = 47,
-                            IsDeleted = false,
-                            Path = "/img/Food/SeasonalFish/lufer.jpg"
-                        });
                 });
 
             modelBuilder.Entity("RestERP.Domain.Entities.Order", b =>
