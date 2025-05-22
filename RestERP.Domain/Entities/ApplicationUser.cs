@@ -16,6 +16,6 @@ namespace RestERP.Domain.Entities
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         
-        public EmployeeRole RoleType { get; set; } = EmployeeRole.Customer;
+        public Role RoleType { get; set; } = Role.Musteri;
     }
 } 

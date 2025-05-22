@@ -12,20 +12,17 @@ public class PanelController : Controller
     private readonly ILogger<PanelController> _logger;
     private readonly IFoodService _foodService;
     private readonly ITableService _tableService;
-    private readonly IEmployeeService _employeeService;
     private readonly IUserService _userService;
 
     public PanelController(
         ILogger<PanelController> logger, 
         IFoodService foodService, 
         ITableService tableService,
-        IEmployeeService employeeService,
         IUserService userService)
     {
         _logger = logger;
         _foodService = foodService;
         _tableService = tableService;
-        _employeeService = employeeService;
         _userService = userService;
     }
 
@@ -45,10 +42,11 @@ public class PanelController : Controller
         {
             tableOccupancyPercentage = (int)Math.Round((double)occupiedTables / totalTables * 100);
         }
-
-        var employees = await _employeeService.GetAllEmployeesAsync();
-        var totalEmployees = employees.Count();
-        var activeEmployees = employees.Count(e => e.IsActive);
+        
+        // Kullanıcıları çekerek çalışan sayısını hesaplayalım
+        var users = await _userService.GetAllUsersAsync();
+        var totalEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Musteri);
+        var activeEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Personel && u.IsActive);
         
         var model = new 
         {
@@ -303,14 +301,14 @@ public class PanelController : Controller
             if (string.IsNullOrEmpty(id))
             {
                 TempData["ErrorMessage"] = "Geçersiz kullanıcı ID'si.";
-                return RedirectToAction("Index", "Employee");
+                return RedirectToAction("Index", "Person");
             }
 
             var user = await _userService.GetUserByIdAsync(id);
             if (user == null)
             {
                 TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
-                return RedirectToAction("Index", "Employee");
+                return RedirectToAction("Index", "Person");
             }
             
             return View("~/Views/Panel/User/UserUpdate.cshtml", user);
@@ -319,7 +317,7 @@ public class PanelController : Controller
         {
             _logger.LogError(ex, "Kullanıcı güncelleme sayfası açılırken hata oluştu. Id: {Id}", id);
             TempData["ErrorMessage"] = "Kullanıcı güncelleme sayfası açılırken bir hata oluştu: " + ex.Message;
-            return RedirectToAction("Index", "Employee");
+            return RedirectToAction("Index", "Person");
         }
     }
 
@@ -331,14 +329,14 @@ public class PanelController : Controller
             if (string.IsNullOrEmpty(id))
             {
                 TempData["ErrorMessage"] = "Geçersiz kullanıcı ID'si.";
-                return RedirectToAction("Index", "Employee");
+                return RedirectToAction("Index", "Person");
             }
 
             var user = await _userService.GetUserByIdAsync(id);
             if (user == null)
             {
                 TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
-                return RedirectToAction("Index", "Employee");
+                return RedirectToAction("Index", "Person");
             }
             
             user.FirstName = model.FirstName;
@@ -356,7 +354,7 @@ public class PanelController : Controller
             }
             
             TempData["SuccessMessage"] = "Kullanıcı başarıyla güncellendi.";
-            return RedirectToAction("Index", "Employee");
+            return RedirectToAction("Index", "Person");
         }
         catch (Exception ex)
         {

@@ -1,4 +1,4 @@
-@model RestERP.Domain.Entities.Employee
+@model RestERP.Domain.Entities.ApplicationUser
 @{
     ViewData["Title"] = "Personel Sil";
 }
@@ -17,17 +17,20 @@
                     </div>
 
                     <dl class="row">
-                        <dt class="col-sm-4">Ad Soyad:</dt>
-                        <dd class="col-sm-8">@Model.Name</dd>
+                        <dt class="col-sm-4">Ad:</dt>
+                        <dd class="col-sm-8">@Model.FirstName</dd>
+
+                        <dt class="col-sm-4">Soyad:</dt>
+                        <dd class="col-sm-8">@Model.LastName</dd>
 
                         <dt class="col-sm-4">Telefon:</dt>
-                        <dd class="col-sm-8">@Model.Phone</dd>
+                        <dd class="col-sm-8">@Model.PhoneNumber</dd>
 
                         <dt class="col-sm-4">E-posta:</dt>
                         <dd class="col-sm-8">@Model.Email</dd>
 
                         <dt class="col-sm-4">Pozisyon:</dt>
-                        <dd class="col-sm-8">@Model.Role</dd>
+                        <dd class="col-sm-8">@Model.RoleType</dd>
 
                         <dt class="col-sm-4">Durum:</dt>
                         <dd class="col-sm-8">

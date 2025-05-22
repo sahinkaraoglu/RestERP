@@ -53,7 +53,7 @@
                         
                         <div class="mb-3">
                             <label asp-for="RoleType" class="form-label">Kullanıcı Rolü</label>
-                            <select asp-for="RoleType" class="form-select" asp-items="Html.GetEnumSelectList<RestERP.Domain.Enums.EmployeeRole>()">
+                            <select asp-for="RoleType" class="form-select" asp-items="Html.GetEnumSelectList<RestERP.Domain.Enums.Role>()">
                             </select>
                             <span asp-validation-for="RoleType" class="text-danger"></span>
                         </div>

@@ -1,4 +1,4 @@
-@model RestERP.Domain.Entities.Employee
+@model RestERP.Domain.Entities.ApplicationUser
 @{
     ViewData["Title"] = "Yeni Personel Ekle";
 }
@@ -27,15 +27,21 @@
                     <div class="card-body">
                         <form asp-action="EmployeeAdd" method="post">
                             <div class="mb-3">
-                                <label asp-for="Name" class="form-label">Ad Soyad</label>
-                                <input asp-for="Name" class="form-control" required />
-                                <span asp-validation-for="Name" class="text-danger"></span>
+                                <label asp-for="FirstName" class="form-label">Ad</label>
+                                <input asp-for="FirstName" class="form-control" required />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
-                                <label asp-for="Phone" class="form-label">Telefon</label>
-                                <input asp-for="Phone" class="form-control" />
-                                <span asp-validation-for="Phone" class="text-danger"></span>
+                                <label asp-for="LastName" class="form-label">Ad Soyad</label>
+                                <input asp-for="LastName" class="form-control" required />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="PhoneNumber" class="form-label">Telefon</label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
@@ -45,10 +51,10 @@
                             </div>
 
                             <div class="mb-3">
-                                <label asp-for="Role" class="form-label">Pozisyon</label>
-                                <select asp-for="Role" class="form-select" asp-items="Html.GetEnumSelectList<RestERP.Domain.Enums.EmployeeRole>()">
+                                <label asp-for="RoleType" class="form-label">Pozisyon</label>
+                                <select asp-for="RoleType" class="form-select" asp-items="Html.GetEnumSelectList<RestERP.Domain.Enums.Role>()">
                                 </select>
-                                <span asp-validation-for="Role" class="text-danger"></span>
+                                <span asp-validation-for="RoleType" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
