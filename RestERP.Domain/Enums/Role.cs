@@ -1,8 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace RestERP.Domain.Enums
 {
-    public enum Role
+       public enum Role
     {
-       Musteri = 1,
-       Personel = 2,
+        [Display(Name = "Müþteri")]
+        Customer = 1,
+
+        [Display(Name = "Personel")]
+        Employee = 2,
     }
-} 
+}

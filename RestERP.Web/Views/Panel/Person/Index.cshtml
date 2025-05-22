@@ -56,7 +56,7 @@
                                 </tr>  
                             </thead>  
                             <tbody>  
-                                @foreach (var person in Model.Where(u => u.RoleType == RestERP.Domain.Enums.Role.Personel))  
+                                @foreach (var person in Model.Where(u => u.RoleType == RestERP.Domain.Enums.Role.Employee))  
                                 {  
                                     <tr>  
                                         <td>@person.Id</td>  
@@ -112,7 +112,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var person in Model.Where(u => u.RoleType == RestERP.Domain.Enums.Role.Musteri))
+                                @foreach (var person in Model.Where(u => u.RoleType == RestERP.Domain.Enums.Role.Customer))
                                 {
                                     <tr>
                                         <td>@person.Id</td>

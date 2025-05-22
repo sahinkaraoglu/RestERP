@@ -45,8 +45,8 @@ public class PanelController : Controller
         
         // Kullanıcıları çekerek çalışan sayısını hesaplayalım
         var users = await _userService.GetAllUsersAsync();
-        var totalEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Musteri);
-        var activeEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Personel && u.IsActive);
+        var totalEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Customer);
+        var activeEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Employee && u.IsActive);
         
         var model = new 
         {
