@@ -5,6 +5,8 @@ using RestERP.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace RestERP.Application.Services
 {
@@ -86,6 +88,24 @@ namespace RestERP.Application.Services
                 
             await _unitOfWork.Repository<Order>().UpdateAsync(order);
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<Order> GetOrderWithDetailsAsync(int id)
+        {
+            var orders = await _unitOfWork.Repository<Order>()
+                .GetAsync(o => o.Id == id);
+
+            var order = orders.FirstOrDefault();
+            if (order == null)
+                throw new KeyNotFoundException($"Sipariş bulunamadı. Id: {id}");
+
+            // Sipariş kalemlerini ayrıca yükle
+            var orderItems = await _unitOfWork.Repository<OrderItem>()
+                .GetAsync(oi => oi.OrderId == id);
+
+            order.OrderItems = orderItems.ToList();
+
+            return order;
         }
     }
 } 

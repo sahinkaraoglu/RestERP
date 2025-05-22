@@ -17,57 +17,60 @@
 
     <div class="menu-container">
         @{
-            var categories = ViewBag.Categories as List<FoodCategory>;
-            var allFoods = ViewBag.Foods as List<Food>;
-            var allImages = ViewBag.Images as List<Image>;
+            var categories = (ViewBag.Categories as List<FoodCategory>) ?? new List<FoodCategory>();
+            var allFoods = (ViewBag.Foods as List<Food>) ?? new List<Food>();
+            var allImages = (ViewBag.Images as List<Image>) ?? new List<Image>();
         }
 
-        @foreach (var category in categories)
+        @if (categories.Any())
         {
-            var categoryFoods = allFoods.Where(f => f.CategoryId == category.Id).ToList();
-            
-            <div class="category">
-                <div class="category-header" onclick="toggleCategory(@category.Id)">
-                    <h3>@category.TurkishName</h3>
-                    <div class="toggle-icon">+</div>
-                </div>
-                <div class="subcategory-container" id="category-@category.Id">
-                    <table class="subcategory-table">
-                        <tbody>
-                            @foreach (var subCategory in categoryFoods)
-                            {
-                                <tr>
-                                    <td class="subcategory-name">
-                                        <div class="sub-item">
-                                            <div class="food-info">
-                                                <span class="food-title">@subCategory.TurkishName</span>
-                                                <span class="food-description">@subCategory.Description</span>
-                                            </div>
-                                            <div class="quantity-control">
-                                                <button class="quantity-btn minus" onclick="decreaseQuantity(@subCategory.Id)">-</button>
-                                                <span id="quantity-@subCategory.Id" class="quantity-value">0</span>
-                                                <button class="quantity-btn plus" onclick="increaseQuantity(@subCategory.Id)">+</button>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="subcategory-price">@subCategory.Price ₺</td>
-                                    <td class="subcategory-image">
-                                        @{
-                                            var foodImage = allImages.FirstOrDefault(i => i.FoodId == subCategory.Id);
-                                            if (foodImage != null)
-                                            {
-                                                <div class="food-image-container">
-                                                    <img src="@foodImage.Path"  class="food-image">
+            @foreach (var category in categories)
+            {
+                var categoryFoods = allFoods.Where(f => f.CategoryId == category.Id).ToList();
+                
+                <div class="category">
+                    <div class="category-header" onclick="toggleCategory(@category.Id)">
+                        <h3>@category.TurkishName</h3>
+                        <div class="toggle-icon">+</div>
+                    </div>
+                    <div class="subcategory-container" id="category-@category.Id">
+                        <table class="subcategory-table">
+                            <tbody>
+                                @foreach (var subCategory in categoryFoods)
+                                {
+                                    <tr>
+                                        <td class="subcategory-name">
+                                            <div class="sub-item">
+                                                <div class="food-info">
+                                                    <span class="food-title">@subCategory.TurkishName</span>
+                                                    <span class="food-description">@subCategory.Description</span>
                                                 </div>
+                                                <div class="quantity-control">
+                                                    <button class="quantity-btn minus" onclick="decreaseQuantity(@subCategory.Id)">-</button>
+                                                    <span id="quantity-@subCategory.Id" class="quantity-value">0</span>
+                                                    <button class="quantity-btn plus" onclick="increaseQuantity(@subCategory.Id)">+</button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="subcategory-price">@subCategory.Price ₺</td>
+                                        <td class="subcategory-image">
+                                            @{
+                                                var foodImage = allImages.FirstOrDefault(i => i.FoodId == subCategory.Id);
+                                                if (foodImage != null)
+                                                {
+                                                    <div class="food-image-container">
+                                                        <img src="@foodImage.Path"  class="food-image">
+                                                    </div>
+                                                }
                                             }
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            }
         }
     </div>
 
@@ -124,8 +127,11 @@
             </div>
             
             <div class="auth-buttons">
-                <a href="/Login/Index" class="secondary-button auth-btn">Giriş Yap</a>
-                <a href="/Login/SignUp" class="secondary-button auth-btn">Üye Ol</a>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a href="/Login/Index" class="secondary-button auth-btn">Giriş Yap</a>
+                    <a href="/Login/SignUp" class="secondary-button auth-btn">Üye Ol</a>
+                }
             </div>
             
             <button id="orderButton" class="order-button">Sipariş Ver</button>
@@ -232,18 +238,23 @@
             const rows = category.querySelectorAll('.subcategory-table tr');
             
             rows.forEach(row => {
+                const quantityElement = row.querySelector('.quantity-value');
+                if (!quantityElement) return;
+                
+                const quantity = parseInt(quantityElement.textContent);
+                if (quantity <= 0) return;
+                
+                const productId = parseInt(quantityElement.id.replace('quantity-', ''));
                 const name = row.querySelector('.food-title').textContent;
-                const quantity = parseInt(row.querySelector('.quantity-value').textContent);
                 const price = parseFloat(row.querySelector('.subcategory-price').textContent);
                 
-                if (quantity > 0) {
-                    items.push({
-                        name: name,
-                        quantity: quantity,
-                        price: price,
-                        total: quantity * price
-                    });
-                }
+                items.push({
+                    productId: productId,
+                    name: name,
+                    quantity: quantity,
+                    price: price,
+                    total: quantity * price
+                });
             });
         });
         
@@ -274,10 +285,36 @@
         });
 
         // Sipariş verme işlemi
-        document.getElementById('orderButton').addEventListener('click', function() {
+        document.getElementById('orderButton').addEventListener('click', async function() {
+            // Kullanıcı giriş kontrolü
+            const isAuthenticated = @User.Identity.IsAuthenticated.ToString().ToLower();
+            
+            if (!isAuthenticated) {
+                Swal.fire({
+                    title: 'Giriş Gerekli',
+                    text: 'Sipariş verebilmek için önce giriş yapmalısınız.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Giriş Yap',
+                    cancelButtonText: 'İptal',
+                    confirmButtonColor: '#6a563d',
+                    cancelButtonColor: '#d6c6af'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/Login/Index';
+                    }
+                });
+                return;
+            }
+
             const cartItems = getCartItems();
             if (cartItems.length === 0) {
-                alert('Lütfen sepete ürün ekleyiniz!');
+                Swal.fire({
+                    title: 'Sepet Boş',
+                    text: 'Lütfen sepete ürün ekleyiniz!',
+                    icon: 'warning',
+                    confirmButtonColor: '#6a563d'
+                });
                 return;
             }
 
@@ -286,14 +323,18 @@
             let isValid = true;
 
             if (activeTabId === 'dine-in') {
-                // Masa numarası kontrolü
                 const tableNumber = document.getElementById('tableNumber').value;
                 if (!tableNumber || tableNumber < 1) {
-                    alert('Lütfen geçerli bir masa numarası giriniz!');
+                    Swal.fire({
+                        title: 'Hata',
+                        text: 'Lütfen geçerli bir masa numarası giriniz!',
+                        icon: 'error',
+                        confirmButtonColor: '#6a563d'
+                    });
                     isValid = false;
                 } else {
                     customerInfo.type = 'dine-in';
-                    customerInfo.tableNumber = tableNumber;
+                    customerInfo.tableNumber = parseInt(tableNumber);
                 }
             } else if (activeTabId === 'delivery') {
                 const name = document.getElementById('deliveryName').value;
@@ -301,13 +342,28 @@
                 const address = document.getElementById('deliveryAddress').value;
                 
                 if (!name || name.trim() === '') {
-                    alert('Lütfen adınızı giriniz!');
+                    Swal.fire({
+                        title: 'Hata',
+                        text: 'Lütfen adınızı giriniz!',
+                        icon: 'error',
+                        confirmButtonColor: '#6a563d'
+                    });
                     isValid = false;
                 } else if (!phone || phone.trim() === '') {
-                    alert('Lütfen telefon numaranızı giriniz!');
+                    Swal.fire({
+                        title: 'Hata',
+                        text: 'Lütfen telefon numaranızı giriniz!',
+                        icon: 'error',
+                        confirmButtonColor: '#6a563d'
+                    });
                     isValid = false;
                 } else if (!address || address.trim() === '') {
-                    alert('Lütfen adresinizi giriniz!');
+                    Swal.fire({
+                        title: 'Hata',
+                        text: 'Lütfen adresinizi giriniz!',
+                        icon: 'error',
+                        confirmButtonColor: '#6a563d'
+                    });
                     isValid = false;
                 } else {
                     customerInfo.type = 'delivery';
@@ -331,9 +387,58 @@
                 customerInfo: customerInfo
             };
 
-            // Sipariş verilerini JSON'a çevir ve URL'e ekle
-            const orderDataParam = encodeURIComponent(JSON.stringify(orderData));
-            window.location.href = `/Order/Index?orderData=${orderDataParam}`;
+            try {
+                // Yükleniyor göster
+                Swal.fire({
+                    title: 'Sipariş Oluşturuluyor',
+                    text: 'Lütfen bekleyiniz...',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Siparişi gönder
+                const response = await fetch('/Order/CreateOrder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Başarılı
+                    Swal.fire({
+                        title: 'Başarılı!',
+                        text: 'Siparişiniz başarıyla oluşturuldu.',
+                        icon: 'success',
+                        confirmButtonColor: '#6a563d'
+                    }).then(() => {
+                        // Sipariş detay sayfasına yönlendir
+                        window.location.href = `/Order/Index?orderId=${result.orderId}`;
+                    });
+                } else {
+                    // Hata
+                    Swal.fire({
+                        title: 'Hata!',
+                        text: result.message || 'Sipariş oluşturulurken bir hata oluştu.',
+                        icon: 'error',
+                        confirmButtonColor: '#6a563d'
+                    });
+                }
+            } catch (error) {
+                console.error('Sipariş gönderme hatası:', error);
+                Swal.fire({
+                    title: 'Hata!',
+                    text: 'Sipariş gönderilirken bir hata oluştu.',
+                    icon: 'error',
+                    confirmButtonColor: '#6a563d'
+                });
+            }
         });
         
         // İlk yüklemede sepeti güncelle
@@ -894,3 +999,6 @@
 
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

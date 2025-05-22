@@ -1,4 +1,4 @@
-@model RestERP.Domain.Entities.Order
+@model Order
 
 @{
     ViewData["Title"] = "Sipariş Detayları";
@@ -7,6 +7,8 @@
 @using RestERP.Infrastructure.Data.SeedData
 @using RestERP.Domain.Entities
 @using RestERP.Domain.Enums
+@using RestERP.Application.Services.Interfaces
+@inject IFoodService FoodService
 
 <div class="order-details-container">
     <div class="order-header">
@@ -14,221 +16,156 @@
         <div class="divider">
             <span>✦</span>
         </div>
-        <h2>Masa No: @Model.TableId</h2>
-        <p>Sipariş No: @Model.OrderNumber</p>
-        <p>Sipariş Tarihi: @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</p>
     </div>
 
-    @if (Model.Status != OrderStatus.Completed)
+    @if (Model != null)
     {
-        <div class="order-status-message">
-            <div class="status-badge @Model.Status.ToString().ToLower()">
-                @(Model.Status switch {
-                    OrderStatus.New => "Yeni Sipariş",
-                    OrderStatus.InProgress => "Hazırlanıyor",
-                    OrderStatus.Ready => "Servise Hazır",
-                    _ => Model.Status.ToString()
-                })
-            </div>
+        <div class="order-info">
+            <h2>Masa No: @Model.TableId</h2>
+            <p>Sipariş No: @Model.OrderNumber</p>
+            <p>Durum: @Model.Status</p>
+            <p>Toplam Tutar: @Model.TotalAmount.ToString("C2")</p>
+        </div>
+
+        <div class="order-items">
+            <h3>Sipariş Kalemleri</h3>
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Ürün</th>
+                        <th>Miktar</th>
+                        <th>Birim Fiyat</th>
+                        <th>Toplam</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <tr>
+                            <td>@(item.Food?.TurkishName ?? "Ürün Bulunamadı")</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.UnitPrice.ToString("C2")</td>
+                            <td>@item.TotalPrice.ToString("C2")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     }
-
-    <div class="order-content">
-        <table class="order-items-table">
-            <thead>
-                <tr>
-                    <th>Ürün</th>
-                    <th>Miktar</th>
-                    <th>Birim Fiyat</th>
-                    <th>Toplam</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.OrderItems)
-                {
-                    <tr>
-                        <td>@item.Food?.Name</td>
-                        <td>@item.Quantity</td>
-                        <td>@item.UnitPrice.ToString("N2") ₺</td>
-                        <td>@item.TotalPrice.ToString("N2") ₺</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <div class="order-summary">
-            <div class="summary-item">
-                <span>Ara Toplam:</span>
-                <span>@Model.TotalAmount.ToString("N2") ₺</span>
-            </div>
-            <div class="summary-item">
-                <span>KDV (%8):</span>
-                <span>@((Model.TotalAmount * 0.08m).ToString("N2")) ₺</span>
-            </div>
-            <div class="summary-item total">
-                <span>Genel Toplam:</span>
-                <span>@((Model.TotalAmount * 1.08m).ToString("N2")) ₺</span>
-            </div>
+    else
+    {
+        <div class="no-order">
+            <p>Sipariş bulunamadı.</p>
         </div>
-    </div>
-
-    <div class="order-actions">
-        @if (Model.Status == OrderStatus.Completed)
-        {
-            <div class="completed-message">Bu sipariş tamamlanmıştır</div>
-        }
-        else
-        {
-            <button id="completeOrderBtn" class="complete-button" data-order-id="@Model.Id">Siparişi Tamamla</button>
-            <button id="cancelOrderBtn" class="cancel-button" data-order-id="@Model.Id">Siparişi İptal Et</button>
-        }
-        <a href="/Table/Index" class="return-button">Masa Yönetimine Dön</a>
-    </div>
+    }
 </div>
 
 <style>
     .order-details-container {
-        max-width: 1000px;
+        max-width: 800px;
         margin: 40px auto;
         padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 8px;
     }
-    
+
     .order-header {
         text-align: center;
         margin-bottom: 30px;
     }
-    
+
     .order-header h1 {
-        color: #5d4b38;
+        color: #333;
+        font-size: 24px;
         margin-bottom: 10px;
     }
-    
+
     .divider {
-        text-align: center;
+        display: flex;
+        align-items: center;
         margin: 15px 0;
     }
-    
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #ddd;
+    }
+
     .divider span {
-        color: #8c7762;
-        font-size: 1.5em;
+        padding: 0 15px;
+        color: #666;
     }
-    
-    .order-status-message {
-        text-align: center;
-        margin: 20px 0;
+
+    .order-info {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 6px;
+        margin-bottom: 20px;
     }
-    
-    .status-badge {
-        display: inline-block;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-weight: 500;
+
+    .order-info h2 {
+        color: #444;
+        font-size: 20px;
+        margin-bottom: 15px;
     }
-    
-    .status-badge.new {
-        background-color: #e3f2fd;
-        color: #1976d2;
+
+    .order-info p {
+        color: #666;
+        margin: 8px 0;
     }
-    
-    .status-badge.inprogress {
-        background-color: #fff3e0;
-        color: #f57c00;
+
+    .order-items {
+        margin-top: 30px;
     }
-    
-    .status-badge.ready {
-        background-color: #e8f5e9;
-        color: #388e3c;
+
+    .order-items h3 {
+        color: #444;
+        font-size: 18px;
+        margin-bottom: 15px;
     }
-    
-    .order-items-table {
+
+    .items-table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 30px;
     }
-    
-    .order-items-table th,
-    .order-items-table td {
+
+    .items-table th,
+    .items-table td {
         padding: 12px;
         text-align: left;
         border-bottom: 1px solid #ddd;
     }
-    
-    .order-items-table th {
-        background-color: #f5f5f5;
-        font-weight: 500;
-    }
-    
-    .order-summary {
+
+    .items-table th {
         background-color: #f8f9fa;
-        padding: 20px;
-        border-radius: 8px;
+        font-weight: 600;
+        color: #444;
     }
-    
-    .summary-item {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
+
+    .items-table td {
+        color: #666;
     }
-    
-    .summary-item.total {
-        font-weight: bold;
-        font-size: 1.2em;
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 2px solid #ddd;
-    }
-    
-    .order-actions {
-        margin-top: 30px;
+
+    .no-order {
         text-align: center;
+        padding: 40px;
+        color: #666;
     }
-    
-    .complete-button,
-    .cancel-button,
-    .return-button {
-        padding: 10px 20px;
-        margin: 0 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: background-color 0.3s;
-    }
-    
-    .complete-button {
-        background-color: #4caf50;
-        color: white;
-    }
-    
-    .complete-button:hover {
-        background-color: #388e3c;
-    }
-    
-    .cancel-button {
-        background-color: #f44336;
-        color: white;
-    }
-    
-    .cancel-button:hover {
-        background-color: #d32f2f;
-    }
-    
-    .return-button {
-        background-color: #5d4b38;
-        color: white;
-        text-decoration: none;
-        display: inline-block;
-    }
-    
-    .return-button:hover {
-        background-color: #4a3c2d;
-        color: white;
-    }
-    
-    .completed-message {
-        color: #4caf50;
-        font-weight: 500;
-        margin-bottom: 20px;
+
+    @@media (max-width: 768px) {
+        .order-details-container {
+            margin: 20px;
+            padding: 15px;
+        }
+
+        .items-table {
+            display: block;
+            overflow-x: auto;
+        }
     }
 </style>
 

@@ -8,6 +8,7 @@ namespace RestERP.Application.Services.Interfaces
     {
         Task<Order> CreateOrderAsync(Order order);
         Task<Order> GetOrderByIdAsync(int id);
+        Task<Order> GetOrderWithDetailsAsync(int id);
         Task<IEnumerable<Order>> GetAllOrdersAsync();
         Task<IEnumerable<Order>> GetOrdersByTableIdAsync(int tableId);
         Task<IEnumerable<Order>> GetActiveOrdersAsync();

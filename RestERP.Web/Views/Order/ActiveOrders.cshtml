@@ -1,8 +1,11 @@
-@model IEnumerable<RestERP.Domain.Entities.Order>
+@model IEnumerable<Order>
 
 @{
     ViewData["Title"] = "Aktif Siparişler";
 }
+
+@using RestERP.Domain.Entities
+@using RestERP.Domain.Enums
 
 <div class="active-orders-container">
     <div class="page-header">
@@ -23,46 +26,58 @@
     }
     else
     {
-        <div class="active-orders-grid">
+        <div class="orders-grid">
             @foreach (var order in Model)
             {
                 <div class="order-card">
                     <div class="order-header">
-                        <div class="order-number">Sipariş No: @order.OrderNumber</div>
-                        <div class="order-status @order.Status.ToString().ToLower()">@GetStatusText(order.Status)</div>
+                        <h2>Masa No: @order.TableId</h2>
+                        <span class="order-number">Sipariş No: @order.OrderNumber</span>
                     </div>
-                    <div class="order-info">
-                        <div class="info-row"><span>Masa:</span> <span>Masa @order.TableId</span></div>
-                        <div class="info-row"><span>Tarih:</span> <span>@(order.CreatedDate.HasValue ? order.CreatedDate.Value.ToString("dd.MM.yyyy HH:mm") : "-")</span></div>
-                        <div class="info-row"><span>Toplam:</span> <span>@order.TotalAmount.ToString("N2") ₺</span></div>
+                    
+                    <div class="order-status">
+                        <span class="status-badge @order.Status.ToString().ToLower()">@order.Status</span>
                     </div>
+                    
                     <div class="order-items">
-                        <h3>Sipariş Kalemleri</h3>
-                        <div class="items-container">
-                            @if (order.OrderItems != null && order.OrderItems.Any())
-                            {
-                                <ul>
-                                    @foreach (var item in order.OrderItems)
-                                    {
-                                        <li>
-                                            <span class="item-name">@item.Food.Name</span>
-                                            <span class="item-quantity">x @item.Quantity</span>
-                                            <span class="item-price">@item.TotalPrice.ToString("N2") ₺</span>
-                                        </li>
-                                    }
-                                </ul>
-                            }
-                            else
-                            {
-                                <p class="no-items">Sipariş detayları bulunamadı</p>
-                            }
-                        </div>
+                        <h3>Sipariş Detayları</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Ürün</th>
+                                    <th>Miktar</th>
+                                    <th>Tutar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in order.OrderItems)
+                                {
+                                    <tr>
+                                        <td>@(item.Food?.TurkishName ?? "Ürün Bulunamadı")</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.TotalPrice.ToString("C2")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2"><strong>Toplam:</strong></td>
+                                    <td><strong>@order.TotalAmount.ToString("C2")</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
+                    
                     <div class="order-actions">
-                        <button class="btn-view" onclick="viewOrderDetails('@order.Id')">Detaylar</button>
-                        @if (order.Status != RestERP.Domain.Enums.OrderStatus.Completed)
+                        <a href="@Url.Action("Index", "Order", new { orderId = order.Id })" class="btn btn-details">Detaylar</a>
+                        @if (order.Status != OrderStatus.Completed && order.Status != OrderStatus.Cancelled)
                         {
-                            <button class="btn-complete" onclick="completeOrder('@order.Id')">Tamamla</button>
+                            <button class="btn btn-complete" data-order-id="@order.Id" onclick="updateOrderStatus(@order.Id, 'Completed')">
+                                Tamamla
+                            </button>
+                            <button class="btn btn-cancel" data-order-id="@order.Id" onclick="updateOrderStatus(@order.Id, 'Cancelled')">
+                                İptal Et
+                            </button>
                         }
                     </div>
                 </div>
@@ -161,7 +176,7 @@
         background-color: #4a3c2e;
     }
 
-    .active-orders-grid {
+    .orders-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
         gap: 25px;
@@ -188,6 +203,12 @@
         border-bottom: 1px solid #e0d8c8;
     }
 
+    .order-header h2 {
+        color: #444;
+        font-size: 20px;
+        margin: 0 0 5px 0;
+    }
+
     .order-number {
         font-weight: 600;
         color: #5d4b38;
@@ -200,49 +221,27 @@
         font-weight: 500;
     }
 
-    .order-status.new {
+    .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-badge.new {
         background-color: #e3f2fd;
-        color: #0d47a1;
+        color: #1976d2;
     }
 
-    .order-status.inprogress {
-        background-color: #fff3cd;
-        color: #856404;
+    .status-badge.inprogress {
+        background-color: #fff3e0;
+        color: #f57c00;
     }
 
-    .order-status.ready {
-        background-color: #d4edda;
-        color: #155724;
-    }
-
-    .order-status.completed {
-        background-color: #c6f6d5;
-        color: #276749;
-    }
-
-    .order-status.cancelled {
-        background-color: #f8d7da;
-        color: #721c24;
-    }
-
-    .order-info {
-        padding: 15px;
-        border-bottom: 1px solid #f1eadd;
-    }
-
-    .info-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 8px;
-    }
-
-    .info-row span:first-child {
-        color: #8c7762;
-    }
-
-    .info-row span:last-child {
-        font-weight: 500;
-        color: #4a3c2e;
+    .status-badge.ready {
+        background-color: #e8f5e9;
+        color: #388e3c;
     }
 
     .order-items {
@@ -256,42 +255,31 @@
         font-weight: 600;
     }
 
-    .items-container {
-        max-height: 150px;
-        overflow-y: auto;
-        padding-right: 5px;
+    .order-items table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
     }
 
-    .items-container ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .items-container li {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 0;
+    .order-items th,
+    .order-items td {
+        padding: 8px;
+        text-align: left;
         border-bottom: 1px solid #f1eadd;
     }
 
-    .item-name {
-        flex: 1;
+    .order-items th {
+        font-weight: 600;
+        color: #444;
     }
 
-    .item-quantity {
-        margin: 0 15px;
-        color: #8c7762;
+    .order-items td {
+        color: #666;
     }
 
-    .item-price {
-        font-weight: 500;
-    }
-
-    .no-items {
-        text-align: center;
-        color: #8c7762;
-        font-style: italic;
+    .order-items tfoot td {
+        font-weight: 600;
+        color: #444;
     }
 
     .order-actions {
@@ -301,42 +289,48 @@
         justify-content: space-between;
     }
 
-    .order-actions button {
-        padding: 8px 15px;
+    .btn {
+        padding: 8px 16px;
         border: none;
-        border-radius: 5px;
-        cursor: pointer;
+        border-radius: 4px;
+        font-size: 14px;
         font-weight: 500;
-        transition: background-color 0.3s;
-        font-family: 'Montserrat', sans-serif;
+        cursor: pointer;
+        transition: background-color 0.2s;
     }
 
-    .btn-view {
-        background-color: #f1eadd;
-        color: #5d4b38;
-        border: 1px solid #d6c6af;
-    }
-
-    .btn-view:hover {
-        background-color: #e0d8c8;
+    .btn-details {
+        background-color: #e3f2fd;
+        color: #1976d2;
+        text-decoration: none;
     }
 
     .btn-complete {
-        background-color: #5d4b38;
-        color: white;
+        background-color: #e8f5e9;
+        color: #388e3c;
     }
 
-    .btn-complete:hover {
-        background-color: #4a3c2e;
+    .btn-cancel {
+        background-color: #ffebee;
+        color: #d32f2f;
+    }
+
+    .btn:hover {
+        opacity: 0.9;
     }
 
     @@media (max-width: 768px) {
-        .active-orders-grid {
+        .active-orders-container {
+            margin: 20px;
+            padding: 15px;
+        }
+
+        .orders-grid {
             grid-template-columns: 1fr;
         }
 
-        .order-card {
-            margin-bottom: 20px;
+        .order-items {
+            overflow-x: auto;
         }
     }
 </style>
@@ -346,33 +340,28 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
 <script>
-    function viewOrderDetails(orderId) {
-        // Sipariş detaylarını görüntülemek için yönlendir
-        alert('Sipariş detayları görüntülenecek. OrderID: ' + orderId);
-        // Gerçek uygulamada: window.location.href = '/Order/Details/' + orderId;
-    }
-    
-    function completeOrder(orderId) {
-        if (confirm('Bu siparişi tamamlamak istediğinize emin misiniz?')) {
-            // Siparişi tamamla API çağrısı yapılacak
-            fetch('/api/orders/' + orderId + '/complete', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('Sipariş başarıyla tamamlandı.');
-                    location.reload();
-                } else {
-                    throw new Error('Sipariş tamamlanırken bir hata oluştu.');
-                }
-            })
-            .catch(error => {
-                alert(error.message);
-            });
+    function updateOrderStatus(orderId, status) {
+        if (!confirm(`Siparişi ${status === 'Completed' ? 'tamamlamak' : 'iptal etmek'} istediğinize emin misiniz?`)) {
+            return;
         }
+
+        fetch(`/api/orders/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: status })
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                throw new Error('Sipariş durumu güncellenirken bir hata oluştu');
+            }
+        })
+        .catch(error => {
+            alert(error.message);
+        });
     }
 </script>
 

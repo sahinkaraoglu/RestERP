@@ -4,6 +4,10 @@ using RestERP.Domain.Entities;
 using RestERP.Domain.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Text.Json;
+using RestERP.Web.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace RestERP.Web.Controllers;
 
@@ -11,25 +15,50 @@ public class OrderController : Controller
 {
     private readonly ILogger<OrderController> _logger;
     private readonly IOrderService _orderService;
+    private readonly IFoodService _foodService;
 
-    public OrderController(ILogger<OrderController> logger, IOrderService orderService)
+    public OrderController(
+        ILogger<OrderController> logger, 
+        IOrderService orderService,
+        IFoodService foodService)
     {
         _logger = logger;
         _orderService = orderService;
+        _foodService = foodService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index(int? orderId = null)
     {
-        // Doğrudan erişim için kullanıcıyı masa sayfasına yönlendir
-        if (!Request.Query.ContainsKey("orderData"))
+        try
         {
-            return View();
+            if (orderId == null)
+            {
+                return View(null);
+            }
+
+            var order = await _orderService.GetOrderWithDetailsAsync(orderId.Value);
+            if (order == null)
+            {
+                TempData["ErrorMessage"] = "Sipariş bulunamadı.";
+                return View(null);
+            }
+
+            // Her bir sipariş kalemi için ürün bilgilerini yükle
+            foreach (var item in order.OrderItems)
+            {
+                item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+            }
+
+            return View(order);
         }
-        
-        return View();
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Sipariş sayfası yüklenirken hata oluştu");
+            return View(null);
+        }
     }
 
-    // Belirli bir masanın siparişlerini görüntülemek için yeni action
+    // Belirli bir masanın siparişlerini görüntülemek için action
     public async Task<IActionResult> ViewOrder(int tableId)
     {
         try
@@ -43,8 +72,17 @@ public class OrderController : Controller
                 return RedirectToAction("Index", "Table");
             }
 
+            // Sipariş detaylarını getir
+            var orderWithDetails = await _orderService.GetOrderWithDetailsAsync(activeOrder.Id);
+            
+            // Her bir sipariş kalemi için ürün bilgilerini yükle
+            foreach (var item in orderWithDetails.OrderItems)
+            {
+                item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+            }
+
             // Sipariş verilerini view'a gönder
-            return View("Index", activeOrder);
+            return View("Index", orderWithDetails);
         }
         catch (Exception ex)
         {
@@ -60,18 +98,32 @@ public class OrderController : Controller
         try
         {
             var activeOrders = await _orderService.GetActiveOrdersAsync();
-            return View(activeOrders);
+            var orderList = new List<Order>();
+
+            foreach (var order in activeOrders)
+            {
+                var orderWithDetails = await _orderService.GetOrderWithDetailsAsync(order.Id);
+                
+                // Her bir sipariş kalemi için ürün bilgilerini yükle
+                foreach (var item in orderWithDetails.OrderItems)
+                {
+                    item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                }
+                
+                orderList.Add(orderWithDetails);
+            }
+
+            return View(orderList);
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Aktif siparişler listelenirken hata oluştu");
             TempData["ErrorMessage"] = "Aktif siparişler listelenirken bir hata oluştu: " + ex.Message;
-            return View("Error");
+            return View(new List<Order>());
         }
     }
 
     [HttpPost]
-    [Route("api/orders")]
     public async Task<IActionResult> CreateOrder([FromBody] OrderViewModel model)
     {
         try
@@ -81,36 +133,31 @@ public class OrderController : Controller
                 return BadRequest(ModelState);
             }
 
-            // Modeli entity'ye dönüştür
+            // Sipariş oluştur
             var order = new Order
             {
-                TableId = model.TableNumber,
+                TableId = model.CustomerInfo.Type == "dine-in" ? model.CustomerInfo.TableNumber : 0,
                 Status = OrderStatus.New,
-                TotalAmount = model.Total,
-                OrderItems = new List<OrderItem>()
-            };
-
-            // Sipariş kalemlerini ekle
-            foreach (var item in model.Items)
-            {
-                order.OrderItems.Add(new OrderItem
+                TotalAmount = model.Items.Sum(i => i.Price * i.Quantity),
+                OrderItems = model.Items.Select(i => new OrderItem
                 {
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    UnitPrice = item.Price,
-                    TotalPrice = item.Price * item.Quantity
-                });
-            }
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity,
+                    UnitPrice = i.Price,
+                    TotalPrice = i.Price * i.Quantity
+                }).ToList()
+            };
 
             // Siparişi kaydet
             var result = await _orderService.CreateOrderAsync(order);
 
-            return Ok(new { orderId = result.Id, orderNumber = result.OrderNumber });
+            // Başarılı sonuç dön
+            return Json(new { success = true, orderId = result.Id });
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Sipariş oluşturulurken hata oluştu");
-            return StatusCode(500, "Sipariş oluşturulurken bir hata oluştu");
+            return Json(new { success = false, message = "Sipariş oluşturulurken bir hata oluştu: " + ex.Message });
         }
     }
 
@@ -158,22 +205,6 @@ public class OrderController : Controller
             return StatusCode(500, "Sipariş durumu güncellenirken bir hata oluştu");
         }
     }
-}
-
-// View Models
-public class OrderViewModel
-{
-    public int TableNumber { get; set; }
-    public decimal Total { get; set; }
-    public List<OrderItemViewModel> Items { get; set; } = new List<OrderItemViewModel>();
-}
-
-public class OrderItemViewModel
-{
-    public int ProductId { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public int Quantity { get; set; }
-    public decimal Price { get; set; }
 }
 
 public class OrderStatusUpdateModel
