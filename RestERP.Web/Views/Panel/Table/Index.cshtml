@@ -310,96 +310,41 @@
             tableNumber.textContent = number;
             modal.style.display = 'block';
             
-            // Masaya ait sipariş olup olmadığını kontrol et
-            const tableKey = 'order_table_' + number;
-            const orderData = localStorage.getItem(tableKey);
-            
-            // Siparişleri görüntüle butonunun durumunu güncelle
-            if (orderData) {
-                viewOrderBtn.disabled = false;
-                viewOrderBtn.style.opacity = '1';
-                checkoutBtn.disabled = false;
-                checkoutBtn.style.opacity = '1';
-            } else {
-                viewOrderBtn.disabled = true;
-                viewOrderBtn.style.opacity = '0.5';
-                checkoutBtn.disabled = true;
-                checkoutBtn.style.opacity = '0.5';
-            }
+            // API'den masa için aktif sipariş kontrolü yap
+            fetch(`/api/orders/table/${number}`)
+                .then(response => response.json())
+                .then(orders => {
+                    const hasActiveOrder = orders.some(order => 
+                        order.status !== 'Completed' && order.status !== 'Cancelled'
+                    );
+                    
+                    // Siparişleri görüntüle ve hesap kapat butonlarının durumunu güncelle
+                    viewOrderBtn.disabled = !hasActiveOrder;
+                    viewOrderBtn.style.opacity = hasActiveOrder ? '1' : '0.5';
+                    checkoutBtn.disabled = !hasActiveOrder;
+                    checkoutBtn.style.opacity = hasActiveOrder ? '1' : '0.5';
+                })
+                .catch(error => {
+                    console.error('Sipariş durumu kontrol edilirken hata:', error);
+                });
         }
-        
-        // Hesap Kapat butonuna tıklandığında
-        checkoutBtn.addEventListener('click', function() {
-            const number = tableNumber.textContent;
-            const tableKey = 'order_table_' + number;
-            const orderDataStr = localStorage.getItem(tableKey);
-            
-            if (orderDataStr) {
-                // Sipariş verisini al ve onaylandı olarak işaretle
-                const orderData = JSON.parse(orderDataStr);
-                orderData.confirmed = true;
-                orderData.checkoutInProgress = true;
-                
-                // Güncellenmiş veriyi localStorage'a geri kaydet
-                localStorage.setItem(tableKey, JSON.stringify(orderData));
-                
-                // Sipariş sayfasına yönlendir
-                window.location.href = '/Order/Index?orderData=' + encodeURIComponent(JSON.stringify(orderData));
-            } else {
-                alert('Bu masaya ait sipariş bulunmamaktadır.');
-            }
-        });
         
         // Siparişleri görüntüle butonuna tıklandığında
         viewOrderBtn.addEventListener('click', function() {
-            const number = tableNumber.textContent;
-            const tableKey = 'order_table_' + number;
-            const orderDataStr = localStorage.getItem(tableKey);
-            
-            if (orderDataStr) {
-                // Sipariş verisini al ve onaylandı olarak işaretle
-                const orderData = JSON.parse(orderDataStr);
-                orderData.confirmed = true;
-                
-                // Güncellenmiş veriyi localStorage'a geri kaydet
-                localStorage.setItem(tableKey, JSON.stringify(orderData));
-                
-                // Sipariş sayfasına yönlendir
-                window.location.href = '/Order/Index?orderData=' + encodeURIComponent(JSON.stringify(orderData));
-            } else {
-                alert('Bu masaya ait sipariş bulunmamaktadır.');
-            }
+            const tableNo = tableNumber.textContent;
+            window.location.href = `/Order/ViewOrder?tableId=${tableNo}`;
         });
         
+        // Modal kapatma
         closeBtn.addEventListener('click', function() {
             modal.style.display = 'none';
         });
         
+        // Modal dışına tıklandığında kapat
         window.addEventListener('click', function(event) {
             if (event.target == modal) {
                 modal.style.display = 'none';
             }
         });
-        
-        // Masa durumunu güncelle
-        function updateTableStatuses() {
-            const tableItems = document.querySelectorAll('.table-item');
-            
-            tableItems.forEach((tableItem, index) => {
-                const tableNumber = index + 1;
-                const tableKey = 'order_table_' + tableNumber;
-                const orderData = localStorage.getItem(tableKey);
-                
-                const statusElement = tableItem.querySelector('.table-status');
-                
-                if (orderData) {
-                    // Siparişi olan masayı dolu göster
-                    statusElement.className = 'table-status occupied';
-                }
-            });
-        }
-        
-        // Sayfa yüklendiğinde masa durumlarını güncelle
-        updateTableStatuses();
     });
 </script> 

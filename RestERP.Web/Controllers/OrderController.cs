@@ -29,6 +29,31 @@ public class OrderController : Controller
         return View();
     }
 
+    // Belirli bir masanın siparişlerini görüntülemek için yeni action
+    public async Task<IActionResult> ViewOrder(int tableId)
+    {
+        try
+        {
+            var orders = await _orderService.GetOrdersByTableIdAsync(tableId);
+            var activeOrder = orders.FirstOrDefault(o => o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled);
+            
+            if (activeOrder == null)
+            {
+                TempData["Message"] = "Bu masaya ait aktif sipariş bulunmamaktadır.";
+                return RedirectToAction("Index", "Table");
+            }
+
+            // Sipariş verilerini view'a gönder
+            return View("Index", activeOrder);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Masa {tableId} için siparişler alınırken hata oluştu");
+            TempData["ErrorMessage"] = "Siparişler alınırken bir hata oluştu: " + ex.Message;
+            return RedirectToAction("Index", "Table");
+        }
+    }
+
     // Aktif siparişleri listeleyen sayfa
     public async Task<IActionResult> ActiveOrders()
     {
@@ -104,6 +129,35 @@ public class OrderController : Controller
             return StatusCode(500, "Siparişler alınırken bir hata oluştu");
         }
     }
+
+    [HttpPut]
+    [Route("api/orders/{orderId}/status")]
+    public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] OrderStatusUpdateModel model)
+    {
+        try
+        {
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+            if (order == null)
+            {
+                return NotFound("Sipariş bulunamadı");
+            }
+
+            // Status string'ini enum'a çevir
+            if (Enum.TryParse<OrderStatus>(model.Status, out OrderStatus newStatus))
+            {
+                order.Status = newStatus;
+                await _orderService.UpdateOrderAsync(order);
+                return Ok();
+            }
+            
+            return BadRequest("Geçersiz sipariş durumu");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Sipariş durumu güncellenirken hata oluştu. OrderId: {orderId}");
+            return StatusCode(500, "Sipariş durumu güncellenirken bir hata oluştu");
+        }
+    }
 }
 
 // View Models
@@ -120,4 +174,9 @@ public class OrderItemViewModel
     public string Name { get; set; } = string.Empty;
     public int Quantity { get; set; }
     public decimal Price { get; set; }
+}
+
+public class OrderStatusUpdateModel
+{
+    public string Status { get; set; } = string.Empty;
 } 

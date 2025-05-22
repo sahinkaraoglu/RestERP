@@ -1,9 +1,12 @@
+@model RestERP.Domain.Entities.Order
+
 @{
     ViewData["Title"] = "Sipariş Detayları";
 }
 
 @using RestERP.Infrastructure.Data.SeedData
 @using RestERP.Domain.Entities
+@using RestERP.Domain.Enums
 
 <div class="order-details-container">
     <div class="order-header">
@@ -11,12 +14,24 @@
         <div class="divider">
             <span>✦</span>
         </div>
-        <h2>Masa No: <span id="tableNumber"></span></h2>
+        <h2>Masa No: @Model.TableId</h2>
+        <p>Sipariş No: @Model.OrderNumber</p>
+        <p>Sipariş Tarihi: @Model.OrderDate.ToString("dd.MM.yyyy HH:mm")</p>
     </div>
 
-    <div class="order-confirmed-message">
-        Siparişiniz onaylandı ve hazırlanmak üzere mutfağa iletildi.
-    </div>
+    @if (Model.Status != OrderStatus.Completed)
+    {
+        <div class="order-status-message">
+            <div class="status-badge @Model.Status.ToString().ToLower()">
+                @(Model.Status switch {
+                    OrderStatus.New => "Yeni Sipariş",
+                    OrderStatus.InProgress => "Hazırlanıyor",
+                    OrderStatus.Ready => "Servise Hazır",
+                    _ => Model.Status.ToString()
+                })
+            </div>
+        </div>
+    }
 
     <div class="order-content">
         <table class="order-items-table">
@@ -24,734 +39,240 @@
                 <tr>
                     <th>Ürün</th>
                     <th>Miktar</th>
-                    <th>Fiyat</th>
+                    <th>Birim Fiyat</th>
                     <th>Toplam</th>
                 </tr>
             </thead>
-            <tbody id="orderItemsBody">
-                <!-- Sipariş kalemleri JavaScript ile eklenecek -->
+            <tbody>
+                @foreach (var item in Model.OrderItems)
+                {
+                    <tr>
+                        <td>@item.Food?.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.UnitPrice.ToString("N2") ₺</td>
+                        <td>@item.TotalPrice.ToString("N2") ₺</td>
+                    </tr>
+                }
             </tbody>
         </table>
 
         <div class="order-summary">
             <div class="summary-item">
                 <span>Ara Toplam:</span>
-                <span id="subtotal">0.00 ₺</span>
+                <span>@Model.TotalAmount.ToString("N2") ₺</span>
             </div>
             <div class="summary-item">
                 <span>KDV (%8):</span>
-                <span id="tax">0.00 ₺</span>
+                <span>@((Model.TotalAmount * 0.08m).ToString("N2")) ₺</span>
             </div>
             <div class="summary-item total">
                 <span>Genel Toplam:</span>
-                <span id="totalAmount">0.00 ₺</span>
+                <span>@((Model.TotalAmount * 1.08m).ToString("N2")) ₺</span>
             </div>
         </div>
     </div>
 
     <div class="order-actions">
-        <button id="confirmOrderBtn" class="confirm-button">Siparişi Onayla</button>
-        <button id="cancelOrderBtn" class="cancel-button">İptal Et</button>
-    </div>
-
-    <div class="previous-orders" id="previousOrders">
-        <div class="divider">
-            <span>✧</span>
-        </div>
-        <h3>Önceki Siparişler</h3>
-        <div id="previousOrdersList">
-            <!-- Eski siparişler buraya eklenecek -->
-        </div>
-    </div>
-
-    <div class="order-footer">
-        <div class="divider">
-            <span>❦</span>
-        </div>
-        <p>Afiyet Olsun</p>
+        @if (Model.Status == OrderStatus.Completed)
+        {
+            <div class="completed-message">Bu sipariş tamamlanmıştır</div>
+        }
+        else
+        {
+            <button id="completeOrderBtn" class="complete-button" data-order-id="@Model.Id">Siparişi Tamamla</button>
+            <button id="cancelOrderBtn" class="cancel-button" data-order-id="@Model.Id">Siparişi İptal Et</button>
+        }
+        <a href="/Table/Index" class="return-button">Masa Yönetimine Dön</a>
     </div>
 </div>
 
 <style>
-    body {
-        font-family: 'Montserrat', sans-serif;
-        background-color: #f9f6f0;
-        color: #333;
-        line-height: 1.6;
-    }
-
     .order-details-container {
-        max-width: 700px;
-        margin: 20px auto;
-        padding: 25px;
-        background-color: #fff;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border: 1px solid #e5e0d5;
-        position: relative;
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 20px;
     }
-
-    .order-details-container::before {
-        content: '';
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        right: 8px;
-        bottom: 8px;
-        border: 1px solid #e0d8c8;
-        pointer-events: none;
-    }
-
+    
     .order-header {
         text-align: center;
-        margin-bottom: 25px;
-        position: relative;
+        margin-bottom: 30px;
     }
-
+    
     .order-header h1 {
-        font-size: 2.2rem;
-        font-weight: 600;
-        color: #4a3c2e;
-        margin-bottom: 8px;
-        font-family: 'Lora', serif;
-        letter-spacing: 1px;
+        color: #5d4b38;
+        margin-bottom: 10px;
     }
-
-    .order-header h2 {
-        font-size: 1.6rem;
-        font-weight: 400;
-        color: #8c7762;
-        margin-top: 5px;
-        font-family: 'Lora', serif;
-    }
-
+    
     .divider {
-        display: flex;
-        align-items: center;
-        margin: 12px 0;
+        text-align: center;
+        margin: 15px 0;
     }
-
-    .divider::before,
-    .divider::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: linear-gradient(to right, transparent, #d2c4af, transparent);
-    }
-
+    
     .divider span {
-        padding: 0 15px;
-        color: #b09a7b;
-        font-size: 1.2rem;
+        color: #8c7762;
+        font-size: 1.5em;
     }
-
-    .order-content {
-        padding: 15px 10px;
+    
+    .order-status-message {
+        text-align: center;
+        margin: 20px 0;
     }
-
+    
+    .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+    
+    .status-badge.new {
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+    
+    .status-badge.inprogress {
+        background-color: #fff3e0;
+        color: #f57c00;
+    }
+    
+    .status-badge.ready {
+        background-color: #e8f5e9;
+        color: #388e3c;
+    }
+    
     .order-items-table {
         width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        margin-bottom: 20px;
+        border-collapse: collapse;
+        margin-bottom: 30px;
     }
-
-    .order-items-table th {
-        background-color: #f8f4ec;
-        padding: 10px 12px;
-        text-align: left;
-        font-weight: 600;
-        color: #6a563d;
-        border-bottom: 2px solid #e0d8c8;
-    }
-
+    
+    .order-items-table th,
     .order-items-table td {
-        padding: 8px 12px;
-        border-bottom: 1px solid #f1eadd;
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
     }
-
-    .order-items-table tr:hover {
-        background-color: #f9f6f0;
+    
+    .order-items-table th {
+        background-color: #f5f5f5;
+        font-weight: 500;
     }
-
+    
     .order-summary {
-        background-color: #f8f4ec;
-        padding: 15px;
-        border-radius: 5px;
-        margin-top: 15px;
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
     }
-
+    
     .summary-item {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 8px;
-        font-size: 1rem;
+        margin-bottom: 10px;
     }
-
+    
     .summary-item.total {
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid #e0d8c8;
-        font-weight: 600;
-        font-size: 1.2rem;
-        color: #4a3c2e;
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px solid #ddd;
     }
-
+    
     .order-actions {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 20px;
+        margin-top: 30px;
+        text-align: center;
     }
-
-    .confirm-button, .cancel-button {
-        padding: 10px 25px;
+    
+    .complete-button,
+    .cancel-button,
+    .return-button {
+        padding: 10px 20px;
+        margin: 0 10px;
         border: none;
         border-radius: 5px;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 1rem;
-        font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
+        font-weight: 500;
+        transition: background-color 0.3s;
     }
-
-    .confirm-button {
-        background-color: #8c7762;
+    
+    .complete-button {
+        background-color: #4caf50;
         color: white;
     }
-
-    .confirm-button:hover {
-        background-color: #6a563d;
+    
+    .complete-button:hover {
+        background-color: #388e3c;
     }
-
+    
     .cancel-button {
-        background-color: #f1eadd;
-        color: #6a563d;
-        border: 1px solid #d6c6af;
+        background-color: #f44336;
+        color: white;
     }
-
+    
     .cancel-button:hover {
-        background-color: #e0d8c8;
+        background-color: #d32f2f;
     }
-
-    .order-footer {
-        text-align: center;
-        margin-top: 30px;
+    
+    .return-button {
+        background-color: #5d4b38;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
     }
-
-    .order-footer p {
-        margin-top: 8px;
-        font-size: 1.2rem;
-        color: #8c7762;
-        font-family: 'Lora', serif;
-        font-style: italic;
+    
+    .return-button:hover {
+        background-color: #4a3c2d;
+        color: white;
     }
-
-    .order-confirmed-message {
-        background-color: #e8f5e9;
-        color: #2e7d32;
-        text-align: center;
-        padding: 12px;
-        border-radius: 5px;
-        margin: 15px 0;
+    
+    .completed-message {
+        color: #4caf50;
         font-weight: 500;
-        display: none;
-    }
-
-    @@media (max-width: 768px) {
-        .order-details-container {
-            padding: 15px;
-            margin: 15px;
-        }
-
-        .order-header h1 {
-            font-size: 1.8rem;
-        }
-
-        .order-header h2 {
-            font-size: 1.4rem;
-        }
-
-        .order-actions {
-            flex-direction: column;
-        }
-
-        .confirm-button, .cancel-button {
-            width: 100%;
-            margin-bottom: 8px;
-        }
-    }
-
-    /* Özet modu için stiller */
-    .summary-mode .order-items-table thead,
-    .summary-mode .order-items-table tbody {
-        display: none;
-    }
-
-    .summary-mode .order-confirmed-message {
-        display: block;
-    }
-
-    .previous-orders {
-        margin-top: 40px;
-        padding-top: 20px;
-    }
-
-    .previous-orders h3 {
-        font-size: 1.6rem;
-        color: #8c7762;
-        text-align: center;
         margin-bottom: 20px;
-        font-family: 'Lora', serif;
-    }
-
-    .previous-order-item {
-        background-color: #f8f4ec;
-        border-radius: 5px;
-        padding: 15px;
-        margin-bottom: 15px;
-        border-left: 4px solid #8c7762;
-    }
-
-    .previous-order-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 10px;
-        font-weight: 500;
-    }
-
-    .previous-order-items {
-        margin-top: 8px;
-        font-size: 0.9rem;
-    }
-
-    .previous-order-items ul {
-        list-style-type: none;
-        padding-left: 0;
-    }
-
-    .previous-order-items li {
-        padding: 4px 0;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .previous-order-total {
-        margin-top: 8px;
-        text-align: right;
-        font-weight: 600;
-        color: #4a3c2e;
-    }
-
-    /* Ödeme modu için stiller */
-    .payment-mode .order-actions {
-        display: flex !important;
-    }
-    
-    .payment-mode #confirmOrderBtn {
-        display: block !important;
-        background-color: #28a745;
-    }
-    
-    .payment-mode #confirmOrderBtn:hover {
-        background-color: #218838;
     }
 </style>
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // URL'den parametreleri al
-        const urlParams = new URLSearchParams(window.location.search);
-        const orderData = JSON.parse(decodeURIComponent(urlParams.get('orderData')));
+        const completeOrderBtn = document.getElementById('completeOrderBtn');
+        const cancelOrderBtn = document.getElementById('cancelOrderBtn');
         
-        console.log('Gelen sipariş verisi:', orderData);
+        if (completeOrderBtn) {
+            completeOrderBtn.addEventListener('click', function() {
+                if (confirm('Siparişi tamamlamak istediğinize emin misiniz?')) {
+                    const orderId = this.getAttribute('data-order-id');
+                    updateOrderStatus(orderId, 'Completed');
+                }
+            });
+        }
         
-        if (orderData && orderData.tableNumber && orderData.items) {
-            // Masa numarasını göster
-            document.getElementById('tableNumber').textContent = orderData.tableNumber;
-            
-            const orderItemsBody = document.getElementById('orderItemsBody');
-            let subtotal = 0;
-            
-            // Sipariş kalemlerini tabloya ekle
-            orderData.items.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                subtotal += itemTotal;
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.name}</td>
-                    <td>${item.quantity}</td>
-                    <td>${item.price.toFixed(2)} ₺</td>
-                    <td>${itemTotal.toFixed(2)} ₺</td>
-                `;
-                orderItemsBody.appendChild(row);
-            });
-            
-            // Toplam tutarları hesapla ve göster
-            const tax = subtotal * 0.08;
-            const total = subtotal + tax;
-            
-            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + ' ₺';
-            document.getElementById('tax').textContent = tax.toFixed(2) + ' ₺';
-            document.getElementById('totalAmount').textContent = total.toFixed(2) + ' ₺';
-            
-            // Hesap Kapat işlemi için ekranı hazırla
-            if (orderData.checkoutInProgress) {
-                document.querySelector('.order-confirmed-message').textContent = 'Hesap ödeme işlemi başlatıldı.';
-                document.querySelector('.order-confirmed-message').style.backgroundColor = '#fff3cd';
-                document.querySelector('.order-confirmed-message').style.color = '#856404';
-                document.querySelector('.order-confirmed-message').style.display = 'block';
-                
-                document.getElementById('confirmOrderBtn').textContent = 'Ödeme Tamamlandı';
-                document.getElementById('confirmOrderBtn').style.display = 'block';
-                document.getElementById('cancelOrderBtn').textContent = 'Geri Dön';
-                
-                // Özet modunu uygula ama "payment-mode" sınıfı da ekle
-                document.querySelector('.order-details-container').classList.add('summary-mode', 'payment-mode');
-            }
-            
-            // Onay butonuna işlev ekle
-            document.getElementById('confirmOrderBtn').addEventListener('click', function() {
-                // Eğer hesap kapat işlemi ise
-                if (orderData.checkoutInProgress) {
-                    // Masayı temizle ve ana sayfaya dön
-                    localStorage.removeItem('order_table_' + orderData.tableNumber);
-                    alert('Ödeme başarıyla tamamlandı!');
-                    window.location.href = '/Panel/Table';
-                    return;
-                }
-                
-                // Normal sipariş onayı işlemi
-                const orderPayload = {
-                    tableNumber: parseInt(orderData.tableNumber),
-                    total: total,
-                    items: orderData.items.map(item => ({
-                        productId: item.id || 1, // Eğer id yoksa varsayılan olarak 1 kullan
-                        name: item.name,
-                        quantity: item.quantity,
-                        price: item.price
-                    }))
-                };
-                
-                // API'ye sipariş verisini gönder
-                fetch('/api/orders', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(orderPayload)
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    throw new Error('Sipariş kaydedilirken bir hata oluştu');
-                })
-                .then(data => {
-                    console.log('Sipariş başarıyla kaydedildi:', data);
-                    
-                    // Siparişi localStorage'a kaydet
-                    const tableKey = 'order_table_' + orderData.tableNumber;
-                    const newOrder = {
-                        ...orderData,
-                        orderId: data.orderId,
-                        orderNumber: data.orderNumber,
-                        confirmed: true,
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    // Önceki siparişleri al
-                    const savedOrdersStr = localStorage.getItem('table_orders_' + orderData.tableNumber);
-                    let savedOrders = savedOrdersStr ? JSON.parse(savedOrdersStr) : [];
-                    
-                    // Yeni siparişi ekle
-                    savedOrders.push(newOrder);
-                    
-                    // Siparişleri kaydet
-                    localStorage.setItem('table_orders_' + orderData.tableNumber, JSON.stringify(savedOrders));
-                    localStorage.setItem(tableKey, JSON.stringify(newOrder));
-                    
-                    // Sipariş onaylandı mesajını göster ve ekranı özet moduna geçir
-                    document.querySelector('.order-details-container').classList.add('summary-mode');
-                    
-                    // Onay butonunu gizle, iptal butonunu "Geri Dön" olarak değiştir
-                    this.style.display = 'none';
-                    const cancelBtn = document.getElementById('cancelOrderBtn');
-                    cancelBtn.textContent = 'Geri Dön';
-                    
-                    // Önceki siparişleri güncelle
-                    loadPreviousOrders(orderData.tableNumber);
-                })
-                .catch(error => {
-                    console.error('Sipariş kaydedilemedi:', error);
-                    alert('Sipariş kaydedilirken bir hata oluştu: ' + error.message);
-                });
-            });
-            
-            // İptal butonuna işlev ekle
-            document.getElementById('cancelOrderBtn').addEventListener('click', function() {
-                if (this.textContent === 'Geri Dön') {
-                    window.location.href = '/Panel/Table';
-                    return;
-                }
-                
+        if (cancelOrderBtn) {
+            cancelOrderBtn.addEventListener('click', function() {
                 if (confirm('Siparişi iptal etmek istediğinize emin misiniz?')) {
-                    window.location.href = '/Home/Menu';
+                    const orderId = this.getAttribute('data-order-id');
+                    updateOrderStatus(orderId, 'Cancelled');
                 }
             });
-
-            // Eğer sipariş daha önce onaylanmışsa özet modunu göster
-            if (orderData.confirmed && !orderData.checkoutInProgress) {
-                document.querySelector('.order-details-container').classList.add('summary-mode');
-                document.getElementById('confirmOrderBtn').style.display = 'none';
-                document.getElementById('cancelOrderBtn').textContent = 'Geri Dön';
-            }
-            
-            // Önceki siparişleri yükle
-            loadPreviousOrders(orderData.tableNumber);
-        } else {
-            // Sipariş verisi yoksa hata mesajı göster
-            const orderContent = document.querySelector('.order-content');
-            orderContent.innerHTML = '<div class="error-message">Sipariş bilgisi bulunamadı!</div>';
-            
-            // Bilgilendirme mesajı ekle
-            const infoMessage = document.createElement('div');
-            infoMessage.className = 'info-message';
-            infoMessage.innerHTML = `
-                <p>Sipariş detaylarına doğrudan erişemezsiniz. Lütfen aşağıdaki yollardan birini deneyin:</p>
-                <ul>
-                    <li>Masa Yönetimi sayfasından bir masa seçin ve "Siparişleri Görüntüle" butonuna tıklayın.</li>
-                    <li>Masa Yönetimi sayfasından bir masa seçin ve "Hesap Kapat" butonuna tıklayın.</li>
-                    <li>Ana sayfadan "Masa Planı" butonuna tıklayarak masaları görüntüleyin.</li>
-                    <li>Aktif tüm siparişleri görmek için "Aktif Siparişler" sayfasını ziyaret edin.</li>
-                </ul>
-                <div class="action-links">
-                    <a href="/Panel/Table" class="action-link">Masa Yönetimine Git</a>
-                    <a href="/Order/ActiveOrders" class="action-link">Aktif Siparişler</a>
-                    <a href="/Panel" class="action-link">Ana Sayfaya Dön</a>
-                </div>
-            `;
-            
-            document.querySelector('.order-details-container').appendChild(infoMessage);
-            document.querySelector('.order-actions').style.display = 'none';
-            
-            // Stil ekle
-            const style = document.createElement('style');
-            style.textContent = `
-                .error-message {
-                    padding: 20px;
-                    text-align: center;
-                    color: #c62828;
-                    font-size: 1.3rem;
-                    background-color: #ffebee;
-                    border-radius: 5px;
-                    margin: 20px 0;
+        }
+        
+        function updateOrderStatus(orderId, status) {
+            fetch(`/api/orders/${orderId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: status })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    throw new Error('Sipariş durumu güncellenirken bir hata oluştu');
                 }
-                
-                .info-message {
-                    padding: 20px;
-                    background-color: #e3f2fd;
-                    border-radius: 5px;
-                    margin: 20px 0;
-                    color: #0d47a1;
-                }
-                
-                .info-message p {
-                    margin-bottom: 15px;
-                }
-                
-                .info-message ul {
-                    padding-left: 20px;
-                    margin-bottom: 20px;
-                }
-                
-                .info-message li {
-                    margin-bottom: 8px;
-                }
-                
-                .action-links {
-                    display: flex;
-                    justify-content: center;
-                    gap: 15px;
-                    margin-top: 20px;
-                }
-                
-                .action-link {
-                    display: inline-block;
-                    padding: 10px 20px;
-                    background-color: #1976d2;
-                    color: white;
-                    text-decoration: none;
-                    border-radius: 5px;
-                    font-weight: 500;
-                    transition: background-color 0.3s;
-                }
-                
-                .action-link:hover {
-                    background-color: #1565c0;
-                }
-            `;
-            document.head.appendChild(style);
+            })
+            .catch(error => {
+                alert(error.message);
+            });
         }
     });
-    
-    // Önceki siparişleri yükleyen fonksiyon
-    function loadPreviousOrders(tableNumber) {
-        const savedOrdersStr = localStorage.getItem('table_orders_' + tableNumber);
-        if (!savedOrdersStr) return;
-        
-        const savedOrders = JSON.parse(savedOrdersStr);
-        if (savedOrders.length === 0) return;
-        
-        const previousOrdersList = document.getElementById('previousOrdersList');
-        previousOrdersList.innerHTML = '';
-        
-        // En yeni siparişler üstte olacak şekilde sırala
-        const sortedOrders = [...savedOrders].sort((a, b) => {
-            const dateA = a.timestamp ? new Date(a.timestamp) : new Date(0);
-            const dateB = b.timestamp ? new Date(b.timestamp) : new Date(0);
-            return dateB - dateA;
-        });
-        
-        // Eğer hesap kapatma işlemi varsa başlığı değiştir
-        const urlParams = new URLSearchParams(window.location.search);
-        const orderData = JSON.parse(decodeURIComponent(urlParams.get('orderData')));
-        
-        if (orderData && orderData.checkoutInProgress) {
-            document.querySelector('#previousOrders h3').textContent = 'Masa Sipariş Geçmişi';
-            
-            // Önceki siparişlerin başlığını değiştir
-            const previousOrdersHeader = document.createElement('div');
-            previousOrdersHeader.className = 'previous-orders-summary';
-            previousOrdersHeader.innerHTML = '<p>Aşağıdaki tüm siparişler hesap kapatma işlemi kapsamındadır.</p>';
-            previousOrdersList.appendChild(previousOrdersHeader);
-            
-            // Stilleri ekle
-            const style = document.createElement('style');
-            style.textContent = `
-                .previous-orders-summary {
-                    background-color: #fff3cd;
-                    padding: 10px 15px;
-                    border-radius: 5px;
-                    margin-bottom: 20px;
-                    color: #856404;
-                    font-weight: 500;
-                    text-align: center;
-                }
-                
-                .total-checkout-summary {
-                    background-color: #f8f4ec;
-                    padding: 20px;
-                    border-radius: 5px;
-                    margin-top: 30px;
-                    border: 1px solid #e0d8c8;
-                }
-                
-                .checkout-total-amount {
-                    font-size: 1.8rem;
-                    font-weight: 600;
-                    color: #4a3c2e;
-                    text-align: right;
-                    margin-top: 10px;
-                }
-                
-                .checkout-total-label {
-                    font-size: 1.2rem;
-                    color: #8c7762;
-                    text-align: right;
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Tüm siparişlerin toplam tutarını hesapla
-            calculateTotalCheckoutAmount(sortedOrders);
-        }
-        
-        sortedOrders.forEach((order, index) => {
-            if (index === 0 && !order.timestamp) {
-                // İlk sipariş ve zaman damgası yoksa, şimdi ekle
-                order.timestamp = new Date().toISOString();
-            }
-            
-            const orderDate = order.timestamp ? new Date(order.timestamp) : new Date();
-            const formattedDate = orderDate.toLocaleString('tr-TR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            
-            let totalAmount = 0;
-            order.items.forEach(item => {
-                totalAmount += item.price * item.quantity;
-            });
-            
-            const orderDiv = document.createElement('div');
-            orderDiv.className = 'previous-order-item';
-            
-            let orderItemsHtml = '<ul>';
-            order.items.forEach(item => {
-                orderItemsHtml += `<li><span>${item.name} x ${item.quantity}</span> <span>${(item.price * item.quantity).toFixed(2)} ₺</span></li>`;
-            });
-            orderItemsHtml += '</ul>';
-            
-            orderDiv.innerHTML = `
-                <div class="previous-order-header">
-                    <span>Sipariş: ${order.orderNumber || 'Onaylanmamış'}</span>
-                    <span>${formattedDate}</span>
-                </div>
-                <div class="previous-order-items">
-                    ${orderItemsHtml}
-                </div>
-                <div class="previous-order-total">
-                    Toplam: ${totalAmount.toFixed(2)} ₺
-                </div>
-            `;
-            
-            previousOrdersList.appendChild(orderDiv);
-        });
-        
-        // Tüm siparişleri güncellenmiş timestamp'lerle kaydedelim
-        localStorage.setItem('table_orders_' + tableNumber, JSON.stringify(sortedOrders));
-    }
-    
-    // Tüm siparişlerin toplam tutarını hesaplama fonksiyonu
-    function calculateTotalCheckoutAmount(orders) {
-        let totalSubtotal = 0;
-        
-        // Tüm siparişlerdeki ürünlerin toplam tutarını hesapla
-        orders.forEach(order => {
-            order.items.forEach(item => {
-                totalSubtotal += item.price * item.quantity;
-            });
-        });
-        
-        // KDV ve genel toplam hesapla
-        const totalTax = totalSubtotal * 0.08;
-        const grandTotal = totalSubtotal + totalTax;
-        
-        // Toplam tutarı göstermek için bir div oluştur
-        const totalSummaryDiv = document.createElement('div');
-        totalSummaryDiv.className = 'total-checkout-summary';
-        totalSummaryDiv.innerHTML = `
-            <div class="checkout-total-label">Toplam Ara Tutar:</div>
-            <div class="checkout-total-amount">${totalSubtotal.toFixed(2)} ₺</div>
-            <div class="checkout-total-label">Toplam KDV (%8):</div>
-            <div class="checkout-total-amount">${totalTax.toFixed(2)} ₺</div>
-            <div class="checkout-total-label">Hesap Toplamı:</div>
-            <div class="checkout-total-amount">${grandTotal.toFixed(2)} ₺</div>
-        `;
-        
-        // Toplam tutarı ekle
-        document.getElementById('previousOrdersList').appendChild(totalSummaryDiv);
-        
-        // Ödeme onayındaki tutarı güncelle
-        document.getElementById('subtotal').textContent = totalSubtotal.toFixed(2) + ' ₺';
-        document.getElementById('tax').textContent = totalTax.toFixed(2) + ' ₺';
-        document.getElementById('totalAmount').textContent = grandTotal.toFixed(2) + ' ₺';
-    }
 </script>
