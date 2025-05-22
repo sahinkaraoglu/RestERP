@@ -32,8 +32,6 @@ The project has a layered architecture in line with Clean Architecture principle
 | **RestERP.Application** | Contains application services, validation rules, and business logic |
 | **RestERP.Infrastructure** | Contains database connection, repository implementations, and external services |
 | **RestERP.Web** | Contains user interface, controllers, and views |
-| RestERP.ApiGateway | Contains API Gateway implementation using Ocelot for routing to microservices |
-| RestERP.MenuService | Microservice for food and category management |
 
 ## 🛠️ Technologies
 
@@ -44,8 +42,6 @@ The project has a layered architecture in line with Clean Architecture principle
 - **SQL Server**: Database
 - **Repository Pattern & Unit of Work**: Data access layer pattern
 - **In-Memory Caching**: Optimizes performance by caching frequently accessed data
-- **Ocelot**: API Gateway library for request routing and management
-- **Microservices**: Distributed architecture for better scalability and maintenance
 
 ### Development Tools
 - **Visual Studio 2022**: Primary IDE
@@ -96,13 +92,11 @@ All entities are derived from the `BaseEntity` class and contain the following p
 - `UpdatedById` (long?): Updater user
 - `UpdatedDate` (DateTime?): Update date
 
-## 👥 Employee Roles
+## 👥 Person Roles
 
 The system defines the following employee roles:
-- Manager
-- Chef
-- Waiter
-- Cashier
+- Customer
+- Person
 
 ## 📊 Order Statuses
 
@@ -119,14 +113,6 @@ The project uses Generic Repository and Unit of Work pattern, providing:
 - Prevention of code duplication
 - Increased testability
 - Simplified transaction management
-
-##  🌐 API Gateway
-- The API Gateway (using Ocelot) provides:
-- Centralized routing to microservices
-- Single entry point for clients
-- Configured routes in ocelot.json:
-- - /menu-service/foods → Routes to MenuService's food endpoints
-- - /menu-service/categories → Routes to MenuService's category endpoints
 
 ## 🚀 Performance Optimizations
 
