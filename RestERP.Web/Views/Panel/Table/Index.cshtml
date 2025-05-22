@@ -33,12 +33,23 @@
 
 <div id="tableModal" class="table-modal">
     <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <h2>MASA <span id="tableNumber"></span></h2>
+        <div class="modal-header">
+            <h2>MASA <span id="tableNumber"></span></h2>
+            <span class="close-btn">&times;</span>
+        </div>
         <div class="table-actions">
-            <button class="action-btn order-btn">Sipariş Al</button>
-            <button class="action-btn checkout-btn">Hesap Kapat</button>
-            <button class="action-btn view-btn">Siparişleri Görüntüle</button>
+            <button class="action-btn order-btn">
+                <i class="bi bi-plus-circle"></i>
+                <span>Sipariş Al</span>
+            </button>
+            <button class="action-btn checkout-btn">
+                <i class="bi bi-cash"></i>
+                <span>Hesap Kapat</span>
+            </button>
+            <button class="action-btn view-btn">
+                <i class="bi bi-list-ul"></i>
+                <span>Siparişleri Görüntüle</span>
+            </button>
         </div>
     </div>
 </div>
@@ -92,6 +103,8 @@
         justify-content: center;
         position: relative;
         transition: all 0.3s ease;
+        border-radius: 8px;
+        background-color: white;
     }
     
     .table-box.occupied {
@@ -129,10 +142,6 @@
         background-color: #FF5722;
     }
     
-    .table-status.reserved {
-        background-color: #FFC107;
-    }
-    
     /* Modal Styles */
     .table-modal {
         display: none;
@@ -143,41 +152,69 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.3s ease;
     }
     
     .modal-content {
         background-color: #fff;
-        margin: 15% auto;
+        margin: 10% auto;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        transform: translateY(20px);
+        animation: slideIn 0.3s ease forwards;
+    }
+    
+    .modal-header {
         padding: 20px;
-        border-radius: 8px;
-        width: 80%;
-        max-width: 500px;
-        position: relative;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .modal-header h2 {
+        margin: 0;
+        color: #5d4b38;
+        font-size: 1.5rem;
     }
     
     .close-btn {
-        position: absolute;
-        right: 20px;
-        top: 10px;
-        font-size: 24px;
+        font-size: 28px;
+        color: #aaa;
         cursor: pointer;
+        transition: color 0.3s ease;
+    }
+    
+    .close-btn:hover {
         color: #5d4b38;
     }
     
     .table-actions {
-        margin-top: 20px;
+        padding: 20px;
         display: flex;
+        flex-direction: column;
         gap: 10px;
-        justify-content: center;
     }
     
     .action-btn {
-        padding: 10px 20px;
+        width: 100%;
+        padding: 15px;
         border: none;
-        border-radius: 4px;
+        border-radius: 8px;
         cursor: pointer;
+        font-size: 1rem;
         font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
         transition: all 0.3s ease;
+    }
+    
+    .action-btn i {
+        font-size: 1.2rem;
     }
     
     .order-btn {
@@ -185,9 +222,17 @@
         color: white;
     }
     
+    .order-btn:hover {
+        background-color: #43A047;
+    }
+    
     .checkout-btn {
         background-color: #FF5722;
         color: white;
+    }
+    
+    .checkout-btn:hover {
+        background-color: #F4511E;
     }
     
     .view-btn {
@@ -195,15 +240,46 @@
         color: white;
     }
     
-    .action-btn:hover {
-        opacity: 0.9;
+    .view-btn:hover {
+        background-color: #1E88E5;
     }
     
     .action-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
+    
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @@keyframes slideIn {
+        from { 
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive Styles */
+    @@media (max-width: 768px) {
+        .modal-content {
+            margin: 20% auto;
+            width: 95%;
+        }
+        
+        .action-btn {
+            padding: 12px;
+            font-size: 0.9rem;
+        }
+    }
 </style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
