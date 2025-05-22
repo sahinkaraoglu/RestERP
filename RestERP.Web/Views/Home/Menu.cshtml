@@ -91,7 +91,6 @@
         <div class="customer-info-panel">
             <div class="panel-tabs">
                 <button class="tab-btn active" data-tab="dine-in">Restoranda</button>
-                <button class="tab-btn" data-tab="takeaway">Paket Servis</button>
                 <button class="tab-btn" data-tab="delivery">Eve Teslimat</button>
             </div>
             
@@ -100,21 +99,6 @@
                     <div class="form-group">
                         <label for="tableNumber">Masa Numarası:</label>
                         <input type="number" id="tableNumber" min="1" placeholder="Masa No">
-                    </div>
-                </div>
-                
-                <div class="tab-pane" id="takeaway">
-                    <div class="form-group">
-                        <label for="customerName">Ad Soyad:</label>
-                        <input type="text" id="customerName" placeholder="Ad Soyad">
-                    </div>
-                    <div class="form-group">
-                        <label for="customerPhone">Telefon:</label>
-                        <input type="tel" id="customerPhone" placeholder="Telefon">
-                    </div>
-                    <div class="form-group">
-                        <label for="pickupTime">Teslim Alma Zamanı:</label>
-                        <input type="time" id="pickupTime">
                     </div>
                 </div>
                 
@@ -240,90 +224,78 @@
         }
     }
 
-            // Sepet işlemleri için yardımcı fonksiyonlar
-
-    // Sayfa yüklendiğinde
-    document.addEventListener('DOMContentLoaded', function() {
-        // Tüm kategorileri kapalı hale getir
-        const categories = document.querySelectorAll('.subcategory-container');
-        categories.forEach(category => {
-            category.style.maxHeight = null;
-        });
+    function getCartItems() {
+        const items = [];
+        const categories = document.querySelectorAll('.category');
         
-        // Tab geçişleri
-        const tabButtons = document.querySelectorAll('.tab-btn');
-        tabButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Aktif tab butonunu güncelle
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
+        categories.forEach(category => {
+            const rows = category.querySelectorAll('.subcategory-table tr');
+            
+            rows.forEach(row => {
+                const name = row.querySelector('.food-title').textContent;
+                const quantity = parseInt(row.querySelector('.quantity-value').textContent);
+                const price = parseFloat(row.querySelector('.subcategory-price').textContent);
                 
-                // Aktif içeriği güncelle
-                const tabId = this.getAttribute('data-tab');
-                const tabPanes = document.querySelectorAll('.tab-pane');
-                tabPanes.forEach(pane => pane.classList.remove('active'));
-                document.getElementById(tabId).classList.add('active');
+                if (quantity > 0) {
+                    items.push({
+                        name: name,
+                        quantity: quantity,
+                        price: price,
+                        total: quantity * price
+                    });
+                }
             });
         });
         
-        // Modallar
-        // Giriş Yap butonuna tıklandığında Login/Index sayfasına yönlendir
-        document.getElementById('loginBtn')?.addEventListener('click', function() {
-            window.location.href = '/Login/Index';
-        });
+        return items;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab değiştirme işlevselliği
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
         
-        // Giriş Yap modalındaki Üye Ol linkine tıklandığında SignUp sayfasına yönlendir
-        document.getElementById('showRegisterLink')?.addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = '/Login/SignUp';
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Aktif tab'ı değiştir
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // İlgili içeriği göster
+                const tabId = button.getAttribute('data-tab');
+                tabPanes.forEach(pane => {
+                    if (pane.id === tabId) {
+                        pane.classList.add('active');
+                    } else {
+                        pane.classList.remove('active');
+                    }
+                });
+            });
         });
-        
-        // Şifremi Unuttum linkine tıklandığında 
-        document.getElementById('forgotPasswordLink')?.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Şimdilik bir işlem yapmıyoruz ama ileride şifre sıfırlama sayfasına yönlendirilebilir
-            alert('Şifre sıfırlama özelliği yakında eklenecektir.');
-        });
-        
-        // Diğer işlemler burada devam eder
-        // Sipariş Ver butonuna tıklama işlevi
+
+        // Sipariş verme işlemi
         document.getElementById('orderButton').addEventListener('click', function() {
+            const cartItems = getCartItems();
+            if (cartItems.length === 0) {
+                alert('Lütfen sepete ürün ekleyiniz!');
+                return;
+            }
+
             const activeTabId = document.querySelector('.tab-btn.active').getAttribute('data-tab');
-            
             let customerInfo = {};
             let isValid = true;
-            
-            // Seçilen sekmeye göre bilgileri kontrol et
+
             if (activeTabId === 'dine-in') {
+                // Masa numarası kontrolü
                 const tableNumber = document.getElementById('tableNumber').value;
-                
-                if (!tableNumber || tableNumber.trim() === '') {
-                    alert('Lütfen masa numarası giriniz!');
+                if (!tableNumber || tableNumber < 1) {
+                    alert('Lütfen geçerli bir masa numarası giriniz!');
                     isValid = false;
                 } else {
                     customerInfo.type = 'dine-in';
                     customerInfo.tableNumber = tableNumber;
                 }
-            } 
-            else if (activeTabId === 'takeaway') {
-                const name = document.getElementById('customerName').value;
-                const phone = document.getElementById('customerPhone').value;
-                const pickupTime = document.getElementById('pickupTime').value;
-                
-                if (!name || name.trim() === '') {
-                    alert('Lütfen adınızı giriniz!');
-                    isValid = false;
-                } else if (!phone || phone.trim() === '') {
-                    alert('Lütfen telefon numaranızı giriniz!');
-                    isValid = false;
-                } else {
-                    customerInfo.type = 'takeaway';
-                    customerInfo.name = name;
-                    customerInfo.phone = phone;
-                    customerInfo.pickupTime = pickupTime;
-                }
-            } 
-            else if (activeTabId === 'delivery') {
+            } else if (activeTabId === 'delivery') {
                 const name = document.getElementById('deliveryName').value;
                 const phone = document.getElementById('deliveryPhone').value;
                 const address = document.getElementById('deliveryAddress').value;
@@ -346,50 +318,20 @@
             }
             
             if (!isValid) return;
-            
-            // Sipariş verilerini topla
-            const orderItems = [];
-            const categories = document.querySelectorAll('.category');
-            
-            categories.forEach(category => {
-                const categoryName = category.querySelector('.category-header h3').textContent;
-                const items = category.querySelectorAll('.subcategory-table tr');
-                
-                items.forEach(item => {
-                    const itemName = item.querySelector('.subcategory-name span').textContent;
-                    const quantityElement = item.querySelector('.quantity-value');
-                    const price = parseFloat(item.querySelector('.subcategory-price').textContent);
-                    const quantity = parseInt(quantityElement.textContent);
-                    
-                    if (quantity > 0) {
-                        orderItems.push({
-                            category: categoryName,
-                            name: itemName,
-                            price: price,
-                            quantity: quantity
-                        });
-                    }
-                });
-            });
-            
-            // Sipariş verileri kontrolü
-            if (orderItems.length === 0) {
-                alert('Lütfen en az bir ürün seçiniz!');
-                return;
-            }
-            
-            // Sipariş notu
+
+            // Sipariş notunu al
             const orderNote = document.getElementById('orderNote').value;
-            
+            if (orderNote && orderNote.trim() !== '') {
+                customerInfo.note = orderNote;
+            }
+
             // Sipariş verilerini hazırla
             const orderData = {
-                customerInfo: customerInfo,
-                items: orderItems,
-                orderDate: new Date().toISOString(),
-                note: orderNote
+                items: cartItems,
+                customerInfo: customerInfo
             };
-            
-            // Order/Index sayfasına yönlendir
+
+            // Sipariş verilerini JSON'a çevir ve URL'e ekle
             const orderDataParam = encodeURIComponent(JSON.stringify(orderData));
             window.location.href = `/Order/Index?orderData=${orderDataParam}`;
         });
@@ -397,8 +339,6 @@
         // İlk yüklemede sepeti güncelle
         updateCart();
     });
-    
-            // Sayfa işlemleri burada sona erer
 </script>
 
 <style>
