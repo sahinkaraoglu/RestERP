@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using RestERP.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace RestERP.Domain.Entities
@@ -14,5 +15,7 @@ namespace RestERP.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        
+        public EmployeeRole RoleType { get; set; } = EmployeeRole.Customer;
     }
 } 

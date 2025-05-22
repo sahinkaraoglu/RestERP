@@ -72,6 +72,7 @@ builder.Services.AddTransient<IFoodService, FoodService>();
 builder.Services.AddTransient<IFoodCategoryService, FoodCategoryService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IEmployeeService, EmployeeService>();
+builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<FoodCacheService>();
 
 var app = builder.Build();

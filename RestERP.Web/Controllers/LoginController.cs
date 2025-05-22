@@ -146,7 +146,7 @@ namespace RestERP.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUp(string username, string email, string password, string confirmPassword)
+        public async Task<IActionResult> SignUp(string username, string email, string firstName, string lastName, string password, string confirmPassword)
         {
             try
             {
@@ -160,6 +160,8 @@ namespace RestERP.Web.Controllers
                 {
                     UserName = username,
                     Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
                     IsActive = true,
                     CreatedDate = DateTime.Now
                 };

@@ -11,7 +11,7 @@ namespace RestERP.Domain.Entities
         public string Name { get; set; } = string.Empty;
         public string? Phone { get; set; }
         public string? Email { get; set; }
-        public EmployeeRole Role { get; set; } = EmployeeRole.Waiter;
+        public EmployeeRole Role { get; set; } = EmployeeRole.Customer;
         public bool IsActive { get; set; } = true;
     }
 } 

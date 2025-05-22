@@ -13,17 +13,20 @@ public class PanelController : Controller
     private readonly IFoodService _foodService;
     private readonly ITableService _tableService;
     private readonly IEmployeeService _employeeService;
+    private readonly IUserService _userService;
 
     public PanelController(
         ILogger<PanelController> logger, 
         IFoodService foodService, 
         ITableService tableService,
-        IEmployeeService employeeService)
+        IEmployeeService employeeService,
+        IUserService userService)
     {
         _logger = logger;
         _foodService = foodService;
         _tableService = tableService;
         _employeeService = employeeService;
+        _userService = userService;
     }
 
     public async Task<IActionResult> Index()
@@ -291,6 +294,76 @@ public class PanelController : Controller
     public IActionResult Panel()
     {
         return View();
+    }
+
+    public async Task<IActionResult> UserUpdate(string id)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                TempData["ErrorMessage"] = "Geçersiz kullanıcı ID'si.";
+                return RedirectToAction("Index", "Employee");
+            }
+
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
+                return RedirectToAction("Index", "Employee");
+            }
+            
+            return View("~/Views/Panel/User/UserUpdate.cshtml", user);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Kullanıcı güncelleme sayfası açılırken hata oluştu. Id: {Id}", id);
+            TempData["ErrorMessage"] = "Kullanıcı güncelleme sayfası açılırken bir hata oluştu: " + ex.Message;
+            return RedirectToAction("Index", "Employee");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UserUpdate(string id, ApplicationUser model)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                TempData["ErrorMessage"] = "Geçersiz kullanıcı ID'si.";
+                return RedirectToAction("Index", "Employee");
+            }
+
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
+                return RedirectToAction("Index", "Employee");
+            }
+            
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Email = model.Email;
+            user.PhoneNumber = model.PhoneNumber;
+            user.IsActive = model.IsActive;
+            user.RoleType = model.RoleType;
+            
+            var result = await _userService.UpdateUserAsync(user);
+            if (!result)
+            {
+                TempData["ErrorMessage"] = "Kullanıcı güncellenirken bir hata oluştu.";
+                return View("~/Views/Panel/User/UserUpdate.cshtml", model);
+            }
+            
+            TempData["SuccessMessage"] = "Kullanıcı başarıyla güncellendi.";
+            return RedirectToAction("Index", "Employee");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Kullanıcı güncellenirken hata oluştu. Id: {Id}", id);
+            TempData["ErrorMessage"] = "Kullanıcı güncellenirken bir hata oluştu: " + ex.Message;
+            return View("~/Views/Panel/User/UserUpdate.cshtml", model);
+        }
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

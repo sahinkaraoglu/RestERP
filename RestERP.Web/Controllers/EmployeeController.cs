@@ -10,11 +10,16 @@ namespace RestERP.Web.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IUserService _userService;
         private readonly ILogger<EmployeeController> _logger;
 
-        public EmployeeController(IEmployeeService employeeService, ILogger<EmployeeController> logger)
+        public EmployeeController(
+            IEmployeeService employeeService, 
+            IUserService userService,
+            ILogger<EmployeeController> logger)
         {
             _employeeService = employeeService;
+            _userService = userService;
             _logger = logger;
         }
 
@@ -23,6 +28,10 @@ namespace RestERP.Web.Controllers
             try
             {
                 var employees = await _employeeService.GetAllEmployeesAsync();
+                var users = await _userService.GetAllUsersAsync();
+                
+                ViewBag.Users = users; // Kullanıcı kayıtlarını ViewBag ile gönderiyoruz
+                
                 return View("~/Views/Panel/Employee/Index.cshtml", employees);
             }
             catch (Exception ex)
