@@ -4,6 +4,7 @@ using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Models;
 using RestERP.Application.Services.Interfaces;
 using RestERP.Domain.Entities;
+using RestERP.Domain.Enums;
 
 namespace RestERP.Web.Controllers;
 
@@ -13,51 +14,73 @@ public class PanelController : Controller
     private readonly IFoodService _foodService;
     private readonly ITableService _tableService;
     private readonly IUserService _userService;
+    private readonly IOrderService _orderService;
 
     public PanelController(
         ILogger<PanelController> logger, 
         IFoodService foodService, 
         ITableService tableService,
-        IUserService userService)
+        IUserService userService,
+        IOrderService orderService)
     {
         _logger = logger;
         _foodService = foodService;
         _tableService = tableService;
         _userService = userService;
+        _orderService = orderService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var menuItemCount = (await _foodService.GetAllFoodsAsync()).Count();
-        var foodCategories = FoodCategorySeedData.GetFoodCategories();
-        var categoryCount = foodCategories.Count();
-        
-        var tables = await _tableService.GetAllTablesAsync();
-        var totalTables = tables.Count();
-        
-        var occupiedTables = tables.Count(t => t.IsOccupied == true);
-        
-        int tableOccupancyPercentage = 0;
-        if (totalTables > 0)
+        try
         {
-            tableOccupancyPercentage = (int)Math.Round((double)occupiedTables / totalTables * 100);
+            var menuItemCount = (await _foodService.GetAllFoodsAsync()).Count();
+            var foodCategories = FoodCategorySeedData.GetFoodCategories();
+            var categoryCount = foodCategories.Count();
+            
+            // Tüm masaları al
+            var tables = await _tableService.GetAllTablesAsync();
+            var totalTables = tables.Count();
+            
+            // Tüm aktif siparişleri al
+            var activeOrders = await _orderService.GetActiveOrdersAsync();
+            
+            // Aktif siparişi olan benzersiz masa sayısını hesapla
+            var occupiedTables = activeOrders
+                .Select(o => o.TableId)
+                .Distinct()
+                .Count();
+            
+            int tableOccupancyPercentage = 0;
+            if (totalTables > 0)
+            {
+                tableOccupancyPercentage = (int)Math.Round((double)occupiedTables / totalTables * 100);
+            }
+            
+            // Kullanıcıları çekerek çalışan sayısını hesaplayalım
+            var users = await _userService.GetAllUsersAsync();
+            var totalEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Customer);
+            var activeEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Employee && u.IsActive);
+            
+            var model = new 
+            {
+                MenuItemCount = menuItemCount,
+                CategoryCount = categoryCount,
+                TotalTables = totalTables,
+                TableOccupancyPercentage = tableOccupancyPercentage,
+                TotalEmployees = totalEmployees,
+                ActiveEmployees = activeEmployees,
+                OccupiedTables = occupiedTables
+            };
+            
+            return View(model);
         }
-        
-        // Kullanıcıları çekerek çalışan sayısını hesaplayalım
-        var users = await _userService.GetAllUsersAsync();
-        var totalEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Customer);
-        var activeEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Employee && u.IsActive);
-        
-        var model = new 
+        catch (Exception ex)
         {
-            MenuItemCount = menuItemCount,
-            CategoryCount = categoryCount,
-            TotalTables = totalTables,
-            TableOccupancyPercentage = tableOccupancyPercentage,
-            TotalEmployees = totalEmployees,
-            ActiveEmployees = activeEmployees
-        };
-        return View(model);
+            _logger.LogError(ex, "Panel sayfası yüklenirken hata oluştu");
+            TempData["ErrorMessage"] = "Panel sayfası yüklenirken bir hata oluştu: " + ex.Message;
+            return View("Error");
+        }
     }
 
     public async Task<IActionResult> Menu()

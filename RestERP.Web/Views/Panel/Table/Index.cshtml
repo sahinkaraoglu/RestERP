@@ -1,3 +1,4 @@
+@model IEnumerable<RestERP.Domain.Entities.Table>
 @{
     ViewData["Title"] = "Masa Yönetimi";
 }
@@ -9,110 +10,24 @@
     </div>
     
     <div class="tables-grid">
-        <div class="table-item" onclick="handleTableClick(1)">
-            <div class="table-box">
-                <h2>MASA 1</h2>
-                <div class="table-status available"></div>
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var table in Model)
+            {
+                <div class="table-item" onclick="handleTableClick(@table.Id)" id="table-@table.Id">
+                    <div class="table-box">
+                        <h2>MASA @table.Id</h2>
+                        <div class="table-status"></div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="no-tables-message">
+                <p>Henüz hiç masa eklenmemiş.</p>
             </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(2)">
-            <div class="table-box">
-                <h2>MASA 2</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(3)">
-            <div class="table-box">
-                <h2>MASA 3</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(4)">
-            <div class="table-box">
-                <h2>MASA 4</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(5)">
-            <div class="table-box">
-                <h2>MASA 5</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(6)">
-            <div class="table-box">
-                <h2>MASA 6</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(7)">
-            <div class="table-box">
-                <h2>MASA 7</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(8)">
-            <div class="table-box">
-                <h2>MASA 8</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(9)">
-            <div class="table-box">
-                <h2>MASA 9</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(10)">
-            <div class="table-box">
-                <h2>MASA 10</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(11)">
-            <div class="table-box">
-                <h2>MASA 11</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(12)">
-            <div class="table-box">
-                <h2>MASA 12</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(13)">
-            <div class="table-box">
-                <h2>MASA 13</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(14)">
-            <div class="table-box">
-                <h2>MASA 14</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
-        
-        <div class="table-item" onclick="handleTableClick(15)">
-            <div class="table-box">
-                <h2>MASA 15</h2>
-                <div class="table-status available"></div>
-            </div>
-        </div>
+        }
     </div>
 </div>
 
@@ -176,6 +91,12 @@
         align-items: center;
         justify-content: center;
         position: relative;
+        transition: all 0.3s ease;
+    }
+    
+    .table-box.occupied {
+        background-color: rgba(255, 87, 34, 0.1);
+        border-color: #FF5722;
     }
     
     .table-box h2 {
@@ -183,6 +104,11 @@
         color: #5d4b38;
         margin: 0;
         text-align: center;
+        transition: color 0.3s ease;
+    }
+    
+    .table-box.occupied h2 {
+        color: #FF5722;
     }
     
     .table-status {
@@ -192,6 +118,7 @@
         position: absolute;
         bottom: 10px;
         right: 10px;
+        transition: background-color 0.3s ease;
     }
     
     .table-status.available {
@@ -215,86 +142,66 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.6);
+        background-color: rgba(0, 0, 0, 0.5);
     }
     
     .modal-content {
         background-color: #fff;
-        margin: 10% auto;
-        padding: 30px;
-        width: 400px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        position: relative;
+        margin: 15% auto;
+        padding: 20px;
         border-radius: 8px;
+        width: 80%;
+        max-width: 500px;
+        position: relative;
     }
     
     .close-btn {
         position: absolute;
         right: 20px;
-        top: 15px;
-        font-size: 1.8rem;
+        top: 10px;
+        font-size: 24px;
         cursor: pointer;
-        color: #8c7762;
+        color: #5d4b38;
     }
     
     .table-actions {
-        margin-top: 25px;
+        margin-top: 20px;
         display: flex;
-        flex-direction: column;
         gap: 10px;
+        justify-content: center;
     }
     
     .action-btn {
-        padding: 12px;
+        padding: 10px 20px;
         border: none;
-        border-radius: 5px;
+        border-radius: 4px;
         cursor: pointer;
         font-weight: 500;
-        transition: background-color 0.3s ease;
+        transition: all 0.3s ease;
     }
     
     .order-btn {
-        background-color: #5d4b38;
+        background-color: #4CAF50;
         color: white;
-    }
-    
-    .order-btn:hover {
-        background-color: #4a3c2e;
     }
     
     .checkout-btn {
-        background-color: #b09a7b;
+        background-color: #FF5722;
         color: white;
     }
     
-    .checkout-btn:hover {
-        background-color: #9c8769;
-    }
-    
     .view-btn {
-        background-color: #f1eadd;
-        color: #5d4b38;
-        border: 1px solid #d6c6af;
+        background-color: #2196F3;
+        color: white;
     }
     
-    .view-btn:hover {
-        background-color: #e0d8c8;
+    .action-btn:hover {
+        opacity: 0.9;
     }
     
-    /* Responsive */
-    @@media (max-width: 768px) {
-        .tables-grid {
-            gap: 15px;
-        }
-        
-        .table-item {
-            width: calc(50% - 15px);
-        }
-        
-        .modal-content {
-            width: 90%;
-            margin: 20% auto;
-        }
+    .action-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 </style>
 
@@ -305,6 +212,45 @@
         const closeBtn = document.querySelector('.close-btn');
         const viewOrderBtn = document.querySelector('.view-btn');
         const checkoutBtn = document.querySelector('.checkout-btn');
+        const orderBtn = document.querySelector('.order-btn');
+        
+        // Sayfa yüklendiğinde tüm masaların durumunu kontrol et
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var table in Model)
+            {
+                <text>
+                checkTableStatus(@table.Id);
+                </text>
+            }
+        }
+        
+        // Masa durumunu kontrol eden fonksiyon
+        function checkTableStatus(tableId) {
+            fetch(`/api/orders/table/${tableId}`)
+                .then(response => response.json())
+                .then(orders => {
+                    const hasActiveOrder = orders.some(order => 
+                        order.status !== 'Completed' && order.status !== 'Cancelled'
+                    );
+                    
+                    const tableBox = document.querySelector(`#table-${tableId} .table-box`);
+                    const tableStatus = document.querySelector(`#table-${tableId} .table-status`);
+                    
+                    if (hasActiveOrder) {
+                        tableBox.classList.add('occupied');
+                        tableStatus.classList.remove('available');
+                        tableStatus.classList.add('occupied');
+                    } else {
+                        tableBox.classList.remove('occupied');
+                        tableStatus.classList.remove('occupied');
+                        tableStatus.classList.add('available');
+                    }
+                })
+                .catch(error => {
+                    console.error('Masa durumu kontrol edilirken hata:', error);
+                });
+        }
         
         window.handleTableClick = function(number) {
             tableNumber.textContent = number;
@@ -323,16 +269,30 @@
                     viewOrderBtn.style.opacity = hasActiveOrder ? '1' : '0.5';
                     checkoutBtn.disabled = !hasActiveOrder;
                     checkoutBtn.style.opacity = hasActiveOrder ? '1' : '0.5';
+                    orderBtn.disabled = hasActiveOrder;
+                    orderBtn.style.opacity = hasActiveOrder ? '0.5' : '1';
                 })
                 .catch(error => {
                     console.error('Sipariş durumu kontrol edilirken hata:', error);
                 });
         }
         
+        // Sipariş al butonuna tıklandığında
+        orderBtn.addEventListener('click', function() {
+            const tableNo = tableNumber.textContent;
+            window.location.href = `/Order/Create?tableId=${tableNo}`;
+        });
+        
         // Siparişleri görüntüle butonuna tıklandığında
         viewOrderBtn.addEventListener('click', function() {
             const tableNo = tableNumber.textContent;
             window.location.href = `/Order/ViewOrder?tableId=${tableNo}`;
+        });
+        
+        // Hesap kapat butonuna tıklandığında
+        checkoutBtn.addEventListener('click', function() {
+            const tableNo = tableNumber.textContent;
+            window.location.href = `/Order/Checkout?tableId=${tableNo}`;
         });
         
         // Modal kapatma
@@ -346,5 +306,18 @@
                 modal.style.display = 'none';
             }
         });
+        
+        // Her 30 saniyede bir masa durumlarını güncelle
+        setInterval(function() {
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var table in Model)
+                {
+                    <text>
+                    checkTableStatus(@table.Id);
+                    </text>
+                }
+            }
+        }, 30000);
     });
 </script> 

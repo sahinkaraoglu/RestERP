@@ -64,7 +64,7 @@
                         <p class="card-desc">Masa ve paket siparişleri görüntüleyin, durumlarını takip edin</p>
                         <div class="card-stats">
                             <div class="mini-stat">
-                                <span class="mini-stat-value">5</span>
+                                <span class="mini-stat-value">@Model.OccupiedTables</span>
                                 <span class="mini-stat-label">Aktif Masa</span>
                             </div>
                             <div class="mini-stat">
@@ -72,7 +72,7 @@
                                 <span class="mini-stat-label">Paket Sipariş</span>
                             </div>
                         </div>
-                        <a href="#" class="dashboard-btn">Siparişleri Yönet</a>
+                        <a href="/Order/ActiveOrders" class="dashboard-btn">Siparişleri Yönet</a>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                             </div>
                             <div class="mini-stat">
                                 <span class="mini-stat-value">@Model.TableOccupancyPercentage%</span>
-                                <span class="mini-stat-label">Doluluk</span>
+                                <span class="mini-stat-label">Doluluk (@Model.OccupiedTables/@Model.TotalTables)</span>
                             </div>
                         </div>
                         <a href="/Table/Index" class="dashboard-btn">Masa Planı</a>

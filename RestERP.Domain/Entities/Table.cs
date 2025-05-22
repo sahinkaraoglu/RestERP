@@ -7,6 +7,6 @@ namespace RestERP.Domain.Entities
     /// </summary>
     public class Table : BaseEntity
     {
-        public bool? IsOccupied { get; set; }
+        public bool IsOccupied { get; set; } = false;
     }
 } 
