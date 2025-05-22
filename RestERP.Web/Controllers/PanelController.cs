@@ -70,7 +70,7 @@ public class PanelController : Controller
             ViewBag.FoodCategories = foodcategories;
             ViewBag.Foods = foods;
             
-            return View("Menu/Menu");
+            return View("Menu/Index");
         }
         catch (Exception ex)
         {
