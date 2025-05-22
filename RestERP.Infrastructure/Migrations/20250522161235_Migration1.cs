@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RestERP.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Migration2 : Migration
+    public partial class Migration1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -298,6 +298,31 @@ namespace RestERP.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FoodId = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<long>(type: "bigint", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedById = table.Column<long>(type: "bigint", nullable: true),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Images_Foods_FoodId",
+                        column: x => x.FoodId,
+                        principalTable: "Foods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderItems",
                 columns: table => new
                 {
@@ -453,6 +478,60 @@ namespace RestERP.Infrastructure.Migrations
                     { 78, 8, null, null, "0.5L içme suyu.", false, "Water", 8m, "Su", null, null }
                 });
 
+            migrationBuilder.InsertData(
+                table: "Images",
+                columns: new[] { "Id", "CreatedById", "CreatedDate", "FoodId", "IsDeleted", "Path", "UpdatedById", "UpdatedDate" },
+                values: new object[,]
+                {
+                    { 1, null, null, 1, false, "/img/Food/Breakfast/KahvaltiTabagi.jpg", null, null },
+                    { 2, null, null, 2, false, "/img/Food/Breakfast/SerpmeKahvalti.jpg", null, null },
+                    { 3, null, null, 3, false, "/img/Food/Breakfast/PeynirTabagi.jpeg", null, null },
+                    { 4, null, null, 4, false, "/img/Food/Breakfast/ZeytinTabagi.jpeg", null, null },
+                    { 5, null, null, 5, false, "/img/Food/Breakfast/Omlet.jpg", null, null },
+                    { 6, null, null, 6, false, "/img/Food/Breakfast/KasarliOmlet.jpg", null, null },
+                    { 7, null, null, 7, false, "/img/Food/Breakfast/KarisikOmlet.jpg", null, null },
+                    { 8, null, null, 8, false, "/img/Food/Breakfast/Menemen.jpg", null, null },
+                    { 9, null, null, 9, false, "/img/Food/Breakfast/SucukluYumurta.jpeg", null, null },
+                    { 10, null, null, 10, false, "/img/Food/Breakfast/Mihlama.jpg", null, null },
+                    { 11, null, null, 11, false, "/img/Food/Breakfast/PastirmaliYumurta.jpg", null, null },
+                    { 12, null, null, 12, false, "/img/Food/Breakfast/SahandaSucuk.jpg", null, null },
+                    { 13, null, null, 13, false, "/img/Food/Breakfast/PatatesTava.jpg", null, null },
+                    { 14, null, null, 14, false, "/img/Food/Breakfast/MiniKalemBoregi.jpg", null, null },
+                    { 15, null, null, 15, false, "/img/Food/Breakfast/BalKaymak.jpg", null, null },
+                    { 16, null, null, 16, false, "/img/Food/Breakfast/TereyagiPorsiyonu.jpg", null, null },
+                    { 17, null, null, 17, false, "/img/Food/Breakfast/SogusTabagi.jpg", null, null },
+                    { 18, null, null, 18, false, "/img/Food/Breakfast/MeyveTabagi.jpg", null, null },
+                    { 19, null, null, 19, false, "/img/Food/OliveOilDishes/biberdolmasi.jpg", null, null },
+                    { 20, null, null, 20, false, "/img/Food/OliveOilDishes/soslupatlican.jpg", null, null },
+                    { 21, null, null, 21, false, "/img/Food/OliveOilDishes/enginar.jpg", null, null },
+                    { 22, null, null, 22, false, "/img/Food/OliveOilDishes/tazefasulye.jpg", null, null },
+                    { 23, null, null, 23, false, "/img/Food/OliveOilDishes/yapraksarma.jpg", null, null },
+                    { 24, null, null, 24, false, "/img/Food/OliveOilDishes/zeytinyagitabagi.jpg", null, null },
+                    { 25, null, null, 25, false, "/img/Food/HotAppetizers/patatestava.jpg", null, null },
+                    { 26, null, null, 26, false, "/img/Food/HotAppetizers/pacangaboregi.jpg", null, null },
+                    { 27, null, null, 27, false, "/img/Food/HotAppetizers/mantargraten.jpg", null, null },
+                    { 28, null, null, 28, false, "/img/Food/HotAppetizers/mantarkavurma.jpg", null, null },
+                    { 29, null, null, 29, false, "/img/Food/HotAppetizers/julyendilbaligi.jpg", null, null },
+                    { 30, null, null, 30, false, "/img/Food/TypesofFish/cipuraizgara.jpg", null, null },
+                    { 31, null, null, 31, false, "/img/Food/TypesofFish/cipuraizgarabuyuk.jpg", null, null },
+                    { 32, null, null, 32, false, "/img/Food/TypesofFish/mezgittava.jpg", null, null },
+                    { 33, null, null, 33, false, "/img/Food/TypesofFish/feslegenlisomonizgara.jpg", null, null },
+                    { 34, null, null, 34, false, "/img/Food/TypesofFish/levrekfileto.jpg", null, null },
+                    { 35, null, null, 35, false, "/img/Food/TypesofFish/levrekizgara.jpg", null, null },
+                    { 36, null, null, 36, false, "/img/Food/TypesofFish/levrekizgarabuyuk.jpg", null, null },
+                    { 37, null, null, 37, false, "/img/Food/TypesofFish/kiremittelevrek.jpg", null, null },
+                    { 38, null, null, 38, false, "/img/Food/TypesofFish/somonizgara.jpg", null, null },
+                    { 39, null, null, 39, false, "/img/Food/TypesofFish/dilbaligiizgara.jpg", null, null },
+                    { 40, null, null, 40, false, "/img/Food/TypesofFish/somonkavurma.jpg", null, null },
+                    { 41, null, null, 41, false, "/img/Food/SeasonalFish/istavrit.jpg", null, null },
+                    { 42, null, null, 42, false, "/img/Food/SeasonalFish/sarikanat.jpg", null, null },
+                    { 43, null, null, 43, false, "/img/Food/SeasonalFish/palamut.jpg", null, null },
+                    { 44, null, null, 44, false, "/img/Food/SeasonalFish/hamsitava.jpg", null, null },
+                    { 45, null, null, 45, false, "/img/Food/SeasonalFish/mezgit.jpg", null, null },
+                    { 46, null, null, 46, false, "/img/Food/SeasonalFish/tekir.jpg", null, null },
+                    { 47, null, null, 47, false, "/img/Food/SeasonalFish/lufer.jpg", null, null }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -498,6 +577,11 @@ namespace RestERP.Infrastructure.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Images_FoodId",
+                table: "Images",
+                column: "FoodId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
                 table: "OrderItems",
                 column: "OrderId");
@@ -531,6 +615,9 @@ namespace RestERP.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "OrderItems");
