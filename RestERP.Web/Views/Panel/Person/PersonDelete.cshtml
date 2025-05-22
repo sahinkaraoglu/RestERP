@@ -1,59 +1,215 @@
 @model RestERP.Domain.Entities.ApplicationUser
 @{
-    ViewData["Title"] = "Personel Sil";
+    ViewData["Title"] = "Kullanıcı Sil";
 }
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <div class="card">
-                <div class="card-header bg-danger text-white">
-                    <h3 class="mb-0">Personel Sil</h3>
+<div class="person-container">
+    <div class="person-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="person-title">Kullanıcı Sil</h1>
+                    <p class="person-subtitle">Kullanıcı kaydını silmek üzeresiniz</p>
                 </div>
-                <div class="card-body">
-                    <div class="alert alert-warning">
-                        <h4 class="alert-heading">Dikkat!</h4>
-                        <p>Aşağıdaki personeli silmek istediğinizden emin misiniz?</p>
-                    </div>
+                <div class="col-lg-4">
+                    <a href="@Url.Action("Index", "Person")" class="btn btn-secondary add-person-btn">
+                        <i class="bi bi-arrow-left"></i> Geri Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <dl class="row">
-                        <dt class="col-sm-4">Ad:</dt>
-                        <dd class="col-sm-8">@Model.FirstName</dd>
-
-                        <dt class="col-sm-4">Soyad:</dt>
-                        <dd class="col-sm-8">@Model.LastName</dd>
-
-                        <dt class="col-sm-4">Telefon:</dt>
-                        <dd class="col-sm-8">@Model.PhoneNumber</dd>
-
-                        <dt class="col-sm-4">E-posta:</dt>
-                        <dd class="col-sm-8">@Model.Email</dd>
-
-                        <dt class="col-sm-4">Pozisyon:</dt>
-                        <dd class="col-sm-8">@Model.RoleType</dd>
-
-                        <dt class="col-sm-4">Durum:</dt>
-                        <dd class="col-sm-8">
-                            @if (Model.IsActive)
-                            {
-                                <span class="badge bg-success">Aktif</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-danger">Pasif</span>
-                            }
-                        </dd>
-                    </dl>
-
-                    <form asp-action="Delete" method="post">
-                        <input type="hidden" asp-for="Id" />
-                        <div class="d-flex justify-content-between">
-                            <a asp-action="Index" class="btn btn-secondary">İptal</a>
-                            <button type="submit" class="btn btn-danger">Sil</button>
+    <div class="container person-content">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <h4 class="alert-heading"><i class="bi bi-exclamation-triangle"></i> Dikkat!</h4>
+                            <p>Bu işlem geri alınamaz. Kullanıcıyı silmek istediğinizden emin misiniz?</p>
                         </div>
-                    </form>
+
+                        <div class="user-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Ad:</span>
+                                <span class="detail-value">@Model.FirstName</span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Soyad:</span>
+                                <span class="detail-value">@Model.LastName</span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Kullanıcı Adı:</span>
+                                <span class="detail-value">@Model.UserName</span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">E-posta:</span>
+                                <span class="detail-value">@Model.Email</span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Telefon:</span>
+                                <span class="detail-value">@Model.PhoneNumber</span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Pozisyon:</span>
+                                <span class="detail-value">@Model.RoleType</span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Durum:</span>
+                                <span class="detail-value">
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Pasif</span>
+                                    }
+                                </span>
+                            </div>
+                        </div>
+
+                        <form asp-action="PersonDelete" asp-controller="Person" method="post" class="mt-4">
+                            <input type="hidden" asp-for="Id" />
+                            <div class="d-flex justify-content-end gap-2">
+                                <a asp-action="Index" asp-controller="Person" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> İptal
+                                </a>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Sil
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .person-container {
+        background-color: #f9f7f4;
+        min-height: 100vh;
+    }
+    
+    .person-header {
+        background: linear-gradient(135deg, #b09a7b, #c7b59d);
+        color: white;
+        padding: 20px 0;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .person-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+    
+    .person-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .add-person-btn {
+        background: white;
+        color: #b09a7b;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .add-person-btn:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+        color: #b09a7b;
+    }
+    
+    .person-content {
+        padding: 20px 0;
+    }
+    
+    .card {
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+
+    .alert {
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .alert-heading {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #856404;
+    }
+
+    .user-details {
+        background: #f9f7f4;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-row {
+        display: flex;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e0d6c8;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        flex: 0 0 150px;
+        font-weight: 500;
+        color: #5d4b38;
+    }
+
+    .detail-value {
+        flex: 1;
+        color: #333;
+    }
+
+    .badge {
+        padding: 0.5rem 0.75rem;
+        font-weight: 500;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+        transform: translateY(-2px);
+    }
+</style>

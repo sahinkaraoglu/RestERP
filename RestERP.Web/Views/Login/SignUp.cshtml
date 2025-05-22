@@ -43,6 +43,14 @@
                     <label for="lastName">Soyad</label>
                     <input type="text" class="form-control" id="lastName" name="lastName" required>
                 </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber">Telefon Numarası</label>
+                    <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" 
+                           placeholder="05XX XXX XX XX" 
+                           pattern="[0-9]{11}" 
+                           title="Lütfen geçerli bir telefon numarası girin (11 haneli, başında 0 olacak şekilde)">
+                </div>
                 
                 <div class="form-group">
                     <label for="password">Şifre</label>
@@ -184,4 +192,29 @@
             font-size: 1.8rem;
         }
     }
-</style> 
+
+    input[type="tel"] {
+        letter-spacing: 1px;
+    }
+    
+    input[type="tel"]::placeholder {
+        color: #bbb;
+        letter-spacing: normal;
+    }
+
+    input[type="tel"]:focus::placeholder {
+        color: transparent;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        document.getElementById('phoneNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Sadece rakamları al
+            if (value.length > 11) {
+                value = value.slice(0, 11);
+            }
+            e.target.value = value;
+        });
+    </script>
+} 

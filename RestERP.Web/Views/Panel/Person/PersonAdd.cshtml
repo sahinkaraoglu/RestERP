@@ -1,18 +1,20 @@
 @model RestERP.Domain.Entities.ApplicationUser
+
 @{
-    ViewData["Title"] = "Yeni Personel Ekle";
+    ViewData["Title"] = "Personel Ekle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="employee-container">
-    <div class="employee-header">
+<div class="person-container">
+    <div class="person-header">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="employee-title">Yeni Personel Ekle</h1>
-                    <p class="employee-subtitle">Yeni personel bilgilerini girin</p>
+                    <h1 class="person-title">Yeni Personel Ekle</h1>
+                    <p class="person-subtitle">Yeni personel bilgilerini girin</p>
                 </div>
                 <div class="col-lg-4">
-                    <a href="@Url.Action("Index", "Employee")" class="btn btn-secondary add-employee-btn">
+                    <a href="@Url.Action("Index", "Person")" class="btn btn-secondary add-person-btn">
                         <i class="bi bi-arrow-left"></i> Geri Dön
                     </a>
                 </div>
@@ -20,12 +22,14 @@
         </div>
     </div>
 
-    <div class="container employee-content">
+    <div class="container person-content">
         <div class="row">
             <div class="col-md-8 offset-md-2">
                 <div class="card">
                     <div class="card-body">
-                        <form asp-action="EmployeeAdd" method="post">
+                        <form asp-action="PersonAdd" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            
                             <div class="mb-3">
                                 <label asp-for="FirstName" class="form-label">Ad</label>
                                 <input asp-for="FirstName" class="form-control" required />
@@ -33,39 +37,63 @@
                             </div>
 
                             <div class="mb-3">
-                                <label asp-for="LastName" class="form-label">Ad Soyad</label>
+                                <label asp-for="LastName" class="form-label">Soyad</label>
                                 <input asp-for="LastName" class="form-control" required />
                                 <span asp-validation-for="LastName" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
-                                <label asp-for="PhoneNumber" class="form-label">Telefon</label>
-                                <input asp-for="PhoneNumber" class="form-control" />
-                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                <label asp-for="Email" class="form-label">E-posta</label>
+                                <input asp-for="Email" class="form-control" type="email" required />
+                                <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
-                                <label asp-for="Email" class="form-label">E-posta</label>
-                                <input asp-for="Email" type="email" class="form-control" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
+                                <label asp-for="PhoneNumber" class="form-label">Telefon</label>
+                                <input asp-for="PhoneNumber" class="form-control" type="tel"
+                                       placeholder="05XX XXX XX XX"
+                                       pattern="[0-9]{11}"
+                                       title="Lütfen geçerli bir telefon numarası girin (11 haneli, başında 0 olacak şekilde)" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
                                 <label asp-for="RoleType" class="form-label">Pozisyon</label>
                                 <select asp-for="RoleType" class="form-select" asp-items="Html.GetEnumSelectList<RestERP.Domain.Enums.Role>()">
+                                    <option value="">Pozisyon Seçiniz</option>
                                 </select>
                                 <span asp-validation-for="RoleType" class="text-danger"></span>
                             </div>
 
                             <div class="mb-3">
-                                <div class="form-check">
-                                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
-                                    <label asp-for="IsActive" class="form-check-label">Aktif</label>
+                                <label for="password" class="form-label">Şifre</label>
+                                <div class="input-group">
+                                    <input type="password" id="password" name="password" class="form-control" required
+                                           minlength="6"
+                                           title="Şifre en az 6 karakter uzunluğunda olmalıdır" />
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
                                 </div>
+                                <div class="form-text">Şifre en az 6 karakter uzunluğunda olmalıdır.</div>
                             </div>
 
-                            <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary">
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Şifre Tekrar</label>
+                                <div class="input-group">
+                                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required />
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div id="passwordMatch" class="form-text text-danger d-none">Şifreler eşleşmiyor!</div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> İptal
+                                </a>
+                                <button type="submit" class="btn btn-primary" id="submitButton">
                                     <i class="bi bi-save"></i> Kaydet
                                 </button>
                             </div>
@@ -78,12 +106,12 @@
 </div>
 
 <style>
-    .employee-container {
+    .person-container {
         background-color: #f9f7f4;
         min-height: 100vh;
     }
     
-    .employee-header {
+    .person-header {
         background: linear-gradient(135deg, #b09a7b, #c7b59d);
         color: white;
         padding: 20px 0;
@@ -91,18 +119,18 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     
-    .employee-title {
+    .person-title {
         font-size: 1.8rem;
         font-weight: 700;
         margin-bottom: 2px;
     }
     
-    .employee-subtitle {
+    .person-subtitle {
         font-size: 0.9rem;
         opacity: 0.9;
     }
     
-    .add-employee-btn {
+    .add-person-btn {
         background: white;
         color: #b09a7b;
         border: none;
@@ -112,13 +140,13 @@
         transition: all 0.3s ease;
     }
     
-    .add-employee-btn:hover {
+    .add-person-btn:hover {
         background: #f8f9fa;
         transform: translateY(-2px);
         color: #b09a7b;
     }
     
-    .employee-content {
+    .person-content {
         padding: 20px 0;
     }
     
@@ -161,8 +189,118 @@
         background: #9a8570;
         transform: translateY(-2px);
     }
+
+    .alert-info {
+        background-color: #f8f4ec;
+        border-color: #e0d6c8;
+        color: #6a563d;
+    }
+
+    .bi {
+        margin-right: 5px;
+    }
+
+    /* Telefon numarası için özel stil */
+    input[type="tel"] {
+        letter-spacing: 1px;
+    }
+    
+    input[type="tel"]::placeholder {
+        color: #bbb;
+        letter-spacing: normal;
+    }
+
+    input[type="tel"]:focus::placeholder {
+        color: transparent;
+    }
+
+    /* Şifre göster/gizle butonu için stil */
+    .input-group .btn-outline-secondary {
+        border-color: #e0d6c8;
+        color: #b09a7b;
+    }
+
+    .input-group .btn-outline-secondary:hover {
+        background-color: #f8f4ec;
+        border-color: #b09a7b;
+        color: #9a8570;
+    }
+
+    .input-group .btn-outline-secondary:focus {
+        box-shadow: none;
+    }
+
+    .form-text {
+        font-size: 0.85rem;
+        color: #9b8977;
+    }
 </style>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Telefon numarası formatlaması
+        document.getElementById('phoneNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) {
+                value = value.slice(0, 11);
+            }
+            e.target.value = value;
+        });
+
+        // Şifre göster/gizle fonksiyonları
+        function togglePasswordVisibility(inputId, buttonId) {
+            const input = document.getElementById(inputId);
+            const button = document.getElementById(buttonId);
+            const icon = button.querySelector('i');
+
+            button.addEventListener('click', function() {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                }
+            });
+        }
+
+        // Şifre eşleşme kontrolü
+        function checkPasswordMatch() {
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirmPassword');
+            const passwordMatch = document.getElementById('passwordMatch');
+            const submitButton = document.getElementById('submitButton');
+
+            function validatePasswords() {
+                if (confirmPassword.value && password.value !== confirmPassword.value) {
+                    passwordMatch.classList.remove('d-none');
+                    submitButton.disabled = true;
+                } else {
+                    passwordMatch.classList.add('d-none');
+                    submitButton.disabled = false;
+                }
+            }
+
+            password.addEventListener('input', validatePasswords);
+            confirmPassword.addEventListener('input', validatePasswords);
+        }
+
+        // Form gönderilmeden önce pozisyon seçimini kontrol et
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const roleSelect = document.getElementById('RoleType');
+            if (!roleSelect.value) {
+                e.preventDefault();
+                alert('Lütfen bir pozisyon seçiniz!');
+                roleSelect.focus();
+            }
+        });
+
+        // Fonksiyonları çağır
+        togglePasswordVisibility('password', 'togglePassword');
+        togglePasswordVisibility('confirmPassword', 'toggleConfirmPassword');
+        checkPasswordMatch();
+    </script>
 }
