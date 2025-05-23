@@ -98,28 +98,21 @@ public class OrderController : Controller
         try
         {
             var activeOrders = await _orderService.GetActiveOrdersAsync();
-            var orderList = new List<Order>();
-
             foreach (var order in activeOrders)
             {
-                var orderWithDetails = await _orderService.GetOrderWithDetailsAsync(order.Id);
-                
-                // Her bir sipariş kalemi için ürün bilgilerini yükle
-                foreach (var item in orderWithDetails.OrderItems)
+                // Her bir sipariş kalemi için yemek bilgilerini yükle
+                foreach (var item in order.OrderItems)
                 {
                     item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
                 }
-                
-                orderList.Add(orderWithDetails);
             }
-
-            return View(orderList);
+            return View(activeOrders);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Aktif siparişler listelenirken hata oluştu");
             TempData["ErrorMessage"] = "Aktif siparişler listelenirken bir hata oluştu: " + ex.Message;
-            return View(new List<Order>());
+            return RedirectToAction("Index", "Table");
         }
     }
 

@@ -2,9 +2,16 @@
     ViewData["Title"] = "Menüler";
 }
 
+@using RestERP.Application.Services.Interfaces
 @using RestERP.Domain.Entities
 @using System.Collections.Generic
 @using System.Linq
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> _userManager
+
+@{
+    var currentUser = await _userManager.GetUserAsync(User);
+}
 
 <div class="restaurant-menu">
     <div class="menu-header">
@@ -106,18 +113,29 @@
                 </div>
                 
                 <div class="tab-pane" id="delivery">
-                    <div class="form-group">
-                        <label for="deliveryName">Ad Soyad:</label>
-                        <input type="text" id="deliveryName" placeholder="Ad Soyad">
-                    </div>
-                    <div class="form-group">
-                        <label for="deliveryPhone">Telefon:</label>
-                        <input type="tel" id="deliveryPhone" placeholder="Telefon">
-                    </div>
-                    <div class="form-group">
-                        <label for="deliveryAddress">Adres:</label>
-                        <textarea id="deliveryAddress" placeholder="Adres"></textarea>
-                    </div>
+                    @if (User.Identity.IsAuthenticated && currentUser != null)
+                    {
+                        <div class="user-info">
+                            <input type="hidden" id="deliveryName" value="@($"{currentUser.FirstName} {currentUser.LastName}")">
+                            <input type="hidden" id="deliveryPhone" value="@currentUser.PhoneNumber">
+                            <input type="hidden" id="deliveryAddress" value="@currentUser.Address">
+                            <div class="info-display">
+                                <p><strong>Ad Soyad:</strong> @($"{currentUser.FirstName} {currentUser.LastName}")</p>
+                                <p><strong>Telefon:</strong> @currentUser.PhoneNumber</p>
+                                <p><strong>Adres:</strong> @currentUser.Address</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="auth-message">
+                            <p>Sipariş verebilmek için lütfen giriş yapın.</p>
+                            <div class="auth-buttons">
+                                <a href="/Login/Index" class="secondary-button auth-btn">Giriş Yap</a>
+                                <a href="/Login/SignUp" class="secondary-button auth-btn">Üye Ol</a>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
             
@@ -994,6 +1012,35 @@
         .auth-buttons {
             flex-direction: row;
         }
+    }
+
+    .user-info {
+        background-color: #f8f4ec;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+    }
+
+    .info-display p {
+        margin: 8px 0;
+        color: #6a563d;
+    }
+
+    .info-display strong {
+        color: #8c7762;
+    }
+
+    .auth-message {
+        text-align: center;
+        padding: 20px;
+        background-color: #f8f4ec;
+        border-radius: 6px;
+        margin-bottom: 15px;
+    }
+
+    .auth-message p {
+        color: #6a563d;
+        margin-bottom: 15px;
     }
 </style>
 

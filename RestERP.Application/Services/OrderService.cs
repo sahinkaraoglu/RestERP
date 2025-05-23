@@ -40,15 +40,16 @@ namespace RestERP.Application.Services
             return order;
         }
 
-        public async Task DeleteOrderAsync(int id)
+        public async Task<bool> DeleteOrderAsync(int id)
         {
             var order = await _unitOfWork.Repository<Order>().GetByIdAsync(id);
             
             if (order == null)
-                throw new KeyNotFoundException($"Sipariş bulunamadı. Id: {id}");
+                return false;
                 
             await _unitOfWork.Repository<Order>().DeleteAsync(order);
             await _unitOfWork.SaveChangesAsync();
+            return true;
         }
 
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
@@ -60,10 +61,21 @@ namespace RestERP.Application.Services
         {
             // Aktif sipariş statüsündeki siparişleri filtreler
             // New, InProgress, Ready statüsündeki siparişler aktif kabul edilir
-            return await _unitOfWork.Repository<Order>().GetAsync(o => 
-                o.Status == OrderStatus.New || 
+            var orders = await _unitOfWork.Repository<Order>().GetAsync(o => 
+                (o.Status == OrderStatus.New || 
                 o.Status == OrderStatus.InProgress || 
-                o.Status == OrderStatus.Ready);
+                o.Status == OrderStatus.Ready) &&
+                !o.IsDeleted);
+
+            // Her sipariş için sipariş kalemlerini yükle
+            foreach (var order in orders)
+            {
+                var orderItems = await _unitOfWork.Repository<OrderItem>()
+                    .GetAsync(oi => oi.OrderId == order.Id && !oi.IsDeleted);
+                order.OrderItems = orderItems.ToList();
+            }
+
+            return orders;
         }
 
         public async Task<Order> GetOrderByIdAsync(int id)
@@ -81,13 +93,14 @@ namespace RestERP.Application.Services
             return await _unitOfWork.Repository<Order>().GetAsync(o => o.TableId == tableId);
         }
 
-        public async Task UpdateOrderAsync(Order order)
+        public async Task<Order> UpdateOrderAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
                 
             await _unitOfWork.Repository<Order>().UpdateAsync(order);
             await _unitOfWork.SaveChangesAsync();
+            return order;
         }
 
         public async Task<Order> GetOrderWithDetailsAsync(int id)
@@ -106,6 +119,18 @@ namespace RestERP.Application.Services
             order.OrderItems = orderItems.ToList();
 
             return order;
+        }
+
+        public async Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status)
+        {
+            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
+            if (order == null)
+                return false;
+
+            order.Status = status;
+            await _unitOfWork.Repository<Order>().UpdateAsync(order);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
     }
 } 

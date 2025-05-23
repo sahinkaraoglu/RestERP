@@ -12,6 +12,9 @@ namespace RestERP.Domain.Entities
         [MaxLength(100)]
         public string? LastName { get; set; }
 
+        [MaxLength(500)]
+        public string? Address { get; set; }
+
         public bool IsActive { get; set; } = true;
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
