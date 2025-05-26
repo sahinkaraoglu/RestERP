@@ -12,8 +12,8 @@ using RestERP.Infrastructure;
 namespace RestERP.Infrastructure.Migrations
 {
     [DbContext(typeof(RestERPDbContext))]
-    [Migration("20250522224032_Migration2")]
-    partial class Migration2
+    [Migration("20250526164623_Migration1")]
+    partial class Migration1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -165,6 +165,10 @@ namespace RestERP.Infrastructure.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -1580,6 +1584,223 @@ namespace RestERP.Infrastructure.Migrations
                             FoodId = 47,
                             IsDeleted = false,
                             Path = "/img/Food/SeasonalFish/lufer.jpg"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            FoodId = 48,
+                            IsDeleted = false,
+                            Path = "/img/Food/TypesofGrillDishes/kofteizgara.jpg"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            FoodId = 49,
+                            IsDeleted = false,
+                            Path = "/img/Food/TypesofGrillDishes/kasarlikofteizgara.jpg"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            FoodId = 50,
+                            IsDeleted = false,
+                            Path = "/img/Food/TypesofGrillDishes/pilicizgara.jpg"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            FoodId = 51,
+                            IsDeleted = false,
+                            Path = "/img/Food/TypesofGrillDishes/pilickavurma.jpg"
+                        },
+                        new
+                        {
+                            Id = 52,
+                            FoodId = 52,
+                            IsDeleted = false,
+                            Path = "/img/Food/TypesofGrillDishes/begendilijulyenpilic.jpg"
+                        },
+                        new
+                        {
+                            Id = 53,
+                            FoodId = 53,
+                            IsDeleted = false,
+                            Path = "/img/Food/TypesofGrillDishes/bonfile.jpg"
+                        },
+                        new
+                        {
+                            Id = 54,
+                            FoodId = 54,
+                            IsDeleted = false,
+                            Path = "/img/Food/TypesofGrillDishes/kasarlibonfile.jpg"
+                        },
+                        new
+                        {
+                            Id = 55,
+                            FoodId = 55,
+                            IsDeleted = false,
+                            Path = "/img/Food/TypesofGrillDishes/begendilijulyenbonfile.jpg"
+                        },
+                        new
+                        {
+                            Id = 56,
+                            FoodId = 56,
+                            IsDeleted = false,
+                            Path = "/img/Food/TypesofGrillDishes/karisikizgara.jpg"
+                        },
+                        new
+                        {
+                            Id = 57,
+                            FoodId = 57,
+                            IsDeleted = false,
+                            Path = "/img/Food/TypesofGrillDishes/cobankavurma.jpg"
+                        },
+                        new
+                        {
+                            Id = 58,
+                            FoodId = 58,
+                            IsDeleted = false,
+                            Path = "/img/Food/Dessert/sutlac.jpg"
+                        },
+                        new
+                        {
+                            Id = 59,
+                            FoodId = 59,
+                            IsDeleted = false,
+                            Path = "/img/Food/Dessert/trilece.jpg"
+                        },
+                        new
+                        {
+                            Id = 60,
+                            FoodId = 60,
+                            IsDeleted = false,
+                            Path = "/img/Food/Dessert/asure.jpg"
+                        },
+                        new
+                        {
+                            Id = 61,
+                            FoodId = 61,
+                            IsDeleted = false,
+                            Path = "/img/Food/Dessert/profiterol.jpg"
+                        },
+                        new
+                        {
+                            Id = 62,
+                            FoodId = 62,
+                            IsDeleted = false,
+                            Path = "/img/Food/Dessert/volkanik.jpg"
+                        },
+                        new
+                        {
+                            Id = 63,
+                            FoodId = 63,
+                            IsDeleted = false,
+                            Path = "/img/Food/Dessert/meyvelitatlilar.jpg"
+                        },
+                        new
+                        {
+                            Id = 64,
+                            FoodId = 64,
+                            IsDeleted = false,
+                            Path = "/img/Food/Dessert/hamurisitatlilari.jpg"
+                        },
+                        new
+                        {
+                            Id = 65,
+                            FoodId = 65,
+                            IsDeleted = false,
+                            Path = "/img/Food/Dessert/dondurmaporsiyon.jpg"
+                        },
+                        new
+                        {
+                            Id = 66,
+                            FoodId = 66,
+                            IsDeleted = false,
+                            Path = "/img/Food/Dessert/meyvetabagi.jpg"
+                        },
+                        new
+                        {
+                            Id = 67,
+                            FoodId = 67,
+                            IsDeleted = false,
+                            Path = "/img/Food/Dessert/tahinlisarma.jpg"
+                        },
+                        new
+                        {
+                            Id = 68,
+                            FoodId = 68,
+                            IsDeleted = false,
+                            Path = "/img/Food/Drinks/mesrubatcesitleri.jpg"
+                        },
+                        new
+                        {
+                            Id = 69,
+                            FoodId = 69,
+                            IsDeleted = false,
+                            Path = "/img/Food/Drinks/ayran.jpg"
+                        },
+                        new
+                        {
+                            Id = 70,
+                            FoodId = 70,
+                            IsDeleted = false,
+                            Path = "/img/Food/Drinks/soda.jpg"
+                        },
+                        new
+                        {
+                            Id = 71,
+                            FoodId = 71,
+                            IsDeleted = false,
+                            Path = "/img/Food/Drinks/meyvelisoda.jpg"
+                        },
+                        new
+                        {
+                            Id = 72,
+                            FoodId = 72,
+                            IsDeleted = false,
+                            Path = "/img/Food/Drinks/sikmaportakalnarsuyu.jpg"
+                        },
+                        new
+                        {
+                            Id = 73,
+                            FoodId = 73,
+                            IsDeleted = false,
+                            Path = "/img/Food/Drinks/narcicegiserbeti.jpg"
+                        },
+                        new
+                        {
+                            Id = 74,
+                            FoodId = 74,
+                            IsDeleted = false,
+                            Path = "/img/Food/Drinks/cay.jpg"
+                        },
+                        new
+                        {
+                            Id = 75,
+                            FoodId = 75,
+                            IsDeleted = false,
+                            Path = "/img/Food/Drinks/hazirkahve.jpg"
+                        },
+                        new
+                        {
+                            Id = 76,
+                            FoodId = 76,
+                            IsDeleted = false,
+                            Path = "/img/Food/Drinks/turkkahvesi.jpg"
+                        },
+                        new
+                        {
+                            Id = 77,
+                            FoodId = 77,
+                            IsDeleted = false,
+                            Path = "/img/Food/Drinks/filtrekahve.jpg"
+                        },
+                        new
+                        {
+                            Id = 78,
+                            FoodId = 78,
+                            IsDeleted = false,
+                            Path = "/img/Food/Drinks/su.jpg"
                         });
                 });
 

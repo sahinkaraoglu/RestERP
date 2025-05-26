@@ -34,6 +34,7 @@ namespace RestERP.Infrastructure.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RoleType = table.Column<int>(type: "int", nullable: false),
@@ -130,7 +131,7 @@ namespace RestERP.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IsOccupied = table.Column<bool>(type: "bit", nullable: true),
+                    IsOccupied = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedById = table.Column<long>(type: "bigint", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -355,21 +356,21 @@ namespace RestERP.Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedById", "CreatedDate", "IsDeleted", "IsOccupied", "UpdatedById", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, null, null, false, null, null, null },
-                    { 2, null, null, false, null, null, null },
-                    { 3, null, null, false, null, null, null },
-                    { 4, null, null, false, null, null, null },
-                    { 5, null, null, false, null, null, null },
-                    { 6, null, null, false, null, null, null },
-                    { 7, null, null, false, null, null, null },
-                    { 8, null, null, false, null, null, null },
-                    { 9, null, null, false, null, null, null },
-                    { 10, null, null, false, null, null, null },
-                    { 11, null, null, false, null, null, null },
-                    { 12, null, null, false, null, null, null },
-                    { 13, null, null, false, null, null, null },
-                    { 14, null, null, false, null, null, null },
-                    { 15, null, null, false, null, null, null }
+                    { 1, null, null, false, false, null, null },
+                    { 2, null, null, false, false, null, null },
+                    { 3, null, null, false, false, null, null },
+                    { 4, null, null, false, false, null, null },
+                    { 5, null, null, false, false, null, null },
+                    { 6, null, null, false, false, null, null },
+                    { 7, null, null, false, false, null, null },
+                    { 8, null, null, false, false, null, null },
+                    { 9, null, null, false, false, null, null },
+                    { 10, null, null, false, false, null, null },
+                    { 11, null, null, false, false, null, null },
+                    { 12, null, null, false, false, null, null },
+                    { 13, null, null, false, false, null, null },
+                    { 14, null, null, false, false, null, null },
+                    { 15, null, null, false, false, null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -508,7 +509,38 @@ namespace RestERP.Infrastructure.Migrations
                     { 44, null, null, 44, false, "/img/Food/SeasonalFish/hamsitava.jpg", null, null },
                     { 45, null, null, 45, false, "/img/Food/SeasonalFish/mezgit.jpg", null, null },
                     { 46, null, null, 46, false, "/img/Food/SeasonalFish/tekir.jpg", null, null },
-                    { 47, null, null, 47, false, "/img/Food/SeasonalFish/lufer.jpg", null, null }
+                    { 47, null, null, 47, false, "/img/Food/SeasonalFish/lufer.jpg", null, null },
+                    { 48, null, null, 48, false, "/img/Food/TypesofGrillDishes/kofteizgara.jpg", null, null },
+                    { 49, null, null, 49, false, "/img/Food/TypesofGrillDishes/kasarlikofteizgara.jpg", null, null },
+                    { 50, null, null, 50, false, "/img/Food/TypesofGrillDishes/pilicizgara.jpg", null, null },
+                    { 51, null, null, 51, false, "/img/Food/TypesofGrillDishes/pilickavurma.jpg", null, null },
+                    { 52, null, null, 52, false, "/img/Food/TypesofGrillDishes/begendilijulyenpilic.jpg", null, null },
+                    { 53, null, null, 53, false, "/img/Food/TypesofGrillDishes/bonfile.jpg", null, null },
+                    { 54, null, null, 54, false, "/img/Food/TypesofGrillDishes/kasarlibonfile.jpg", null, null },
+                    { 55, null, null, 55, false, "/img/Food/TypesofGrillDishes/begendilijulyenbonfile.jpg", null, null },
+                    { 56, null, null, 56, false, "/img/Food/TypesofGrillDishes/karisikizgara.jpg", null, null },
+                    { 57, null, null, 57, false, "/img/Food/TypesofGrillDishes/cobankavurma.jpg", null, null },
+                    { 58, null, null, 58, false, "/img/Food/Dessert/sutlac.jpg", null, null },
+                    { 59, null, null, 59, false, "/img/Food/Dessert/trilece.jpg", null, null },
+                    { 60, null, null, 60, false, "/img/Food/Dessert/asure.jpg", null, null },
+                    { 61, null, null, 61, false, "/img/Food/Dessert/profiterol.jpg", null, null },
+                    { 62, null, null, 62, false, "/img/Food/Dessert/volkanik.jpg", null, null },
+                    { 63, null, null, 63, false, "/img/Food/Dessert/meyvelitatlilar.jpg", null, null },
+                    { 64, null, null, 64, false, "/img/Food/Dessert/hamurisitatlilari.jpg", null, null },
+                    { 65, null, null, 65, false, "/img/Food/Dessert/dondurmaporsiyon.jpg", null, null },
+                    { 66, null, null, 66, false, "/img/Food/Dessert/meyvetabagi.jpg", null, null },
+                    { 67, null, null, 67, false, "/img/Food/Dessert/tahinlisarma.jpg", null, null },
+                    { 68, null, null, 68, false, "/img/Food/Drinks/mesrubatcesitleri.jpg", null, null },
+                    { 69, null, null, 69, false, "/img/Food/Drinks/ayran.jpg", null, null },
+                    { 70, null, null, 70, false, "/img/Food/Drinks/soda.jpg", null, null },
+                    { 71, null, null, 71, false, "/img/Food/Drinks/meyvelisoda.jpg", null, null },
+                    { 72, null, null, 72, false, "/img/Food/Drinks/sikmaportakalnarsuyu.jpg", null, null },
+                    { 73, null, null, 73, false, "/img/Food/Drinks/narcicegiserbeti.jpg", null, null },
+                    { 74, null, null, 74, false, "/img/Food/Drinks/cay.jpg", null, null },
+                    { 75, null, null, 75, false, "/img/Food/Drinks/hazirkahve.jpg", null, null },
+                    { 76, null, null, 76, false, "/img/Food/Drinks/turkkahvesi.jpg", null, null },
+                    { 77, null, null, 77, false, "/img/Food/Drinks/filtrekahve.jpg", null, null },
+                    { 78, null, null, 78, false, "/img/Food/Drinks/su.jpg", null, null }
                 });
 
             migrationBuilder.CreateIndex(

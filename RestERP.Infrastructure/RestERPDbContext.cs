@@ -24,7 +24,13 @@ namespace RestERP.Infrastructure
         {
             base.OnModelCreating(builder);
 
-            // Entity konfigürasyonları burada yapılacak
+            // Soft delete filtreleri
+            builder.Entity<Order>().HasQueryFilter(e => !e.IsDeleted);
+            builder.Entity<OrderItem>().HasQueryFilter(e => !e.IsDeleted);
+            builder.Entity<Food>().HasQueryFilter(e => !e.IsDeleted);
+            builder.Entity<Table>().HasQueryFilter(e => !e.IsDeleted);
+
+            // Entity konfigürasyonları
             
             // OrderItem konfigürasyonu
             builder.Entity<OrderItem>()

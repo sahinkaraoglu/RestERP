@@ -12,9 +12,9 @@ namespace RestERP.Infrastructure.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly AppDbContext _context;
+        private readonly RestERPDbContext _context;
 
-        public OrderService(AppDbContext context)
+        public OrderService(RestERPDbContext context)
         {
             _context = context;
         }
