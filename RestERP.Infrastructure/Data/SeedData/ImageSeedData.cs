@@ -81,6 +81,18 @@ namespace RestERP.Infrastructure.Data.SeedData
                 new Image { Id = 55, FoodId = 55, Path = "/img/Food/TypesofGrillDishes/begendilijulyenbonfile.jpg" },
                 new Image { Id = 56, FoodId = 56, Path = "/img/Food/TypesofGrillDishes/karisikizgara.jpg" },
                 new Image { Id = 57, FoodId = 57, Path = "/img/Food/TypesofGrillDishes/cobankavurma.jpg" },
+
+                //Tatlılar
+                new Image { Id = 58, FoodId = 58, Path = "/img/Food/Dessert/sutlac.jpg" },
+                new Image { Id = 59, FoodId = 59, Path = "/img/Food/Dessert/trilece.jpg" },
+                new Image { Id = 60, FoodId = 60, Path = "/img/Food/Dessert/asure.jpg" },
+                new Image { Id = 61, FoodId = 61, Path = "/img/Food/Dessert/profiterol.jpg" },
+                new Image { Id = 62, FoodId = 62, Path = "/img/Food/Dessert/volkanik.jpg" },
+                new Image { Id = 63, FoodId = 63, Path = "/img/Food/Dessert/meyvelitatlilar.jpg" },
+                new Image { Id = 64, FoodId = 64, Path = "/img/Food/Dessert/hamurisitatlilari.jpg" },
+                new Image { Id = 65, FoodId = 65, Path = "/img/Food/Dessert/dondurmaporsiyon.jpg" },
+                new Image { Id = 66, FoodId = 66, Path = "/img/Food/Dessert/meyvetabagi.jpg" },
+                new Image { Id = 67, FoodId = 67, Path = "/img/Food/Dessert/tahinlisarma.jpg" },
             };
         }
     }
