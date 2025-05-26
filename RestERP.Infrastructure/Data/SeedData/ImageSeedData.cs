@@ -68,7 +68,19 @@ namespace RestERP.Infrastructure.Data.SeedData
                 new Image { Id = 44, FoodId = 44, Path = "/img/Food/SeasonalFish/hamsitava.jpg" },
                 new Image { Id = 45, FoodId = 45, Path = "/img/Food/SeasonalFish/mezgit.jpg" },
                 new Image { Id = 46, FoodId = 46, Path = "/img/Food/SeasonalFish/tekir.jpg" },
-                new Image { Id = 47, FoodId = 47, Path = "/img/Food/SeasonalFish/lufer.jpg" }
+                new Image { Id = 47, FoodId = 47, Path = "/img/Food/SeasonalFish/lufer.jpg" },
+
+                //Izgara ve Kavurmalar
+                new Image { Id = 48, FoodId = 48, Path = "/img/Food/TypesofGrillDishes/kofteizgara.jpg" },
+                new Image { Id = 49, FoodId = 49, Path = "/img/Food/TypesofGrillDishes/kasarlikofteizgara.jpg" },
+                new Image { Id = 50, FoodId = 50, Path = "/img/Food/TypesofGrillDishes/pilicizgara.jpg" },
+                new Image { Id = 51, FoodId = 51, Path = "/img/Food/TypesofGrillDishes/pilickavurma.jpg" },
+                new Image { Id = 52, FoodId = 52, Path = "/img/Food/TypesofGrillDishes/begendilijulyenpilic.jpg" },
+                new Image { Id = 53, FoodId = 53, Path = "/img/Food/TypesofGrillDishes/bonfile.jpg" },
+                new Image { Id = 54, FoodId = 54, Path = "/img/Food/TypesofGrillDishes/kasarlibonfile.jpg" },
+                new Image { Id = 55, FoodId = 55, Path = "/img/Food/TypesofGrillDishes/begendilijulyenbonfile.jpg" },
+                new Image { Id = 56, FoodId = 56, Path = "/img/Food/TypesofGrillDishes/karisikizgara.jpg" },
+                new Image { Id = 57, FoodId = 57, Path = "/img/Food/TypesofGrillDishes/cobankavurma.jpg" },
             };
         }
     }
