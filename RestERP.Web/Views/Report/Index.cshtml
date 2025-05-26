@@ -1,0 +1,177 @@
+@model IEnumerable<RestERP.Domain.Entities.Order>
+
+@{
+    ViewData["Title"] = "Raporlar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="report-container">
+    <div class="report-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="report-title">Raporlar</h1>
+                    <p class="report-subtitle">Sipariş ve satış raporlarını görüntüleyin</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container report-content">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Sipariş Raporları</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Sipariş No</th>
+                                    <th>Masa No</th>
+                                    <th>Toplam Tutar</th>
+                                    <th>Durum</th>
+                                    <th>Oluşturulma Tarihi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model)
+                                {
+                                    <tr>
+                                        <td>@order.Id</td>
+                                        <td>@order.TableId</td>
+                                        <td>@order.TotalAmount.ToString("C2")</td>
+                                        <td>
+                                            @switch (order.Status)
+                                            {
+                                                case RestERP.Domain.Enums.OrderStatus.InProgress:
+                                                    <span class="badge bg-success">Aktif</span>
+                                                    break;
+                                                case RestERP.Domain.Enums.OrderStatus.Completed:
+                                                    <span class="badge bg-primary">Tamamlandı</span>
+                                                    break;
+                                                case RestERP.Domain.Enums.OrderStatus.Cancelled:
+                                                    <span class="badge bg-danger">İptal Edildi</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>@order.CreatedDate?.ToString("dd.MM.yyyy HH:mm")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .report-container {
+        background-color: #f9f7f4;
+        min-height: 100vh;
+    }
+    
+    .report-header {
+        background: linear-gradient(135deg, #5d4b38, #b09a7b);
+        color: white;
+        padding: 20px 0 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .report-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+    
+    .report-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .report-content {
+        padding-bottom: 30px;
+    }
+    
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: none;
+        margin-bottom: 20px;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #f1ece5, #e5ded3);
+        border-bottom: none;
+        padding: 15px 20px;
+        border-radius: 10px 10px 0 0 !important;
+    }
+    
+    .card-title {
+        color: #5d4b38;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+    
+    .card-body {
+        padding: 20px;
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+    
+    .table th {
+        border-top: none;
+        color: #5d4b38;
+        font-weight: 600;
+    }
+    
+    .table td {
+        vertical-align: middle;
+    }
+    
+    .badge {
+        padding: 6px 12px;
+        font-weight: 500;
+    }
+    
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .report-header {
+            padding: 15px 0;
+        }
+        
+        .report-title {
+            font-size: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 15px;
+        }
+        
+        .table-responsive {
+            margin: 0 -15px;
+        }
+    }
+</style> 
