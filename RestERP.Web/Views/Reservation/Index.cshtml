@@ -1,0 +1,271 @@
+@model IEnumerable<RestERP.Domain.Entities.Table>
+
+@{
+    ViewData["Title"] = "Rezervasyon";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="reservation-container">
+    <div class="reservation-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="reservation-title">Rezervasyon</h1>
+                    <p class="reservation-subtitle">Masa rezervasyonu yapın</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container reservation-content">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Rezervasyon Formu</h5>
+            </div>
+            <div class="card-body">
+                <form id="reservationForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Ad Soyad</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Telefon</label>
+                                <input type="tel" class="form-control" id="phone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="date" class="form-label">Tarih</label>
+                                <input type="date" class="form-control" id="date" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="time" class="form-label">Saat</label>
+                                <input type="time" class="form-control" id="time" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="guests" class="form-label">Kişi Sayısı</label>
+                                <select class="form-select" id="guests" required>
+                                    @for (int i = 1; i <= 10; i++)
+                                    {
+                                        <option value="@i">@i Kişi</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="table" class="form-label">Masa</label>
+                                <select class="form-select" id="table" required>
+                                    @foreach (var table in Model)
+                                    {
+                                        <option value="@table.Id">Masa @table.Id</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Notlar</label>
+                                <textarea class="form-control" id="notes" rows="4"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary float-end">Rezervasyon Yap</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title">Rezervasyon Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <i class="bi bi-clock"></i>
+                            <span>Rezervasyonlar için en az 2 saat önceden bildirim gereklidir.</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="bi bi-people"></i>
+                            <span>Maksimum rezervasyon kapasitesi 10 kişidir.</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>Rezervasyonunuz onaylandığında SMS ile bilgilendirileceksiniz.</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="bi bi-exclamation-circle"></i>
+                            <span>Rezervasyon saatinden 15 dakika sonra gelmeyen misafirlerimizin rezervasyonları iptal edilir.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .reservation-container {
+        background-color: #f9f7f4;
+        min-height: 100vh;
+    }
+    
+    .reservation-header {
+        background: linear-gradient(135deg, #5d4b38, #b09a7b);
+        color: white;
+        padding: 20px 0 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .reservation-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+    
+    .reservation-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .reservation-content {
+        padding-bottom: 30px;
+    }
+    
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: none;
+        margin-bottom: 20px;
+    }
+    
+    .card-header {
+        background: linear-gradient(135deg, #f1ece5, #e5ded3);
+        border-bottom: none;
+        padding: 15px 20px;
+        border-radius: 10px 10px 0 0 !important;
+    }
+    
+    .card-title {
+        color: #5d4b38;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+    
+    .card-body {
+        padding: 20px;
+    }
+    
+    .form-label {
+        color: #5d4b38;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+        border: 1px solid #e5ded2;
+        border-radius: 6px;
+        padding: 10px;
+        background-color: #fff;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #b09a7b;
+        box-shadow: 0 0 0 0.2rem rgba(176, 154, 123, 0.25);
+    }
+    
+    .btn-primary {
+        background-color: #5d4b38;
+        border-color: #5d4b38;
+        padding: 10px 30px;
+        border-radius: 6px;
+        font-weight: 500;
+    }
+    
+    .btn-primary:hover {
+        background-color: #4a3c2d;
+        border-color: #4a3c2d;
+    }
+    
+    .info-item {
+        display: flex;
+        align-items: start;
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 8px;
+        border: 1px solid #e5ded2;
+    }
+    
+    .info-item i {
+        margin-right: 15px;
+        color: #b09a7b;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+    
+    .info-item span {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: #5d4b38;
+    }
+    
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .reservation-header {
+            padding: 15px 0;
+        }
+        
+        .reservation-title {
+            font-size: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 15px;
+        }
+        
+        .info-item {
+            margin-bottom: 15px;
+            padding: 12px;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('reservationForm');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Rezervasyon talebiniz alındı. En kısa sürede size dönüş yapılacaktır.');
+        form.reset();
+    });
+
+    // Bugünden önceki tarihleri seçilemez yap
+    const dateInput = document.getElementById('date');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+});
+</script>
