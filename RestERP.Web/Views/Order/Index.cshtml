@@ -1,101 +1,214 @@
-@model Order
+@model IEnumerable<RestERP.Domain.Entities.Order>
 
 @{
-    ViewData["Title"] = "Sipariş Detayları";
+    var showSingleOrder = ViewData["ShowSingleOrder"] as bool? ?? false;
+    ViewData["Title"] = showSingleOrder ? "Sipariş Detayı" : "Siparişlerim";
 }
 
 @using RestERP.Infrastructure.Data.SeedData
 @using RestERP.Domain.Entities
 @using RestERP.Domain.Enums
 @using RestERP.Application.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @inject IFoodService FoodService
 
 <div class="order-details-container">
-    <div class="order-header">
-        <h1>MASA @Model.TableId - Sipariş Detayları</h1>
+    <div class="page-header">
+        <h1>@ViewData["Title"]</h1>
         <div class="divider">
             <span>✦</span>
         </div>
+        @if (!showSingleOrder)
+        {
+            <p>Masanıza ait siparişleri görüntüleyebilirsiniz</p>
+        }
     </div>
 
-    @if (Model != null)
+    @if (!SignInManager.IsSignedIn(User))
     {
-        <div class="order-info">
-            <div class="info-row">
-                <div class="info-item">
-                    <span class="label">Sipariş No:</span>
-                    <span class="value">@Model.OrderNumber</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">Durum:</span>
-                    <span class="value status-badge @Model.Status.ToString().ToLower()">@Model.Status</span>
-                </div>
+        <div class="no-order-message">
+            <i class="bi bi-shield-lock"></i>
+            <p>Siparişlerinizi görüntüleyebilmek için giriş yapmanız gerekmektedir.</p>
+            <div class="auth-buttons">
+                <a href="/Identity/Account/Login" class="action-button login-button">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Giriş Yap
+                </a>
+                <a href="/Identity/Account/Register" class="action-button register-button">
+                    <i class="bi bi-person-plus"></i>
+                    Kayıt Ol
+                </a>
             </div>
-        </div>
-
-        <div class="order-items">
-            <h3>Sipariş Kalemleri</h3>
-            <table class="items-table">
-                <thead>
-                    <tr>
-                        <th>Ürün</th>
-                        <th>Miktar</th>
-                        <th>Birim Fiyat</th>
-                        <th>Toplam</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.OrderItems)
-                    {
-                        <tr>
-                            <td>@(item.Food?.TurkishName ?? "Ürün Bulunamadı")</td>
-                            <td>@item.Quantity</td>
-                            <td>@item.UnitPrice.ToString("C2")</td>
-                            <td>@item.TotalPrice.ToString("C2")</td>
-                        </tr>
-                    }
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3" class="total-label">Toplam Tutar:</td>
-                        <td class="total-amount">@Model.TotalAmount.ToString("C2")</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-
-        <div class="actions">
-            <a href="/Table/Index" class="back-btn">
-                <i class="bi bi-arrow-left"></i>
-                Masalara Dön
-            </a>
         </div>
     }
     else
     {
-        <div class="no-order">
-            <p>Sipariş bulunamadı.</p>
-            <a href="/Table/Index" class="back-btn">Masalara Dön</a>
-        </div>
+        @if (Model == null || !Model.Any())
+        {
+            <div class="no-order-message">
+                <i class="bi bi-exclamation-circle"></i>
+                <p>@(showSingleOrder 
+                    ? "Sipariş bulunamadı." 
+                    : "Henüz sipariş verilmemiş.")</p>
+                <a href="/Menu" class="action-link">
+                    <i class="bi bi-journal-text"></i>
+                    Menüyü Görüntüle
+                </a>
+            </div>
+        }
+        else if (showSingleOrder)
+        {
+            var order = Model.First();
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <div class="info-row">
+                            <div class="info-item">
+                                <span class="label">Sipariş No:</span>
+                                <span class="value">@order.OrderNumber</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Masa No:</span>
+                                <span class="value">@order.TableId</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Tarih:</span>
+                                <span class="value">@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Durum:</span>
+                                <span class="value status-badge @order.Status.ToString().ToLower()">@GetStatusText(order.Status)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-items">
+                    <h3>Sipariş Kalemleri</h3>
+                    <div class="items-list">
+                        @foreach (var item in order.OrderItems)
+                        {
+                            <div class="item-row">
+                                <div class="item-details">
+                                    <span class="item-name">@(item.Food?.Name ?? "Ürün Bulunamadı")</span>
+                                    <span class="item-quantity">x @item.Quantity</span>
+                                </div>
+                                <div class="item-price">
+                                    <span class="unit-price">@item.UnitPrice.ToString("C2")</span>
+                                    <span class="total-price">@item.TotalPrice.ToString("C2")</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="order-total">
+                        <span class="label">Toplam Tutar:</span>
+                        <span class="value">@order.TotalAmount.ToString("C2")</span>
+                    </div>
+                </div>
+
+                <div class="order-actions">
+                    <a href="/Menu" class="action-button menu-button">
+                        <i class="bi bi-journal-text"></i>
+                        Menüyü Görüntüle
+                    </a>
+                </div>
+            </div>
+        }
+        else
+        {
+            var groupedOrders = Model.GroupBy(o => o.TableId).OrderBy(g => g.Key);
+            <div class="orders-grid">
+                @foreach (var group in groupedOrders)
+                {
+                    <div class="order-card">
+                        <div class="order-header">
+                            <h2>MASA @group.Key</h2>
+                        </div>
+                        @foreach (var order in group)
+                        {
+                            <div class="order-details">
+                                <div class="order-info">
+                                    <div class="info-row">
+                                        <div class="info-item">
+                                            <span class="label">Sipariş No:</span>
+                                            <span class="value">@order.OrderNumber</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <span class="label">Durum:</span>
+                                            <span class="value status-badge @order.Status.ToString().ToLower()">@GetStatusText(order.Status)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="order-items">
+                                    <h3>Sipariş Kalemleri</h3>
+                                    <table class="items-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Ürün</th>
+                                                <th>Miktar</th>
+                                                <th>Birim Fiyat</th>
+                                                <th>Toplam</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in order.OrderItems)
+                                            {
+                                                <tr>
+                                                    <td>@(item.Food?.Name ?? "Ürün Bulunamadı")</td>
+                                                    <td>@item.Quantity</td>
+                                                    <td>@item.UnitPrice.ToString("C2")</td>
+                                                    <td>@item.TotalPrice.ToString("C2")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="3" class="total-label">Toplam Tutar:</td>
+                                                <td class="total-amount">@order.TotalAmount.ToString("C2")</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                                <div class="order-actions">
+                                    <a href="/Order/Index?orderId=@order.Id" class="action-button details-button">
+                                        <i class="bi bi-eye"></i>
+                                        Detayları Görüntüle
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
     }
 </div>
 
 <style>
     .order-details-container {
-        max-width: 800px;
+        max-width: 1200px;
         margin: 40px auto;
         padding: 20px;
     }
 
-    .order-header {
+    .page-header {
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 40px;
     }
 
-    .order-header h1 {
-        font-size: 2rem;
+    .page-header h1 {
+        font-size: 2.2rem;
         color: #5d4b38;
         margin-bottom: 10px;
+    }
+
+    .page-header p {
+        color: #8c7762;
+        font-size: 1.1rem;
     }
 
     .divider {
@@ -117,18 +230,48 @@
         color: #b09a7b;
     }
 
+    .orders-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .order-card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .order-header {
+        background-color: #f8f4ec;
+        padding: 20px;
+        border-bottom: 1px solid #e5e0d5;
+    }
+
+    .order-header h2 {
+        margin: 0;
+        color: #5d4b38;
+        font-size: 1.5rem;
+    }
+
+    .order-details {
+        padding: 20px;
+    }
+
     .order-info {
         background-color: #f8f4ec;
         border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 30px;
+        padding: 15px;
+        margin-bottom: 20px;
     }
 
     .info-row {
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 20px;
+        gap: 15px;
     }
 
     .info-item {
@@ -151,6 +294,7 @@
         border-radius: 20px;
         font-size: 0.9rem;
         font-weight: 500;
+        text-transform: uppercase;
     }
 
     .new {
@@ -163,14 +307,9 @@
         color: #f57c00;
     }
 
-    .ready {
+    .completed {
         background-color: #e8f5e9;
         color: #388e3c;
-    }
-
-    .completed {
-        background-color: #efebe9;
-        color: #5d4037;
     }
 
     .cancelled {
@@ -178,18 +317,25 @@
         color: #d32f2f;
     }
 
+    .ready {
+        background-color: #f3e5f5;
+        color: #7b1fa2;
+    }
+
     .order-items {
         background-color: white;
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         overflow: hidden;
+        margin-bottom: 20px;
     }
 
     .order-items h3 {
-        padding: 20px;
+        padding: 15px 20px;
         margin: 0;
         color: #5d4b38;
         border-bottom: 1px solid #eee;
+        font-size: 1.2rem;
     }
 
     .items-table {
@@ -226,12 +372,133 @@
         font-size: 1.1rem;
     }
 
-    .actions {
-        margin-top: 30px;
-        text-align: center;
+    .items-list {
+        margin-bottom: 1.5rem;
     }
 
-    .back-btn {
+    .item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0e9df;
+    }
+
+    .item-details {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .item-name {
+        color: #5d4b38;
+        font-weight: 500;
+    }
+
+    .item-quantity {
+        color: #8b7355;
+        font-size: 0.9rem;
+    }
+
+    .item-price {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .unit-price {
+        color: #8b7355;
+        font-size: 0.9rem;
+    }
+
+    .total-price {
+        color: #5d4b38;
+        font-weight: 500;
+    }
+
+    .order-total {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 2px solid #f0e9df;
+    }
+
+    .order-total .label {
+        color: #5d4b38;
+        font-weight: 500;
+    }
+
+    .order-total .value {
+        color: #5d4b38;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+
+    .order-actions {
+        padding: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        background: #f8f4ed;
+        border-top: 1px solid #e2d7c7;
+    }
+
+    .action-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: white;
+    }
+
+    .details-button {
+        background-color: #5c6bc0;
+    }
+
+    .details-button:hover {
+        background-color: #3f51b5;
+        color: white;
+    }
+
+    .menu-button {
+        background-color: #5c6bc0;
+    }
+
+    .menu-button:hover {
+        background-color: #3f51b5;
+        color: white;
+    }
+
+    .no-order-message {
+        text-align: center;
+        padding: 40px;
+        background-color: #f8f4ec;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    .no-order-message i {
+        font-size: 2rem;
+        color: #8c7762;
+        margin-bottom: 15px;
+    }
+
+    .no-order-message p {
+        color: #5d4b38;
+        margin-bottom: 20px;
+        font-size: 1.1rem;
+    }
+
+    .action-link {
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -243,27 +510,19 @@
         transition: background-color 0.3s;
     }
 
-    .back-btn:hover {
+    .action-link:hover {
         background-color: #6a563d;
         color: white;
-    }
-
-    .no-order {
-        text-align: center;
-        padding: 40px;
-        background-color: #f8f4ec;
-        border-radius: 8px;
-    }
-
-    .no-order p {
-        color: #8c7762;
-        margin-bottom: 20px;
     }
 
     @@media (max-width: 768px) {
         .order-details-container {
             margin: 20px;
             padding: 15px;
+        }
+
+        .orders-grid {
+            grid-template-columns: 1fr;
         }
 
         .info-item {
@@ -274,52 +533,54 @@
             display: block;
             overflow-x: auto;
         }
+
+        .order-actions {
+            flex-direction: column;
+        }
+
+        .action-button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    .auth-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1.5rem;
+    }
+
+    .login-button {
+        background-color: #5c6bc0;
+    }
+
+    .login-button:hover {
+        background-color: #3f51b5;
+    }
+
+    .register-button {
+        background-color: #26a69a;
+    }
+
+    .register-button:hover {
+        background-color: #00897b;
     }
 </style>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const completeOrderBtn = document.getElementById('completeOrderBtn');
-        const cancelOrderBtn = document.getElementById('cancelOrderBtn');
-        
-        if (completeOrderBtn) {
-            completeOrderBtn.addEventListener('click', function() {
-                if (confirm('Siparişi tamamlamak istediğinize emin misiniz?')) {
-                    const orderId = this.getAttribute('data-order-id');
-                    updateOrderStatus(orderId, 'Completed');
-                }
-            });
-        }
-        
-        if (cancelOrderBtn) {
-            cancelOrderBtn.addEventListener('click', function() {
-                if (confirm('Siparişi iptal etmek istediğinize emin misiniz?')) {
-                    const orderId = this.getAttribute('data-order-id');
-                    updateOrderStatus(orderId, 'Cancelled');
-                }
-            });
-        }
-        
-        function updateOrderStatus(orderId, status) {
-            fetch(`/api/orders/${orderId}/status`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ status: status })
-            })
-            .then(response => {
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    throw new Error('Sipariş durumu güncellenirken bir hata oluştu');
-                }
-            })
-            .catch(error => {
-                alert(error.message);
-            });
-        }
-    });
-</script>
+@functions {
+    string GetStatusText(OrderStatus status)
+    {
+        return status switch
+        {
+            OrderStatus.New => "Yeni",
+            OrderStatus.InProgress => "Hazırlanıyor",
+            OrderStatus.Ready => "Hazır",
+            OrderStatus.Completed => "Tamamlandı",
+            OrderStatus.Cancelled => "İptal Edildi",
+            _ => status.ToString()
+        };
+    }
+}

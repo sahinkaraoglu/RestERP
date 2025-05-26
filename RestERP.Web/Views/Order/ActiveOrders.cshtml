@@ -1,14 +1,14 @@
-@model IEnumerable<Order>
+@model IEnumerable<RestERP.Domain.Entities.Order>
 
 @{
     ViewData["Title"] = "Aktif Siparişler";
-    var groupedOrders = Model.GroupBy(o => o.TableId).OrderBy(g => g.Key);
+    var groupedOrders = Model?.GroupBy(o => o.TableId).OrderBy(g => g.Key) ?? Enumerable.Empty<IGrouping<int?, Order>>();
 }
 
 @using RestERP.Domain.Entities
 @using RestERP.Domain.Enums
 
-<div class="active-orders-container">
+<div class="order-details-container">
     <div class="page-header">
         <h1>Aktif Siparişler</h1>
         <div class="divider">
@@ -17,9 +17,9 @@
         <p>Restoranda şu anda aktif olan siparişleri görüntüleyin ve yönetin</p>
     </div>
 
-    @if (!Model.Any())
+    @if (Model == null || !Model.Any())
     {
-        <div class="no-orders-message">
+        <div class="no-order-message">
             <i class="bi bi-exclamation-circle"></i>
             <p>Şu anda aktif sipariş bulunmamaktadır.</p>
             <a href="/Table/Index" class="action-link">Masa Yönetimine Dön</a>
@@ -45,7 +45,7 @@
                                     </div>
                                     <div class="info-item">
                                         <span class="label">Durum:</span>
-                                        <span class="value status-badge @order.Status.ToString().ToLower()">@order.Status</span>
+                                        <span class="value status-badge @order.Status.ToString().ToLower()">@GetStatusText(order.Status)</span>
                                     </div>
                                 </div>
                             </div>
@@ -65,7 +65,7 @@
                                         @foreach (var item in order.OrderItems)
                                         {
                                             <tr>
-                                                <td>@(item.Food?.TurkishName ?? "Ürün Bulunamadı")</td>
+                                                <td>@(item.Food?.Name ?? "Ürün Bulunamadı")</td>
                                                 <td>@item.Quantity</td>
                                                 <td>@item.UnitPrice.ToString("C2")</td>
                                                 <td>@item.TotalPrice.ToString("C2")</td>
@@ -80,23 +80,37 @@
                                     </tfoot>
                                 </table>
                             </div>
+
+                            <div class="order-actions">
+                                <a href="/Order/Index?orderId=@order.Id" class="action-button details-button">
+                                    <i class="bi bi-eye"></i>
+                                    Detayları Görüntüle
+                                </a>
+                                @if (!order.IsPaid)
+                                {
+                                    <button class="action-button pay-button" onclick="updateOrderStatus(@order.Id, 'Completed')">
+                                        <i class="bi bi-credit-card"></i>
+                                        Ödeme Al
+                                    </button>
+                                }
+                                @if (order.Status != OrderStatus.Completed && order.Status != OrderStatus.Cancelled)
+                                {
+                                    <button class="action-button complete-button" onclick="updateOrderStatus(@order.Id, 'Completed')">
+                                        <i class="bi bi-check-circle"></i>
+                                        Tamamla
+                                    </button>
+                                }
+                            </div>
                         </div>
                     }
                 </div>
             }
         </div>
-
-        <div class="actions">
-            <a href="/Table/Index" class="back-btn">
-                <i class="bi bi-arrow-left"></i>
-                Masalara Dön
-            </a>
-        </div>
     }
 </div>
 
 <style>
-    .active-orders-container {
+    .order-details-container {
         max-width: 1200px;
         margin: 40px auto;
         padding: 20px;
@@ -201,6 +215,7 @@
         border-radius: 20px;
         font-size: 0.9rem;
         font-weight: 500;
+        text-transform: uppercase;
     }
 
     .new {
@@ -213,9 +228,19 @@
         color: #f57c00;
     }
 
-    .ready {
+    .completed {
         background-color: #e8f5e9;
         color: #388e3c;
+    }
+
+    .cancelled {
+        background-color: #ffebee;
+        color: #d32f2f;
+    }
+
+    .ready {
+        background-color: #f3e5f5;
+        color: #7b1fa2;
     }
 
     .order-items {
@@ -223,6 +248,7 @@
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         overflow: hidden;
+        margin-bottom: 20px;
     }
 
     .order-items h3 {
@@ -267,7 +293,57 @@
         font-size: 1.1rem;
     }
 
-    .no-orders-message {
+    .order-actions {
+        padding: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        background: #f8f4ed;
+        border-top: 1px solid #e2d7c7;
+    }
+
+    .action-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: white;
+    }
+
+    .details-button {
+        background-color: #5c6bc0;
+    }
+
+    .details-button:hover {
+        background-color: #3f51b5;
+        color: white;
+    }
+
+    .pay-button {
+        background-color: #4caf50;
+    }
+
+    .pay-button:hover {
+        background-color: #43a047;
+        color: white;
+    }
+
+    .complete-button {
+        background-color: #ff9800;
+    }
+
+    .complete-button:hover {
+        background-color: #f57c00;
+        color: white;
+    }
+
+    .no-order-message {
         text-align: center;
         padding: 40px;
         background-color: #f8f4ec;
@@ -275,19 +351,19 @@
         margin: 20px 0;
     }
 
-    .no-orders-message i {
+    .no-order-message i {
         font-size: 2rem;
         color: #8c7762;
         margin-bottom: 15px;
     }
 
-    .no-orders-message p {
+    .no-order-message p {
         color: #5d4b38;
         margin-bottom: 20px;
         font-size: 1.1rem;
     }
 
-    .action-link, .back-btn {
+    .action-link {
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -299,18 +375,13 @@
         transition: background-color 0.3s;
     }
 
-    .action-link:hover, .back-btn:hover {
+    .action-link:hover {
         background-color: #6a563d;
         color: white;
     }
 
-    .actions {
-        text-align: center;
-        margin-top: 30px;
-    }
-
     @@media (max-width: 768px) {
-        .active-orders-container {
+        .order-details-container {
             margin: 20px;
             padding: 15px;
         }
@@ -327,54 +398,58 @@
             display: block;
             overflow-x: auto;
         }
+
+        .order-actions {
+            flex-direction: column;
+        }
+
+        .action-button {
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 
 <script>
-    function updateOrderStatus(orderId, status) {
+    async function updateOrderStatus(orderId, status) {
         if (!confirm(`Siparişi ${status === 'Completed' ? 'tamamlamak' : 'iptal etmek'} istediğinize emin misiniz?`)) {
             return;
         }
 
-        fetch(`/api/orders/${orderId}/status`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ status: status })
-        })
-        .then(response => {
+        try {
+            const response = await fetch(`/api/orders/${orderId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: status })
+            });
+
             if (response.ok) {
-                window.location.reload();
+                location.reload();
             } else {
-                throw new Error('Sipariş durumu güncellenirken bir hata oluştu');
+                alert('Sipariş durumu güncellenirken bir hata oluştu.');
             }
-        })
-        .catch(error => {
-            alert(error.message);
-        });
+        } catch (error) {
+            console.error('Sipariş durumu güncelleme hatası:', error);
+            alert('Sipariş durumu güncellenirken bir hata oluştu.');
+        }
     }
 </script>
 
 @functions {
-    string GetStatusText(RestERP.Domain.Enums.OrderStatus status)
+    string GetStatusText(OrderStatus status)
     {
-        switch (status)
+        return status switch
         {
-            case RestERP.Domain.Enums.OrderStatus.New:
-                return "Yeni";
-            case RestERP.Domain.Enums.OrderStatus.InProgress:
-                return "Hazırlanıyor";
-            case RestERP.Domain.Enums.OrderStatus.Ready:
-                return "Hazır";
-            case RestERP.Domain.Enums.OrderStatus.Completed:
-                return "Tamamlandı";
-            case RestERP.Domain.Enums.OrderStatus.Cancelled:
-                return "İptal Edildi";
-            default:
-                return status.ToString();
-        }
+            OrderStatus.New => "Yeni",
+            OrderStatus.InProgress => "Hazırlanıyor",
+            OrderStatus.Ready => "Hazır",
+            OrderStatus.Completed => "Tamamlandı",
+            OrderStatus.Cancelled => "İptal Edildi",
+            _ => status.ToString()
+        };
     }
 } 

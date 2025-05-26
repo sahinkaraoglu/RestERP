@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text.Json;
 using RestERP.Web.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RestERP.Web.Controllers;
 
@@ -16,45 +18,87 @@ public class OrderController : Controller
     private readonly ILogger<OrderController> _logger;
     private readonly IOrderService _orderService;
     private readonly IFoodService _foodService;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
 
     public OrderController(
         ILogger<OrderController> logger, 
         IOrderService orderService,
-        IFoodService foodService)
+        IFoodService foodService,
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager)
     {
         _logger = logger;
         _orderService = orderService;
         _foodService = foodService;
+        _userManager = userManager;
+        _signInManager = signInManager;
     }
 
     public async Task<IActionResult> Index(int? orderId = null)
     {
         try
         {
-            if (orderId == null)
+            // Kullanıcı girişi kontrolü
+            if (!_signInManager.IsSignedIn(User))
             {
-                return View(null);
+                return View(new List<Order>());
             }
 
-            var order = await _orderService.GetOrderWithDetailsAsync(orderId.Value);
-            if (order == null)
+            // Eğer sipariş ID'si belirtilmişse, o siparişin detaylarını göster
+            if (orderId.HasValue)
             {
-                TempData["ErrorMessage"] = "Sipariş bulunamadı.";
-                return View(null);
+                var order = await _orderService.GetOrderWithDetailsAsync(orderId.Value);
+                if (order == null)
+                {
+                    TempData["ErrorMessage"] = "Sipariş bulunamadı.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Her bir sipariş kalemi için ürün bilgilerini yükle
+                foreach (var item in order.OrderItems)
+                {
+                    item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                }
+
+                ViewData["ShowSingleOrder"] = true;
+                return View(new List<Order> { order });
+            }
+            
+            // Sipariş ID'si belirtilmemişse tüm aktif siparişleri göster
+            var activeOrders = await _orderService.GetActiveOrdersAsync();
+            
+            // Eğer aktif sipariş yoksa boş bir liste ile view'ı döndür
+            if (!activeOrders.Any())
+            {
+                ViewData["ShowSingleOrder"] = false;
+                return View(new List<Order>());
             }
 
-            // Her bir sipariş kalemi için ürün bilgilerini yükle
-            foreach (var item in order.OrderItems)
+            // Her bir sipariş için yemek bilgilerini yükle
+            foreach (var order in activeOrders)
             {
-                item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                foreach (var item in order.OrderItems)
+                {
+                    try
+                    {
+                        item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. ProductId: {item.ProductId}");
+                    }
+                }
             }
 
-            return View(order);
+            ViewData["ShowSingleOrder"] = false;
+            return View(activeOrders);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Sipariş sayfası yüklenirken hata oluştu");
-            return View(null);
+            TempData["ErrorMessage"] = "Sipariş yüklenirken bir hata oluştu.";
+            return View(new List<Order>());
         }
     }
 
@@ -81,8 +125,9 @@ public class OrderController : Controller
                 item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
             }
 
-            // Sipariş verilerini view'a gönder
-            return View("Index", orderWithDetails);
+            ViewData["ShowSingleOrder"] = true;
+            // Tekil siparişi liste olarak dön
+            return View("Index", new List<Order> { orderWithDetails });
         }
         catch (Exception ex)
         {
@@ -98,21 +143,38 @@ public class OrderController : Controller
         try
         {
             var activeOrders = await _orderService.GetActiveOrdersAsync();
+            
+            // Eğer aktif sipariş yoksa boş bir liste ile view'ı döndür
+            if (!activeOrders.Any())
+            {
+                ViewData["ShowSingleOrder"] = false;
+                return View("Index", new List<Order>());
+            }
+
+            // Her bir sipariş için yemek bilgilerini yükle
             foreach (var order in activeOrders)
             {
-                // Her bir sipariş kalemi için yemek bilgilerini yükle
                 foreach (var item in order.OrderItems)
                 {
-                    item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                    try
+                    {
+                        item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. ProductId: {item.ProductId}");
+                    }
                 }
             }
-            return View(activeOrders);
+
+            ViewData["ShowSingleOrder"] = false;
+            return View("Index", activeOrders.ToList());
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Aktif siparişler listelenirken hata oluştu");
             TempData["ErrorMessage"] = "Aktif siparişler listelenirken bir hata oluştu: " + ex.Message;
-            return RedirectToAction("Index", "Table");
+            return View("Index", new List<Order>());
         }
     }
 
@@ -163,7 +225,7 @@ public class OrderController : Controller
             var orders = await _orderService.GetOrdersByTableIdAsync(tableId);
             return Ok(orders);
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, $"Masa {tableId} için siparişler alınırken hata oluştu");
             return StatusCode(500, "Siparişler alınırken bir hata oluştu");
