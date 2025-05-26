@@ -93,6 +93,19 @@ namespace RestERP.Infrastructure.Data.SeedData
                 new Image { Id = 65, FoodId = 65, Path = "/img/Food/Dessert/dondurmaporsiyon.jpg" },
                 new Image { Id = 66, FoodId = 66, Path = "/img/Food/Dessert/meyvetabagi.jpg" },
                 new Image { Id = 67, FoodId = 67, Path = "/img/Food/Dessert/tahinlisarma.jpg" },
+
+                //İçecekler
+                new Image { Id = 68, FoodId = 68, Path = "/img/Food/Drinks/mesrubatcesitleri.jpg" },
+                new Image { Id = 69, FoodId = 69, Path = "/img/Food/Drinks/ayran.jpg" },
+                new Image { Id = 70, FoodId = 70, Path = "/img/Food/Drinks/soda.jpg" },
+                new Image { Id = 71, FoodId = 71, Path = "/img/Food/Drinks/meyvelisoda.jpg" },
+                new Image { Id = 72, FoodId = 72, Path = "/img/Food/Drinks/sikmaportakalnarsuyu.jpg" },
+                new Image { Id = 73, FoodId = 73, Path = "/img/Food/Drinks/narcicegiserbeti.jpg" },
+                new Image { Id = 74, FoodId = 74, Path = "/img/Food/Drinks/cay.jpg" },
+                new Image { Id = 75, FoodId = 75, Path = "/img/Food/Drinks/hazirkahve.jpg" },
+                new Image { Id = 76, FoodId = 76, Path = "/img/Food/Drinks/turkkahvesi.jpg" },
+                new Image { Id = 77, FoodId = 77, Path = "/img/Food/Drinks/filtrekahve.jpg" },
+                new Image { Id = 78, FoodId = 78, Path = "/img/Food/Drinks/su.jpg" },
             };
         }
     }
