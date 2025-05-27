@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestERP.Web", "RestERP.Web\RestERP.Web.csproj", "{4331B507-736A-9C18-4EC3-2FE79577AF4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestERP.Core", "RestERP.Domain\RestERP.Core.csproj", "{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestERP.Core", "RestERP.Core\RestERP.Core.csproj", "{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestERP.Application", "RestERP.Application\RestERP.Application.csproj", "{DA19E481-4BB7-4AD6-A572-5E3AFA399A71}"
 EndProject
