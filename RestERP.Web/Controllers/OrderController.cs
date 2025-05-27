@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Application.Services.Interfaces;
-using RestERP.Domain.Entities;
 using RestERP.Domain.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,6 +9,7 @@ using RestERP.Web.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using RestERP.Core.Doman.Entities;
 
 namespace RestERP.Web.Controllers;
 

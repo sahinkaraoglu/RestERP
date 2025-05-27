@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using RestERP.Application.Services.Interfaces;
-using RestERP.Domain.Entities;
 using RestERP.Domain.Enums;
+using RestERP.Core.Doman.Entities;
 
 namespace RestERP.Web.Controllers
 {

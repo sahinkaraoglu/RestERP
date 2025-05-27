@@ -1,11 +1,11 @@
-@model IEnumerable<RestERP.Domain.Entities.Order>
+@model IEnumerable<Order>
 
 @{
     ViewData["Title"] = "Aktif Siparişler";
     var groupedOrders = Model?.GroupBy(o => o.TableId).OrderBy(g => g.Key) ?? Enumerable.Empty<IGrouping<int?, Order>>();
 }
 
-@using RestERP.Domain.Entities
+@using RestERP.Core.Doman.Entities
 @using RestERP.Domain.Enums
 
 <div class="order-details-container">

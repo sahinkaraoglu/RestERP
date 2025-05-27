@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RestERP.Application.Services.Interfaces;
-using RestERP.Domain.Entities;
+using RestERP.Core.Doman.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

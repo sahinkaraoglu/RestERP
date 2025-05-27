@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using RestERP.Domain.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Models;
 using RestERP.Web.Services;

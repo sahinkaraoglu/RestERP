@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using RestERP.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace RestERP.Domain.Entities
+namespace RestERP.Core.Doman.Entities
 {
     public class ApplicationUser : IdentityUser
     {

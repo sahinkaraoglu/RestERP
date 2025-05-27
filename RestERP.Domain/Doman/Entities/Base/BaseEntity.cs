@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RestERP.Domain.Entities.Base
+namespace RestERP.Core.Doman.Entities.Base
 {
     public class BaseEntity
     {

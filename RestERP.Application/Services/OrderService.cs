@@ -1,5 +1,4 @@
 using RestERP.Application.Services.Interfaces;
-using RestERP.Domain.Entities;
 using RestERP.Domain.Enums;
 using RestERP.Domain.Interfaces;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using RestERP.Core.Doman.Entities;
 
 namespace RestERP.Application.Services
 {

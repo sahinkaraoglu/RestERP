@@ -1,6 +1,6 @@
-using RestERP.Domain.Entities.Base;
+using RestERP.Core.Doman.Entities.Base;
 
-namespace RestERP.Domain.Entities
+namespace RestERP.Core.Doman.Entities
 {
     /// <summary>
     /// Ürün kategorisi entity sınıfı

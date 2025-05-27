@@ -1,5 +1,5 @@
 using RestERP.Application.Services.Interfaces;
-using RestERP.Domain.Entities;
+using RestERP.Core.Doman.Entities;
 using RestERP.Domain.Interfaces;
 using System;
 using System.Collections.Generic;

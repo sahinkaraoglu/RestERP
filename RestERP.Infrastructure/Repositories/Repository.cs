@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using RestERP.Domain.Entities.Base;
 using RestERP.Domain.Interfaces;
+using RestERP.Core.Doman.Entities.Base;
 
 namespace RestERP.Infrastructure.Repositories
 {

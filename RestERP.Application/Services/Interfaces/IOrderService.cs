@@ -1,7 +1,7 @@
-using RestERP.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RestERP.Domain.Enums;
+using RestERP.Core.Doman.Entities;
 
 namespace RestERP.Application.Services.Interfaces
 {

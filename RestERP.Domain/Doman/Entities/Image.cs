@@ -1,7 +1,7 @@
-using RestERP.Domain.Entities.Base;
+using RestERP.Core.Doman.Entities.Base;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace RestERP.Domain.Entities
+namespace RestERP.Core.Doman.Entities
 {
     public class Image : BaseEntity
     {

@@ -155,7 +155,7 @@ namespace RestERP.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.ApplicationUser", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -241,7 +241,7 @@ namespace RestERP.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.Customer", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.Customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -286,7 +286,7 @@ namespace RestERP.Infrastructure.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.Food", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.Food", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1117,7 +1117,7 @@ namespace RestERP.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.FoodCategory", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.FoodCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1215,7 +1215,7 @@ namespace RestERP.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.Image", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1801,7 +1801,7 @@ namespace RestERP.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.Order", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1856,7 +1856,7 @@ namespace RestERP.Infrastructure.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.OrderItem", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1906,7 +1906,7 @@ namespace RestERP.Infrastructure.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.Table", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.Table", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -2041,7 +2041,7 @@ namespace RestERP.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("RestERP.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("RestERP.Core.Doman.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2050,7 +2050,7 @@ namespace RestERP.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("RestERP.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("RestERP.Core.Doman.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2065,7 +2065,7 @@ namespace RestERP.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RestERP.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("RestERP.Core.Doman.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2074,16 +2074,16 @@ namespace RestERP.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("RestERP.Domain.Entities.ApplicationUser", null)
+                    b.HasOne("RestERP.Core.Doman.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.Food", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.Food", b =>
                 {
-                    b.HasOne("RestERP.Domain.Entities.FoodCategory", "Category")
+                    b.HasOne("RestERP.Core.Doman.Entities.FoodCategory", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2092,9 +2092,9 @@ namespace RestERP.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.Image", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.Image", b =>
                 {
-                    b.HasOne("RestERP.Domain.Entities.Food", "Food")
+                    b.HasOne("RestERP.Core.Doman.Entities.Food", "Food")
                         .WithMany("Images")
                         .HasForeignKey("FoodId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2103,15 +2103,15 @@ namespace RestERP.Infrastructure.Migrations
                     b.Navigation("Food");
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.OrderItem", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.OrderItem", b =>
                 {
-                    b.HasOne("RestERP.Domain.Entities.Order", "Order")
+                    b.HasOne("RestERP.Core.Doman.Entities.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RestERP.Domain.Entities.Food", "Food")
+                    b.HasOne("RestERP.Core.Doman.Entities.Food", "Food")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2122,12 +2122,12 @@ namespace RestERP.Infrastructure.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.Food", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.Food", b =>
                 {
                     b.Navigation("Images");
                 });
 
-            modelBuilder.Entity("RestERP.Domain.Entities.Order", b =>
+            modelBuilder.Entity("RestERP.Core.Doman.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
                 });

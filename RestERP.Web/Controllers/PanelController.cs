@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Models;
 using RestERP.Application.Services.Interfaces;
-using RestERP.Domain.Entities;
 using RestERP.Domain.Enums;
+using RestERP.Core.Doman.Entities;
 
 namespace RestERP.Web.Controllers;
 

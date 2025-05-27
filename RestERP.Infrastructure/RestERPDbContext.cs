@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using RestERP.Domain.Entities;
+using RestERP.Core.Doman.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 
 namespace RestERP.Infrastructure

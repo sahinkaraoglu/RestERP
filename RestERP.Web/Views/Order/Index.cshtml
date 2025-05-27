@@ -1,15 +1,15 @@
-@model IEnumerable<RestERP.Domain.Entities.Order>
+@model IEnumerable<Order>
 
 @{
     var showSingleOrder = ViewData["ShowSingleOrder"] as bool? ?? false;
     ViewData["Title"] = showSingleOrder ? "Sipariş Detayı" : "Siparişlerim";
 }
 
-@using RestERP.Infrastructure.Data.SeedData
-@using RestERP.Domain.Entities
-@using RestERP.Domain.Enums
-@using RestERP.Application.Services.Interfaces
 @using Microsoft.AspNetCore.Identity
+@using RestERP.Application.Services.Interfaces
+@using RestERP.Core.Doman.Entities
+@using RestERP.Domain.Enums
+@using RestERP.Infrastructure.Data.SeedData
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject IFoodService FoodService
