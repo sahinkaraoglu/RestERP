@@ -44,7 +44,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         // GET: Person/PersonAdd
         public IActionResult PersonAdd()
         {
-            return View("~/Views/Panel/Person/PersonAdd.cshtml");
+            return View("~/Areas/Admin/Views/Person/PersonAdd.cshtml");
         }
 
         // POST: Person/PersonAdd
@@ -56,7 +56,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 if (password != confirmPassword)
                 {
                     ModelState.AddModelError("", "Şifreler eşleşmiyor!");
-                    return View("~/Views/Panel/Person/PersonAdd.cshtml", user);
+                    return View("~/Areas/Admin/Views/Person/PersonAdd.cshtml", user);
                 }
 
                 if (ModelState.IsValid)
@@ -78,13 +78,13 @@ namespace RestERP.Web.Areas.Admin.Controllers
                         ModelState.AddModelError("", error.Description);
                     }
                 }
-                return View("~/Views/Panel/Person/PersonAdd.cshtml", user);
+                return View("~/Areas/Admin/Views/Person/PersonAdd.cshtml", user);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Kullanıcı eklenirken hata oluştu");
                 TempData["ErrorMessage"] = "Kullanıcı eklenirken bir hata oluştu: " + ex.Message;
-                return View("~/Views/Panel/Person/PersonAdd.cshtml", user);
+                return View("~/Areas/Admin/Views/Person/PersonAdd.cshtml", user);
             }
         }
 
@@ -106,7 +106,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             
-                return View("~/Views/Panel/Person/PersonUpdate.cshtml", user);
+                return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", user);
             }
             catch (Exception ex)
             {
@@ -141,19 +141,19 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     if (string.IsNullOrEmpty(currentPassword))
                     {
                         ModelState.AddModelError("", "Mevcut şifrenizi girmelisiniz.");
-                        return View("~/Views/Panel/Person/PersonUpdate.cshtml", model);
+                        return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                     }
 
                     if (string.IsNullOrEmpty(newPassword) || newPassword.Length < 6)
                     {
                         ModelState.AddModelError("", "Yeni şifre en az 6 karakter uzunluğunda olmalıdır.");
-                        return View("~/Views/Panel/Person/PersonUpdate.cshtml", model);
+                        return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                     }
 
                     if (newPassword != confirmPassword)
                     {
                         ModelState.AddModelError("", "Yeni şifreler eşleşmiyor.");
-                        return View("~/Views/Panel/Person/PersonUpdate.cshtml", model);
+                        return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                     }
 
                     // Mevcut şifreyi kontrol et
@@ -161,7 +161,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     if (!isCurrentPasswordValid)
                     {
                         ModelState.AddModelError("", "Mevcut şifre yanlış.");
-                        return View("~/Views/Panel/Person/PersonUpdate.cshtml", model);
+                        return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                     }
 
                     // Şifreyi değiştir
@@ -174,7 +174,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                         {
                             ModelState.AddModelError("", error.Description);
                         }
-                        return View("~/Views/Panel/Person/PersonUpdate.cshtml", model);
+                        return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                     }
                 }
 
@@ -190,7 +190,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 if (!updateResult)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı güncellenirken bir hata oluştu.";
-                    return View("~/Views/Panel/Person/PersonUpdate.cshtml", model);
+                    return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                 }
             
                 TempData["SuccessMessage"] = "Kullanıcı başarıyla güncellendi.";
@@ -200,7 +200,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
             {
                 _logger.LogError(ex, "Kullanıcı güncellenirken hata oluştu. Id: {Id}", id);
                 TempData["ErrorMessage"] = "Kullanıcı güncellenirken bir hata oluştu: " + ex.Message;
-                return View("~/Views/Panel/Person/PersonUpdate.cshtml", model);
+                return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
             }
         }
 
@@ -222,7 +222,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                return View("~/Views/Panel/Person/PersonDelete.cshtml", user);
+                return View("~/Areas/Admin/Views/Person/PersonDelete.cshtml", user);
             }
             catch (Exception ex)
             {
@@ -256,7 +256,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 if (!result.Succeeded)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı silinirken bir hata oluştu: " + string.Join(", ", result.Errors.Select(e => e.Description));
-                    return View("~/Views/Panel/Person/PersonDelete.cshtml", user);
+                    return View("~/Areas/Admin/Views/Person/PersonDelete.cshtml", user);
                 }
 
                 TempData["SuccessMessage"] = "Kullanıcı başarıyla silindi.";
