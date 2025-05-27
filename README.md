@@ -28,7 +28,7 @@ The project has a layered architecture in line with Clean Architecture principle
 
 | Layer | Description |
 |-------|-------------|
-| **RestERP.Domain** | Contains core entities, enum values, and domain logic |
+| **RestERP.Core** | Core entities, enum values, and domain logic |
 | **RestERP.Application** | Contains application services, validation rules, and business logic |
 | **RestERP.Infrastructure** | Contains database connection, repository implementations, and external services |
 | **RestERP.Web** | Contains user interface, controllers, and views |
@@ -36,12 +36,12 @@ The project has a layered architecture in line with Clean Architecture principle
 ## 🛠️ Technologies
 
 ### Core Framework
-- **.NET Core 9.0**: Modern, cross-platform framework
+- **.NET Core 9.0**: Cross-platform framework
 - **ASP.NET Core MVC**: Web application framework
 - **Entity Framework Core**: ORM (Object-Relational Mapping) tool
 - **SQL Server**: Database
 - **Repository Pattern & Unit of Work**: Data access layer pattern
-- **In-Memory Caching**: Optimizes performance by caching frequently accessed data
+- **In-Memory Caching**: Caching for frequently accessed data
 
 ### Development Tools
 - **Visual Studio 2022**: Primary IDE
