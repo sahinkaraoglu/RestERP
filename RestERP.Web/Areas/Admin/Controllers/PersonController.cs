@@ -4,8 +4,9 @@ using RestERP.Application.Services.Interfaces;
 using RestERP.Domain.Enums;
 using RestERP.Core.Doman.Entities;
 
-namespace RestERP.Web.Controllers
+namespace RestERP.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class PersonController : Controller
     {
         private readonly ILogger<PersonController> _logger;
@@ -30,7 +31,7 @@ namespace RestERP.Web.Controllers
                 var users = await _userService.GetAllUsersAsync();
                 
                 // Kullanıcıları doğrudan model olarak View'a gönderelim
-                return View("~/Views/Panel/Person/Index.cshtml", users);
+                return View(users);
             }
             catch (Exception ex)
             {

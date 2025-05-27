@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Application.Services.Interfaces;
 
-namespace RestERP.Web.Controllers;
+namespace RestERP.Web.Areas.Admin.Panel.Controllers;
 
 public class ReportController : Controller
 {

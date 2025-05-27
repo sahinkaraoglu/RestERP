@@ -11,8 +11,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using RestERP.Core.Doman.Entities;
 
-namespace RestERP.Web.Controllers;
+namespace RestERP.Web.Areas.Admin.Controllers;
 
+[Area("Admin")]
 public class OrderController : Controller
 {
     private readonly ILogger<OrderController> _logger;
@@ -245,7 +246,7 @@ public class OrderController : Controller
             }
 
             // Status string'ini enum'a çevir
-            if (Enum.TryParse<OrderStatus>(model.Status, out OrderStatus newStatus))
+            if (Enum.TryParse(model.Status, out OrderStatus newStatus))
             {
                 order.Status = newStatus;
                 await _orderService.UpdateOrderAsync(order);

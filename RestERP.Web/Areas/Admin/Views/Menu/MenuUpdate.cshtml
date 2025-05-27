@@ -14,7 +14,7 @@
                     <p class="dashboard-subtitle">Ürün bilgilerini ve fiyatını güncelleyin</p>
                 </div>
                 <div class="col-lg-4 text-end">
-                    <a href="/Panel/Menu" class="btn btn-light rounded-pill"><i class="bi bi-arrow-left"></i> Menüye Dön</a>
+                    <a href="/Admin/Panel/Menu" class="btn btn-light rounded-pill"><i class="bi bi-arrow-left"></i> Menüye Dön</a>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
                         }
 
                         <!-- Form başlangıcı -->
-                        <form method="post" action="/Panel/MenuUpdatePost">
+                        <form method="post" action="/Admin/Panel/MenuUpdatePost">
                             <!-- Gizli alan - ID -->
                             <input type="hidden" name="Id" value="@food.Id" />
                             
@@ -91,7 +91,7 @@
                             
                             <!-- Butonlar -->
                             <div class="d-flex justify-content-between">
-                                <a href="/Panel/Menu" class="btn btn-secondary">İptal</a>
+                                <a href="/Admin/Panel/Menu" class="btn btn-secondary">İptal</a>
                                 <button type="submit" class="btn btn-primary">Güncelle</button>
                             </div>
                         </form>

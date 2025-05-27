@@ -5,8 +5,9 @@ using RestERP.Application.Services.Interfaces;
 using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Core.Doman.Entities;
 
-namespace RestERP.Web.Controllers;
+namespace RestERP.Web.Areas.Admin.Controllers;
 
+[Area("Admin")]
 public class TableController : Controller
 {
     private readonly ILogger<TableController> _logger;
@@ -23,7 +24,7 @@ public class TableController : Controller
         try
         {
             var tables = await _tableService.GetAllTablesAsync();
-            return View("~/Views/Panel/Table/Index.cshtml", tables);
+            return View(tables);
         }
         catch (Exception ex)
         {

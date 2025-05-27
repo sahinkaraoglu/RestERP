@@ -22,4 +22,8 @@
     <ProjectReference Include="..\RestERP.Infrastructure\RestERP.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Models\" />
+  </ItemGroup>
+
 </Project>

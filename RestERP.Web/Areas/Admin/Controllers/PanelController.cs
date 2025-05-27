@@ -6,8 +6,9 @@ using RestERP.Application.Services.Interfaces;
 using RestERP.Domain.Enums;
 using RestERP.Core.Doman.Entities;
 
-namespace RestERP.Web.Controllers;
+namespace RestERP.Web.Areas.Admin.Controllers;
 
+[Area("Admin")]
 public class PanelController : Controller
 {
     private readonly ILogger<PanelController> _logger;
@@ -59,8 +60,8 @@ public class PanelController : Controller
             
             // Kullanıcıları çekerek çalışan sayısını hesaplayalım
             var users = await _userService.GetAllUsersAsync();
-            var totalEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Customer);
-            var activeEmployees = users.Count(u => u.RoleType == Domain.Enums.Role.Employee && u.IsActive);
+            var totalEmployees = users.Count(u => u.RoleType == Role.Customer);
+            var activeEmployees = users.Count(u => u.RoleType == Role.Employee && u.IsActive);
             
             var model = new 
             {
@@ -92,8 +93,8 @@ public class PanelController : Controller
             
             ViewBag.FoodCategories = foodcategories;
             ViewBag.Foods = foods;
-            
-            return View("Menu/Index");
+
+            return RedirectToAction("Index", "Menu", new { area = "Admin" });
         }
         catch (Exception ex)
         {

@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Application.Services.Interfaces;
 
-namespace RestERP.Web.Controllers;
+namespace RestERP.Web.Areas.Admin.Controllers;
 
+[Area("Admin")]
 public class ReservationController : Controller
 {
     private readonly ILogger<ReservationController> _logger;

@@ -13,7 +13,7 @@
                     <p class="dashboard-subtitle">Menüye yeni bir ürün ekleyin</p>
                 </div>
                 <div class="col-lg-4 text-end">
-                    <a href="/Panel/Menu" class="btn btn-light rounded-pill"><i class="bi bi-arrow-left"></i> Menü Yönetimine Dön</a>
+                    <a href="/Admin/Panel/Menu" class="btn btn-light rounded-pill"><i class="bi bi-arrow-left"></i> Menü Yönetimine Dön</a>
                 </div>
             </div>
         </div>
@@ -40,7 +40,7 @@
                         <h5 class="card-title">Ürün Bilgileri</h5>
                     </div>
                     <div class="card-body">
-                        <form id="addItemForm" action="/Panel/AddMenuItem" method="post">
+                        <form id="addItemForm" action="/Admin/Panel/AddMenuItem" method="post">
                             <div class="mb-4">
                                 <label for="itemCategory" class="form-label">Kategori</label>
                                 <select class="form-select" id="itemCategory" name="CategoryId" required>
@@ -81,7 +81,7 @@
                                 </div>
                             </div>
                             <div class="text-end">
-                                <a href="/Panel/Menu" class="btn btn-outline-secondary me-2">İptal</a>
+                                <a href="/Admin/Panel/Menu" class="btn btn-outline-secondary me-2">İptal</a>
                                 <button type="submit" class="btn btn-primary">Ürünü Kaydet</button>
                             </div>
                         </form>
@@ -270,7 +270,7 @@
             if (!formData.has('IsSpicy')) jsonData['IsSpicy'] = false;
             
             // AJAX ile API'ye gönder
-            fetch('/Panel/AddMenuItem', {
+            fetch('/Admin/Panel/AddMenuItem', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -296,7 +296,7 @@
                     
                     // Kısa bir gecikme sonrası yönlendirme yap
                     setTimeout(function() {
-                        window.location.href = '/Panel/Menu'; // Başarılı olursa menü listesine dön
+                        window.location.href = '/Admin/Panel/Menu'; // Başarılı olursa menü listesine dön
                     }, 1500);
                 } else {
                     alert(data.message || 'İşlem sırasında bir hata oluştu.');

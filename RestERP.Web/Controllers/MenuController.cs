@@ -25,23 +25,25 @@ public class MenuController : Controller
             var categories = _foodCacheService.GetCategories();
             var foods = _foodCacheService.GetFoods();
             var images = _foodCacheService.GetImages();
-            
+
             ViewBag.Categories = categories;
             ViewBag.Foods = foods;
             ViewBag.Images = images;
-            
+
             return View();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "MenÃ¼ sayfasÄ± yÃ¼klenirken hata oluÅŸtu");
+            _logger.LogError(ex, "Menü sayfasý yüklenirken hata oluþtu");
             return View("Error");
         }
+        return View();
     }
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
-} 
+}
