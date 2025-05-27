@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace RestERP.Web.Models
+namespace RestERP.Web.Areas.Admin.Models
 {
     public class OrderViewModel
     {

@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace RestERP.Web.Models
+namespace RestERP.Web.Areas.Admin.Models
 {
-    public class MenuItemViewModel
+    public class MenuViewModel
     {
         public int Id { get; set; }
         

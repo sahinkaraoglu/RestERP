@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using RestERP.Application.Services.Interfaces;
 using RestERP.Core.Doman.Entities;
 using RestERP.Infrastructure.Data.SeedData;
-using RestERP.Web.Models;
+using RestERP.Web.Areas.Admin.Models;
 using RestERP.Web.Services;
 
 namespace RestERP.Web.Areas.Admin.Controllers
@@ -62,7 +62,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddMenuItem([FromBody] MenuItemViewModel model)
+        public async Task<IActionResult> AddMenuItem([FromBody] MenuViewModel model)
         {
             try
             {

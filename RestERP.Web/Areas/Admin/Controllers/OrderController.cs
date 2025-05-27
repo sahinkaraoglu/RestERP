@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Text.Json;
-using RestERP.Web.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using RestERP.Core.Doman.Entities;
+using RestERP.Web.Areas.Admin.Models;
 
 namespace RestERP.Web.Areas.Admin.Controllers;
 
