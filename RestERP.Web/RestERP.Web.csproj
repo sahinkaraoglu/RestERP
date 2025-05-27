@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RestERP.Application\RestERP.Application.csproj" />
-    <ProjectReference Include="..\RestERP.Domain\RestERP.Core.csproj" />
+    <ProjectReference Include="..\RestERP.Core\RestERP.Core.csproj" />
     <ProjectReference Include="..\RestERP.Infrastructure\RestERP.Infrastructure.csproj" />
   </ItemGroup>
 
