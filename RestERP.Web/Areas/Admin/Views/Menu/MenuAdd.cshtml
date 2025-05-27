@@ -40,7 +40,7 @@
                         <h5 class="card-title">Ürün Bilgileri</h5>
                     </div>
                     <div class="card-body">
-                        <form id="addItemForm" action="/Admin/AddMenuItem" method="post">
+                        <form id="addItemForm" action="/Admin/Menu/AddMenuItem" method="post">
                             <div class="mb-4">
                                 <label for="itemCategory" class="form-label">Kategori</label>
                                 <select class="form-select" id="itemCategory" name="CategoryId" required>
@@ -270,7 +270,7 @@
             if (!formData.has('IsSpicy')) jsonData['IsSpicy'] = false;
             
             // AJAX ile API'ye gönder
-            fetch('/Admin/AddMenuItem', {
+            fetch('/Admin/Menu/AddMenuItem', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
