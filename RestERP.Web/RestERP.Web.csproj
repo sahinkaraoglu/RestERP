@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RestERP.Application\RestERP.Application.csproj" />
-    <ProjectReference Include="..\RestERP.Domain\RestERP.Domain.csproj" />
+    <ProjectReference Include="..\RestERP.Domain\RestERP.Core.csproj" />
     <ProjectReference Include="..\RestERP.Infrastructure\RestERP.Infrastructure.csproj" />
   </ItemGroup>
 
