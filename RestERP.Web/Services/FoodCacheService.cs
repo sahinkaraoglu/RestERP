@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using RestERP.Core.Doman.Entities;
 using RestERP.Infrastructure.Data.SeedData;
+using RestERP.Application.Services.Interfaces;
 
 namespace RestERP.Web.Services
 {
@@ -8,6 +9,7 @@ namespace RestERP.Web.Services
     {
         private readonly IMemoryCache _memoryCache;
         private readonly ILogger<FoodCacheService> _logger;
+        private readonly IFoodService _foodService;
         
         // Cache anahtarları private readonly olarak tanımlanmalı
         private static readonly string CategoriesCacheKey = "FoodCategories";
@@ -19,10 +21,11 @@ namespace RestERP.Web.Services
         private static readonly TimeSpan FoodsCacheDuration = TimeSpan.FromHours(1);
         private static readonly TimeSpan ImagesCacheDuration = TimeSpan.FromMinutes(30);
         
-        public FoodCacheService(IMemoryCache memoryCache, ILogger<FoodCacheService> logger)
+        public FoodCacheService(IMemoryCache memoryCache, ILogger<FoodCacheService> logger, IFoodService foodService)
         {
             _memoryCache = memoryCache;
             _logger = logger;
+            _foodService = foodService;
         }
         
         public List<FoodCategory> GetCategories()
@@ -54,8 +57,8 @@ namespace RestERP.Web.Services
             if (!_memoryCache.TryGetValue(FoodsCacheKey, out List<Food> foods))
             {
                 _logger.LogInformation("Cache miss for foods, loading from data source");
-                foods = FoodSeedData.GetFood();
-                
+                foods = _foodService.GetAllFoodsAsync().Result.ToList();
+
                 var cacheOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(FoodsCacheDuration)
                     .RegisterPostEvictionCallback((key, value, reason, state) => 

@@ -41,7 +41,7 @@
                         }
 
                         <!-- Form başlangıcı -->
-                        <form method="post" action="/Admin/Panel/MenuUpdatePost">
+                        <form method="post" asp-area="Admin" asp-controller="Menu" asp-action="MenuUpdatePost">
                             <!-- Gizli alan - ID -->
                             <input type="hidden" name="Id" value="@food.Id" />
                             

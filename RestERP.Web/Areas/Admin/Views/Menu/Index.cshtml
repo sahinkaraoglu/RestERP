@@ -14,7 +14,7 @@
                     <p class="dashboard-subtitle">Yemek kategorileri ve ürünleri ekleyin, düzenleyin ve fiyatları güncelleyin</p>
                 </div>
                 <div class="col-lg-4 text-end">
-                    <a href="/Panel/Index" class="btn btn-light rounded-pill"><i class="bi bi-arrow-left"></i> Panel'e Dön</a>
+                    <a href="/Admin/Menu" class="btn btn-light rounded-pill"><i class="bi bi-arrow-left"></i> Panel'e Dön</a>
                     <button class="btn btn-success rounded-pill ms-2" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                         <i class="bi bi-plus-circle"></i> Yeni Kategori
                     </button>
@@ -63,7 +63,7 @@
                 </div>
             </div>
             <div class="col-md-6 text-end">
-                <a href="/Panel/MenuAdd" class="btn btn-primary rounded-pill">
+                <a asp-area="Admin" asp-controller="Menu" asp-action="MenuAdd" class="btn btn-primary rounded-pill">
                     <i class="bi bi-plus-circle"></i> Yeni Ürün Ekle
                 </a>
             </div>
@@ -108,10 +108,10 @@
                                                 <p class="menu-desc">@item.Name</p>
                                             </div>
                                             <div class="menu-actions">
-                                                <a href="/Panel/MenuUpdate?id=@item.Id" class="btn btn-sm btn-outline-primary">
+                                                <a asp-area="Admin" asp-controller="Menu" asp-action="MenuUpdate" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <a href="/Panel/MenuDelete?id=@item.Id" class="btn btn-sm btn-outline-danger">
+                                                <a href="/Admin/Menu/MenuDelete?id=@item.Id" class="btn btn-sm btn-outline-danger">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             </div>
@@ -148,7 +148,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <a href="/Admin/Menu" class="btn btn-outline-secondary me-2">İptal</a>
                 <button type="button" class="btn btn-primary" id="saveCategoryBtn">Kaydet</button>
             </div>
         </div>
@@ -416,6 +416,7 @@
                 // Başarılı olursa:
                 alert('Kategori başarıyla eklendi: ' + categoryName);
                 $('#addCategoryModal').modal('hide');
+                window.location.href = '/Admin/Menu'; // Başarılı olursa menü listesine dön
             }
         });
 
@@ -436,8 +437,6 @@
             }
         });
 
-
-
         // Silme onay butonu
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
         confirmDeleteBtn.addEventListener('click', function() {
@@ -450,7 +449,11 @@
         });
     });
 
-    // Ürün düzenleme fonksiyonu    function editMenuItem(id) {        // Düzenleme sayfasına yönlendir        window.location.href = `/Panel/MenuUpdate?id=${id}`;    }
+    // Ürün düzenleme fonksiyonu
+    function editMenuItem(id) {
+        // Düzenleme sayfasına yönlendir
+        window.location.href = `/Admin/Menu/MenuUpdate?id=${id}`;
+    }
 
     // Ürün silme fonksiyonu
     function deleteMenuItem(id) {
