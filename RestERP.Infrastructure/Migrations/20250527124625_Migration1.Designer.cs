@@ -12,7 +12,7 @@ using RestERP.Infrastructure;
 namespace RestERP.Infrastructure.Migrations
 {
     [DbContext(typeof(RestERPDbContext))]
-    [Migration("20250527123938_Migration1")]
+    [Migration("20250527124625_Migration1")]
     partial class Migration1
     {
         /// <inheritdoc />
