@@ -40,30 +40,30 @@
                 <h5 class="card-title">Rezervasyon Formu</h5>
             </div>
             <div class="card-body">
-                <form id="reservationForm">
+                <form id="reservationForm" asp-action="Index" asp-controller="Reservation" method="post">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Ad Soyad</label>
-                                <input type="text" class="form-control" id="name" required>
+                                <input type="text" class="form-control" id="name" name="name" required>
                             </div>
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Telefon</label>
-                                <input type="tel" class="form-control" id="phone" required>
+                                <input type="tel" class="form-control" id="phone" name="phone" required>
                             </div>
                             <div class="mb-3">
                                 <label for="date" class="form-label">Tarih</label>
-                                <input type="date" class="form-control" id="date" required>
+                                <input type="date" class="form-control" id="date" name="date" required>
                             </div>
                             <div class="mb-3">
                                 <label for="time" class="form-label">Saat</label>
-                                <input type="time" class="form-control" id="time" required>
+                                <input type="time" class="form-control" id="time" name="time" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="guests" class="form-label">Kişi Sayısı</label>
-                                <select class="form-select" id="guests" required>
+                                <select class="form-select" id="guests" name="guests" required>
                                     @for (int i = 1; i <= 10; i++)
                                     {
                                         <option value="@i">@i Kişi</option>
@@ -71,17 +71,8 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="table" class="form-label">Masa</label>
-                                <select class="form-select" id="table" required>
-                                    @foreach (var table in Model)
-                                    {
-                                        <option value="@table.Id">Masa @table.Id</option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="mb-3">
                                 <label for="notes" class="form-label">Notlar</label>
-                                <textarea class="form-control" id="notes" rows="4"></textarea>
+                                <textarea class="form-control" id="notes" name="notes" rows="4"></textarea>
                             </div>
                         </div>
                     </div>
@@ -258,15 +249,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('reservationForm');
     
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        alert('Rezervasyon talebiniz alındı. En kısa sürede size dönüş yapılacaktır.');
-        form.reset();
-    });
-
     // Bugünden önceki tarihleri seçilemez yap
     const dateInput = document.getElementById('date');
     const today = new Date().toISOString().split('T')[0];
     dateInput.setAttribute('min', today);
+    
+    // Saat seçimi için kısıtlamalar
+    const timeInput = document.getElementById('time');
+    timeInput.addEventListener('change', function() {
+        const selectedTime = this.value;
+        const [hours] = selectedTime.split(':');
+        
+    });
 });
 </script>

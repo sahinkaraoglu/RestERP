@@ -19,6 +19,7 @@ namespace RestERP.Infrastructure
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Table> Tables { get; set; }
         public DbSet<Image> Images { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
