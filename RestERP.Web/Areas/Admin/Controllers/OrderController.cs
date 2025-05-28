@@ -36,7 +36,7 @@ public class OrderController : Controller
     {
         if (!User.Identity.IsAuthenticated)
         {
-            return RedirectToAction("Login", "Account", new { area = "" });
+            return RedirectToAction("Index", "AccessDenied", new { area = "" });
         }
         try
         {
@@ -264,6 +264,47 @@ public class OrderController : Controller
         {
             _logger.LogError(ex, $"Sipariş durumu güncellenirken hata oluştu. OrderId: {orderId}");
             return StatusCode(500, "Sipariş durumu güncellenirken bir hata oluştu");
+        }
+    }
+
+    [HttpGet]
+    [Route("api/orders/all-tables")]
+    public async Task<IActionResult> GetAllTablesOrders()
+    {
+        try
+        {
+            var orders = await _orderService.GetAllOrdersAsync();
+            var tableOrders = orders
+                .Where(o => o.TableId.HasValue)
+                .GroupBy(o => o.TableId)
+                .Select(g => new
+                {
+                    TableId = g.Key,
+                    Orders = g.Select(o => new
+                    {
+                        o.Id,
+                        o.OrderNumber,
+                        o.OrderDate,
+                        o.Status,
+                        o.TotalAmount,
+                        o.IsPaid,
+                        Items = o.OrderItems.Select(i => new
+                        {
+                            i.ProductId,
+                            i.Quantity,
+                            i.UnitPrice,
+                            i.TotalPrice
+                        })
+                    })
+                })
+                .ToList();
+
+            return Ok(tableOrders);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Tüm masaların siparişleri alınırken hata oluştu");
+            return StatusCode(500, "Siparişler alınırken bir hata oluştu");
         }
     }
 }

@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = "Erişim Reddedildi";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 text-danger">Erişim Reddedildi</h1>
+            <p class="lead">Bu sayfaya erişim yetkiniz bulunmamaktadır.</p>
+            <p>Lütfen giriş yapın veya yetkili bir kullanıcı ile iletişime geçin.</p>
+            <a href="@Url.Action("Index", "Login")" class="btn btn-primary">Giriş Yap</a>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Ana Sayfaya Dön</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .access-denied-container {
+        background-color: #fffcf7;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid #f0e9df;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 20px auto;
+        max-width: 300px;
+        position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(to right, transparent, #e2d7c7, transparent);
+    }
+
+    .divider span {
+        padding: 0 15px;
+        color: #b8a88d;
+        font-size: 1.1rem;
+    }
+
+    .menu-button {
+        display: inline-block;
+        font-size: 1.1rem;
+        color: #6a563d;
+        font-weight: 400;
+        padding: 10px 25px;
+        text-decoration: none;
+        position: relative;
+        border: 1px solid #e6dfd4;
+        border-radius: 6px;
+        background-color: #fdfaf5;
+        transition: all 0.4s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+
+    .menu-button:hover {
+        color: #4a3c2e;
+        background-color: #f7f2e8;
+        border-color: #d6c8b4;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+</style> 

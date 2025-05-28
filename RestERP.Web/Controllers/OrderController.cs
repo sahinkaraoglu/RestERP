@@ -33,7 +33,7 @@ namespace RestERP.Web.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Index", "AccessDenied");
             }
 
             try
@@ -75,7 +75,41 @@ namespace RestERP.Web.Controllers
             }
         }
 
+        public async Task<IActionResult> ViewOrder(int tableId)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("AccessDenied", "AccessDenied");
+            }
 
+            try
+            {
+                var orders = await _orderService.GetAllOrdersAsync();
+                var tableOrders = orders.Where(o => o.TableId == tableId).ToList();
+
+                foreach (var order in tableOrders)
+                {
+                    foreach (var item in order.OrderItems)
+                    {
+                        try
+                        {
+                            item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. ProductId: {item.ProductId}");
+                        }
+                    }
+                }
+
+                return View(tableOrders);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Masa {tableId} siparişleri yüklenirken hata oluştu");
+                TempData["ErrorMessage"] = "Siparişler yüklenirken bir hata oluştu.";
+                return View(new List<Order>());
+            }
+        }
     }
-
 }
