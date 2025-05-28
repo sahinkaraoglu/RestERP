@@ -16,20 +16,23 @@ namespace RestERP.Web.Controllers
         private readonly IOrderService _orderService;
         private readonly IFoodService _foodService;
         private readonly IUserService _userService;
+        private readonly ITableService _tableService;
 
         public OrderController(
             ILogger<OrderController> logger,
             IOrderService orderService,
             IFoodService foodService,
-            IUserService userService)
+            IUserService userService,
+            ITableService tableService)
         {
             _logger = logger;
             _orderService = orderService;
             _foodService = foodService;
             _userService = userService;
+            _tableService = tableService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? tableId = null)
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -38,19 +41,22 @@ namespace RestERP.Web.Controllers
 
             try
             {
-                // Kullanıcı girişi kontrolü
-                var currentUser = await _userService.GetCurrentUserAsync();
-                if (currentUser == null)
+                // Tüm masaları getir
+                var tables = await _tableService.GetAllTablesAsync();
+                ViewBag.Tables = tables;
+
+                // Tüm siparişleri getir
+                var orders = await _orderService.GetAllOrdersAsync();
+
+                // Masa filtresi varsa uygula
+                if (tableId.HasValue)
                 {
-                    return View(new List<Order>());
+                    orders = orders.Where(o => o.TableId == tableId.Value).ToList();
+                    ViewBag.SelectedTableId = tableId.Value;
                 }
 
-                // Kullanıcının siparişlerini getir
-                var orders = await _orderService.GetAllOrdersAsync();
-                var userOrders = orders.Where(o => o.CustomerId == currentUser.Id).ToList();
-
                 // Her bir sipariş için yemek bilgilerini yükle
-                foreach (var order in userOrders)
+                foreach (var order in orders)
                 {
                     foreach (var item in order.OrderItems)
                     {
@@ -65,7 +71,7 @@ namespace RestERP.Web.Controllers
                     }
                 }
 
-                return View(userOrders);
+                return View(orders);
             }
             catch (Exception ex)
             {
@@ -79,7 +85,7 @@ namespace RestERP.Web.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("AccessDenied", "AccessDenied");
+                return RedirectToAction("Index", "AccessDenied");
             }
 
             try

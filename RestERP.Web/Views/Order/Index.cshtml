@@ -1,8 +1,7 @@
 @model IEnumerable<Order>
 
 @{
-    var showSingleOrder = ViewData["ShowSingleOrder"] as bool? ?? false;
-    ViewData["Title"] = showSingleOrder ? "Sipariş Detayı" : "Siparişlerim";
+    ViewData["Title"] = "Tüm Siparişler";
 }
 
 @using RestERP.Application.Services.Interfaces
@@ -18,17 +17,13 @@
         <div class="divider">
             <span>✦</span>
         </div>
-        @if (!showSingleOrder)
-        {
-            <p>Masanıza ait siparişleri görüntüleyebilirsiniz</p>
-        }
     </div>
 
     @if (!User.Identity.IsAuthenticated)
     {
         <div class="no-order-message">
             <i class="bi bi-shield-lock"></i>
-            <p>Siparişlerinizi görüntüleyebilmek için giriş yapmanız gerekmektedir.</p>
+            <p>Siparişleri görüntüleyebilmek için giriş yapmanız gerekmektedir.</p>
             <div class="auth-buttons">
                 <a href="/Identity/Account/Login" class="action-button login-button">
                     <i class="bi bi-box-arrow-in-right"></i>
@@ -43,142 +38,94 @@
     }
     else
     {
+        <div class="filter-section">
+            <form method="get" action="@Url.Action("Index")" class="filter-form">
+                <div class="form-group">
+                    <label for="tableId">Masa Filtresi:</label>
+                    <select name="tableId" id="tableId" class="form-control" onchange="this.form.submit()">
+                        <option value="">Tüm Masalar</option>
+                        @foreach (var table in ViewBag.Tables)
+                        {
+                            var isSelected = ViewBag.SelectedTableId == table.Id;
+                            <option value="@table.Id" selected="@isSelected">
+                                Masa @table.Id
+                            </option>
+                        }
+                    </select>
+                </div>
+            </form>
+        </div>
+
         @if (Model == null || !Model.Any())
         {
             <div class="no-order-message">
                 <i class="bi bi-exclamation-circle"></i>
-                <p>@(showSingleOrder 
-                    ? "Sipariş bulunamadı." 
-                    : "Henüz sipariş verilmemiş.")</p>
+                <p>Henüz sipariş verilmemiş.</p>
                 <a href="/Menu" class="action-link">
                     <i class="bi bi-journal-text"></i>
                     Menüyü Görüntüle
                 </a>
             </div>
         }
-        else if (showSingleOrder)
-        {
-            var order = Model.First();
-            <div class="order-card">
-                <div class="order-header">
-                    <div class="order-info">
-                        <div class="info-row">
-                            <div class="info-item">
-                                <span class="label">Sipariş No:</span>
-                                <span class="value">@order.OrderNumber</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Masa No:</span>
-                                <span class="value">@order.TableId</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Tarih:</span>
-                                <span class="value">@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">Durum:</span>
-                                <span class="value status-badge @order.Status.ToString().ToLower()">@GetStatusText(order.Status)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="order-items">
-                    <h3>Sipariş Kalemleri</h3>
-                    <div class="items-list">
-                        @foreach (var item in order.OrderItems)
-                        {
-                            <div class="item-row">
-                                <div class="item-details">
-                                    <span class="item-name">@(item.Food?.Name ?? "Ürün Bulunamadı")</span>
-                                    <span class="item-quantity">x @item.Quantity</span>
-                                </div>
-                                <div class="item-price">
-                                    <span class="unit-price">@item.UnitPrice.ToString("C2")</span>
-                                    <span class="total-price">@item.TotalPrice.ToString("C2")</span>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    <div class="order-total">
-                        <span class="label">Toplam Tutar:</span>
-                        <span class="value">@order.TotalAmount.ToString("C2")</span>
-                    </div>
-                </div>
-
-                <div class="order-actions">
-                    <a href="/Menu" class="action-button menu-button">
-                        <i class="bi bi-journal-text"></i>
-                        Menüyü Görüntüle
-                    </a>
-                </div>
-            </div>
-        }
         else
         {
-            var groupedOrders = Model.GroupBy(o => o.TableId).OrderBy(g => g.Key);
             <div class="orders-grid">
-                @foreach (var group in groupedOrders)
+                @foreach (var order in Model.OrderByDescending(o => o.OrderDate))
                 {
                     <div class="order-card">
                         <div class="order-header">
-                            <h2>MASA @group.Key</h2>
-                        </div>
-                        @foreach (var order in group)
-                        {
-                            <div class="order-details">
-                                <div class="order-info">
-                                    <div class="info-row">
-                                        <div class="info-item">
-                                            <span class="label">Sipariş No:</span>
-                                            <span class="value">@order.OrderNumber</span>
-                                        </div>
-                                        <div class="info-item">
-                                            <span class="label">Durum:</span>
-                                            <span class="value status-badge @order.Status.ToString().ToLower()">@GetStatusText(order.Status)</span>
-                                        </div>
+                            <div class="order-info">
+                                <div class="info-row">
+                                    <div class="info-item">
+                                        <span class="label">Sipariş No:</span>
+                                        <span class="value">@order.OrderNumber</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Masa No:</span>
+                                        <span class="value">@order.TableId</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Tarih:</span>
+                                        <span class="value">@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="label">Durum:</span>
+                                        <span class="value status-badge @order.Status.ToString().ToLower()">@GetStatusText(order.Status)</span>
                                     </div>
                                 </div>
-
-                                <div class="order-items">
-                                    <h3>Sipariş Kalemleri</h3>
-                                    <table class="items-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Ürün</th>
-                                                <th>Miktar</th>
-                                                <th>Birim Fiyat</th>
-                                                <th>Toplam</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var item in order.OrderItems)
-                                            {
-                                                <tr>
-                                                    <td>@(item.Food?.Name ?? "Ürün Bulunamadı")</td>
-                                                    <td>@item.Quantity</td>
-                                                    <td>@item.UnitPrice.ToString("C2")</td>
-                                                    <td>@item.TotalPrice.ToString("C2")</td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td colspan="3" class="total-label">Toplam Tutar:</td>
-                                                <td class="total-amount">@order.TotalAmount.ToString("C2")</td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-
-                                <div class="order-actions">
-                                    <a href="/Order/Index?orderId=@order.Id" class="action-button details-button">
-                                        <i class="bi bi-eye"></i>
-                                        Detayları Görüntüle
-                                    </a>
-                                </div>
                             </div>
-                        }
+                        </div>
+
+                        <div class="order-items">
+                            <h3>Sipariş Kalemleri</h3>
+                            <table class="items-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ürün</th>
+                                        <th>Miktar</th>
+                                        <th>Birim Fiyat</th>
+                                        <th>Toplam</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in order.OrderItems)
+                                    {
+                                        <tr>
+                                            <td>@(item.Food?.Name ?? "Ürün Bulunamadı")</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@item.UnitPrice.ToString("C2")</td>
+                                            <td>@item.TotalPrice.ToString("C2")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="total-label">Toplam Tutar:</td>
+                                        <td class="total-amount">@order.TotalAmount.ToString("C2")</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 }
             </div>
@@ -191,9 +138,10 @@
         max-width: 1200px;
         margin: 20px auto;
         padding: 20px;
-        background-color: #fff;
+        background-color: #fffcf7;
         border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: 1px solid #f0e9df;
     }
 
     .page-header {
@@ -202,26 +150,23 @@
         padding: 20px;
         background-color: #f8f4ec;
         border-radius: 8px;
+        border: 1px solid #e5e0d5;
     }
 
     .page-header h1 {
-        font-size: 2rem;
         color: #5d4b38;
+        font-size: 2.5rem;
         margin-bottom: 10px;
         font-weight: 600;
-    }
-
-    .page-header p {
-        color: #8c7762;
-        font-size: 1.1rem;
-        margin: 0;
     }
 
     .divider {
         display: flex;
         align-items: center;
+        justify-content: center;
         margin: 15px auto;
         max-width: 300px;
+        position: relative;
     }
 
     .divider::before,
@@ -235,178 +180,193 @@
     .divider span {
         padding: 0 15px;
         color: #b09a7b;
+        font-size: 1.2rem;
+    }
+
+    .filter-section {
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f8f4ec;
+        border-radius: 8px;
+        border: 1px solid #e5e0d5;
+    }
+
+    .filter-form {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .form-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-group label {
+        font-weight: 500;
+        color: #5d4b38;
+        margin: 0;
+    }
+
+    .form-control {
+        padding: 8px 12px;
+        border: 1px solid #e5e0d5;
+        border-radius: 4px;
+        font-size: 1rem;
+        min-width: 200px;
+        background-color: #fff;
+        color: #5d4b38;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #b09a7b;
+        box-shadow: 0 0 0 2px rgba(176, 154, 123, 0.1);
     }
 
     .orders-grid {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: 20px;
-        margin-bottom: 30px;
+        margin-top: 20px;
     }
 
     .order-card {
-        background-color: #fff;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        overflow: hidden;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        padding: 20px;
+        transition: transform 0.2s;
         border: 1px solid #e5e0d5;
+    }
+
+    .order-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     .order-header {
-        background-color: #f8f4ec;
-        padding: 20px;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
         border-bottom: 1px solid #e5e0d5;
     }
 
-    .order-header h2 {
-        margin: 0;
-        color: #5d4b38;
-        font-size: 1.5rem;
-        font-weight: 600;
-    }
-
-    .order-details {
-        padding: 20px;
-    }
-
     .order-info {
-        background-color: #f8f4ec;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
-        border: 1px solid #e5e0d5;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 
     .info-row {
         display: flex;
         flex-wrap: wrap;
         gap: 15px;
-        margin: -5px;
     }
 
     .info-item {
-        flex: 1;
-        min-width: 200px;
-        padding: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
     }
 
     .label {
-        font-weight: 600;
-        color: #8c7762;
-        margin-right: 10px;
         font-size: 0.9rem;
+        color: #8c7762;
     }
 
     .value {
-        color: #5d4b38;
         font-weight: 500;
+        color: #5d4b38;
     }
 
     .status-badge {
-        display: inline-block;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 500;
     }
 
-    .new {
-        background-color: #e3f2fd;
-        color: #1976d2;
-    }
-
-    .inprogress {
-        background-color: #fff3e0;
-        color: #f57c00;
-    }
-
-    .completed {
-        background-color: #e8f5e9;
-        color: #388e3c;
-    }
-
-    .cancelled {
-        background-color: #ffebee;
-        color: #d32f2f;
-    }
-
-    .ready {
-        background-color: #f3e5f5;
-        color: #7b1fa2;
-    }
+    .status-badge.new { background-color: #e3f2fd; color: #1976d2; }
+    .status-badge.preparing { background-color: #fff3e0; color: #f57c00; }
+    .status-badge.ready { background-color: #e8f5e9; color: #388e3c; }
+    .status-badge.completed { background-color: #f5f5f5; color: #616161; }
+    .status-badge.cancelled { background-color: #ffebee; color: #d32f2f; }
 
     .order-items {
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        overflow: hidden;
-        margin-bottom: 20px;
-        border: 1px solid #e5e0d5;
+        margin-top: 15px;
     }
 
     .order-items h3 {
-        padding: 15px 20px;
-        margin: 0;
-        color: #5d4b38;
-        background-color: #f8f4ec;
-        border-bottom: 1px solid #e5e0d5;
         font-size: 1.2rem;
+        color: #5d4b38;
+        margin-bottom: 10px;
         font-weight: 600;
     }
 
     .items-table {
         width: 100%;
         border-collapse: collapse;
+        margin-top: 10px;
+        background-color: #fff;
+        border: 1px solid #e5e0d5;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .items-table th,
+    .items-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #e5e0d5;
     }
 
     .items-table th {
         background-color: #f8f4ec;
-        color: #8c7762;
-        font-weight: 600;
-        text-align: left;
-        padding: 12px 20px;
-        border-bottom: 1px solid #e5e0d5;
-        font-size: 0.9rem;
+        font-weight: 500;
+        color: #5d4b38;
     }
 
     .items-table td {
-        padding: 12px 20px;
-        border-bottom: 1px solid #e5e0d5;
         color: #5d4b38;
-        font-size: 0.95rem;
-    }
-
-    .items-table tr:last-child td {
-        border-bottom: none;
-    }
-
-    .items-table tfoot td {
-        background-color: #f8f4ec;
-        font-weight: 600;
-        border-top: 2px solid #e5e0d5;
     }
 
     .total-label {
+        font-weight: 500;
         text-align: right;
-        color: #8c7762;
-        font-size: 1rem;
+        color: #5d4b38;
     }
 
     .total-amount {
-        color: #5d4b38;
-        font-size: 1.1rem;
-        font-weight: 700;
+        font-weight: 600;
+        color: #b09a7b;
     }
 
-    .order-actions {
-        padding: 20px;
+    .no-order-message {
+        text-align: center;
+        padding: 40px 20px;
+        background-color: #f8f4ec;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 1px solid #e5e0d5;
+    }
+
+    .no-order-message i {
+        font-size: 3rem;
+        color: #b09a7b;
+        margin-bottom: 15px;
+    }
+
+    .no-order-message p {
+        color: #5d4b38;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+
+    .auth-buttons {
         display: flex;
-        gap: 12px;
-        justify-content: flex-end;
-        background: #f8f4ec;
-        border-top: 1px solid #e5e0d5;
+        gap: 15px;
+        justify-content: center;
     }
 
     .action-button {
@@ -414,81 +374,56 @@
         align-items: center;
         gap: 8px;
         padding: 10px 20px;
-        border: none;
         border-radius: 6px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
         text-decoration: none;
-        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.2s;
     }
 
-    .action-button i {
-        font-size: 1.1rem;
-    }
-
-    .details-button {
-        background-color: #5c6bc0;
+    .login-button {
+        background-color: #b09a7b;
         color: white;
     }
 
-    .details-button:hover {
-        background-color: #3f51b5;
-        color: white;
-        transform: translateY(-1px);
-    }
-
-    .menu-button {
-        background-color: #5c6bc0;
-    }
-
-    .menu-button:hover {
-        background-color: #3f51b5;
-        color: white;
-    }
-
-    .no-order-message {
-        text-align: center;
-        padding: 40px;
+    .register-button {
         background-color: #f8f4ec;
-        border-radius: 12px;
-        margin: 20px 0;
+        color: #5d4b38;
         border: 1px solid #e5e0d5;
     }
 
-    .no-order-message i {
-        font-size: 2.5rem;
-        color: #8c7762;
-        margin-bottom: 15px;
-        display: block;
-    }
-
-    .no-order-message p {
-        color: #5d4b38;
-        margin-bottom: 20px;
-        font-size: 1.1rem;
+    .action-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .action-link {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        padding: 12px 24px;
-        background-color: #5c6bc0;
-        color: white;
+        color: #b09a7b;
         text-decoration: none;
-        border-radius: 6px;
-        transition: all 0.2s ease;
         font-weight: 500;
     }
 
     .action-link:hover {
-        background-color: #3f51b5;
-        color: white;
-        transform: translateY(-1px);
+        text-decoration: underline;
     }
 
     @@media (max-width: 768px) {
+        .filter-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .form-group {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .form-control {
+            width: 100%;
+        }
+
         .order-details-container {
             margin: 10px;
             padding: 15px;
@@ -496,67 +431,24 @@
 
         .page-header {
             padding: 15px;
-            margin-bottom: 20px;
         }
 
         .page-header h1 {
-            font-size: 1.8rem;
+            font-size: 2rem;
         }
 
         .info-item {
             min-width: 100%;
         }
-
-        .items-table {
-            display: block;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .order-actions {
-            flex-direction: column;
-            padding: 15px;
-        }
-
-        .action-button {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-
-    .auth-buttons {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        margin-top: 1.5rem;
-    }
-
-    .login-button {
-        background-color: #5c6bc0;
-    }
-
-    .login-button:hover {
-        background-color: #3f51b5;
-    }
-
-    .register-button {
-        background-color: #26a69a;
-    }
-
-    .register-button:hover {
-        background-color: #00897b;
     }
 </style>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
-
 @functions {
-    string GetStatusText(OrderStatus status)
+    public string GetStatusText(OrderStatus status)
     {
         return status switch
         {
             OrderStatus.New => "Yeni",
-            OrderStatus.InProgress => "Hazırlanıyor",
             OrderStatus.Ready => "Hazır",
             OrderStatus.Completed => "Tamamlandı",
             OrderStatus.Cancelled => "İptal Edildi",
