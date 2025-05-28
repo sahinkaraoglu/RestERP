@@ -64,9 +64,16 @@ public class PanelController : Controller
             
             // Kullanıcıları çekerek çalışan sayısını hesaplayalım
             var users = await _userService.GetAllUsersAsync();
-            var totalEmployees = users.Count(u => u.RoleType == Role.Customer);
+
+            var totalEmployees = users.Count(u => u.RoleType == Role.Employee);
             var activeEmployees = users.Count(u => u.RoleType == Role.Employee && u.IsActive);
-            
+
+            var totalCustomers = users.Count(u => u.RoleType == Role.Customer);
+            var activeCustomers = users.Count(u => u.RoleType == Role.Customer && u.IsActive);
+
+            var alltotal = totalEmployees + activeEmployees;
+            var allactive = activeEmployees + activeCustomers;
+
             var model = new 
             {
                 MenuItemCount = menuItemCount,
@@ -75,7 +82,10 @@ public class PanelController : Controller
                 TableOccupancyPercentage = tableOccupancyPercentage,
                 TotalEmployees = totalEmployees,
                 ActiveEmployees = activeEmployees,
-                OccupiedTables = occupiedTables
+                OccupiedTables = occupiedTables,
+                AllTotal = alltotal,
+                AllActive = allactive
+
             };
             
             return View(model);

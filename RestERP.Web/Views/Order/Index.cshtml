@@ -11,7 +11,7 @@
 @using RestERP.Domain.Enums
 @using RestERP.Infrastructure.Data.SeedData
 @inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
+@inject IUserService UserService
 @inject IFoodService FoodService
 
 <div class="order-details-container">
@@ -26,7 +26,7 @@
         }
     </div>
 
-    @if (!SignInManager.IsSignedIn(User))
+    @if (!User.Identity.IsAuthenticated)
     {
         <div class="no-order-message">
             <i class="bi bi-shield-lock"></i>

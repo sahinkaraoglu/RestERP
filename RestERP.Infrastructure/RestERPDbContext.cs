@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RestERP.Core.Doman.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 
 namespace RestERP.Infrastructure
 {
-    public class RestERPDbContext : IdentityDbContext<ApplicationUser>
+    public class RestERPDbContext : DbContext
     {
         public RestERPDbContext(DbContextOptions<RestERPDbContext> options)
             : base(options)
@@ -20,11 +19,10 @@ namespace RestERP.Infrastructure
         public DbSet<Table> Tables { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
-
             // Soft delete filtreleri
             builder.Entity<Order>().HasQueryFilter(e => !e.IsDeleted);
             builder.Entity<OrderItem>().HasQueryFilter(e => !e.IsDeleted);

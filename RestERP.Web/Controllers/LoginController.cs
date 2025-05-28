@@ -1,30 +1,26 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
 using RestERP.Core.Doman.Entities;
+using RestERP.Application.Services.Interfaces;
+using System.Security.Cryptography;
 
 namespace RestERP.Web.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<LoginController> _logger;
 
         public LoginController(
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
+            IUserService userService,
             IConfiguration configuration,
             ILogger<LoginController> logger)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _userService = userService;
             _configuration = configuration;
             _logger = logger;
         }
@@ -47,11 +43,12 @@ namespace RestERP.Web.Controllers
 
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString() ?? string.Empty),
                     new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
-                    new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                     new Claim("FirstName", user.FirstName ?? string.Empty),
-                    new Claim("LastName", user.LastName ?? string.Empty)
+                    new Claim("LastName", user.LastName ?? string.Empty),
+                    new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                    new Claim(ClaimTypes.Role, user.RoleType.ToString())
                 };
 
                 var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
@@ -75,6 +72,21 @@ namespace RestERP.Web.Controllers
             }
         }
 
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return Convert.ToBase64String(hashedBytes);
+            }
+        }
+
+        private bool VerifyPassword(string password, string hashedPassword)
+        {
+            var hashedInput = HashPassword(password);
+            return hashedInput == hashedPassword;
+        }
+
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password, bool rememberMe)
         {
@@ -86,42 +98,35 @@ namespace RestERP.Web.Controllers
                     return View("Index");
                 }
 
-                var user = await _userManager.FindByNameAsync(username);
+                var user = await _userService.GetUserByUsernameAsync(username);
                 if (user == null || !user.IsActive)
                 {
                     ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre.");
                     return View("Index");
                 }
 
-                var result = await _signInManager.PasswordSignInAsync(username, password, rememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
+                if (!VerifyPassword(password, user.PasswordHash))
                 {
-                    // JWT token oluştur
-                    var token = GenerateJwtToken(user);
-
-                    // Token'ı cookie'ye kaydet
-                    var cookieOptions = new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Secure = true,
-                        SameSite = SameSiteMode.Strict,
-                        Expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:ExpiryInDays"] ?? "7"))
-                    };
-
-                    Response.Cookies.Append("JWT", token, cookieOptions);
-
-                    // Başarılı giriş sonrası Home/Index'e yönlendir
-                    return RedirectToAction("Index", "Home", new { area = "" });
-                }
-
-                if (result.IsLockedOut)
-                {
-                    ModelState.AddModelError(string.Empty, "Hesabınız kilitlendi. Lütfen daha sonra tekrar deneyin.");
+                    ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre.");
                     return View("Index");
                 }
 
-                ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre.");
-                return View("Index");
+                // JWT token oluştur
+                var token = GenerateJwtToken(user);
+
+                // Token'ı cookie'ye kaydet
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:ExpiryInDays"] ?? "7"))
+                };
+
+                Response.Cookies.Append("JWT", token, cookieOptions);
+
+                // Başarılı giriş sonrası Home/Index'e yönlendir
+                return RedirectToAction("Index", "Home", new { area = "" });
             }
             catch (Exception ex)
             {
@@ -132,11 +137,10 @@ namespace RestERP.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
-            await _signInManager.SignOutAsync();
             Response.Cookies.Delete("JWT");
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
 
         [HttpGet]
@@ -146,7 +150,7 @@ namespace RestERP.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUp(string username, string email, string firstName, string lastName, string password, string confirmPassword)
+        public async Task<IActionResult> SignUp(string username, string email, string firstName, string lastName, string phoneNumber, string password, string confirmPassword)
         {
             try
             {
@@ -162,12 +166,14 @@ namespace RestERP.Web.Controllers
                     Email = email,
                     FirstName = firstName,
                     LastName = lastName,
+                    PhoneNumber = phoneNumber,
                     IsActive = true,
-                    CreatedDate = DateTime.Now
+                    PasswordHash = HashPassword(password),
+                    RoleType = RestERP.Domain.Enums.Role.Customer
                 };
 
-                var result = await _userManager.CreateAsync(user, password);
-                if (result.Succeeded)
+                var result = await _userService.CreateUserAsync(user);
+                if (result)
                 {
                     // JWT token oluştur
                     var token = GenerateJwtToken(user);
@@ -186,11 +192,7 @@ namespace RestERP.Web.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-
+                ModelState.AddModelError(string.Empty, "Kullanıcı oluşturulurken bir hata oluştu.");
                 return View();
             }
             catch (Exception ex)
@@ -199,6 +201,13 @@ namespace RestERP.Web.Controllers
                 ModelState.AddModelError(string.Empty, "Kayıt işlemi sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.");
                 return View();
             }
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied(string returnUrl = null)
+        {
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
         }
     }
 }

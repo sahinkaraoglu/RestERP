@@ -19,25 +19,29 @@ public class OrderController : Controller
     private readonly ILogger<OrderController> _logger;
     private readonly IOrderService _orderService;
     private readonly IFoodService _foodService;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IUserService _userService;
     private readonly SignInManager<ApplicationUser> _signInManager;
 
     public OrderController(
         ILogger<OrderController> logger, 
         IOrderService orderService,
         IFoodService foodService,
-        UserManager<ApplicationUser> userManager,
+        IUserService userService,
         SignInManager<ApplicationUser> signInManager)
     {
         _logger = logger;
         _orderService = orderService;
         _foodService = foodService;
-        _userManager = userManager;
+        _userService = userService;
         _signInManager = signInManager;
     }
 
-    public async Task<IActionResult> Index(int? orderId = null)
+    public async Task<IActionResult> Index()
     {
+        if (!User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Login", "Account", new { area = "" });
+        }
         try
         {
             // Kullanıcı girişi kontrolü
@@ -47,23 +51,27 @@ public class OrderController : Controller
             }
 
             // Eğer sipariş ID'si belirtilmişse, o siparişin detaylarını göster
-            if (orderId.HasValue)
+            if (Request.Query.ContainsKey("orderId"))
             {
-                var order = await _orderService.GetOrderWithDetailsAsync(orderId.Value);
-                if (order == null)
+                var orderId = int.TryParse(Request.Query["orderId"], out int id) ? id : (int?)null;
+                if (orderId.HasValue)
                 {
-                    TempData["ErrorMessage"] = "Sipariş bulunamadı.";
-                    return RedirectToAction(nameof(Index));
-                }
+                    var order = await _orderService.GetOrderWithDetailsAsync(orderId.Value);
+                    if (order == null)
+                    {
+                        TempData["ErrorMessage"] = "Sipariş bulunamadı.";
+                        return RedirectToAction(nameof(Index));
+                    }
 
-                // Her bir sipariş kalemi için ürün bilgilerini yükle
-                foreach (var item in order.OrderItems)
-                {
-                    item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
-                }
+                    // Her bir sipariş kalemi için ürün bilgilerini yükle
+                    foreach (var item in order.OrderItems)
+                    {
+                        item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                    }
 
-                ViewData["ShowSingleOrder"] = true;
-                return View(new List<Order> { order });
+                    ViewData["ShowSingleOrder"] = true;
+                    return View(new List<Order> { order });
+                }
             }
             
             // Sipariş ID'si belirtilmemişse tüm aktif siparişleri göster

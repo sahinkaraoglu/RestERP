@@ -1,6 +1,7 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Security.Claims;
 
 namespace RestERP.Web.Middleware
 {
@@ -39,10 +40,11 @@ namespace RestERP.Web.Middleware
                     }, out SecurityToken validatedToken);
 
                     var jwtToken = (JwtSecurityToken)validatedToken;
-                    var userId = jwtToken.Claims.First(x => x.Type == "nameid").Value;
+                    var claims = jwtToken.Claims.ToList();
 
-                    // Kullanıcı kimliğini context'e ekle
-                    context.Items["UserId"] = userId;
+                    // ClaimsPrincipal oluştur ve context'e ekle
+                    var identity = new ClaimsIdentity(claims, "Bearer");
+                    context.User = new ClaimsPrincipal(identity);
                 }
                 catch
                 {

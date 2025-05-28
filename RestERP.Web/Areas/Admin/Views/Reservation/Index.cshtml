@@ -1,0 +1,225 @@
+@model IEnumerable<RestERP.Core.Doman.Entities.Reservation>
+
+@{
+    ViewData["Title"] = "Rezervasyon Yönetimi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="person-container">
+    <div class="person-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="person-title">Rezervasyon Yönetimi</h1>
+                    <p class="person-subtitle">Tüm rezervasyonları görüntüleyin ve yönetin</p>
+                </div>
+                <div class="col-lg-4">
+                    <a href="@Url.Action("Create", "Reservation")" class="btn btn-primary add-person-btn">
+                        <i class="bi bi-plus-circle"></i> Yeni Rezervasyon
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container person-content">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="reservationTable" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>İsim</th>
+                                    <th>Telefon</th>
+                                    <th>Tarih</th>
+                                    <th>Saat</th>
+                                    <th>Misafir Sayısı</th>
+                                    <th>Notlar</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var reservation in Model)
+                                {
+                                    <tr>
+                                        <td>@reservation.Id</td>
+                                        <td>@reservation.Name</td>
+                                        <td>@reservation.Phone</td>
+                                        <td>@reservation.Date.ToShortDateString()</td>
+                                        <td>@reservation.Time</td>
+                                        <td>@reservation.Guests</td>
+                                        <td>@reservation.Notes</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <a href="@Url.Action("Edit", "Reservation", new { id = reservation.Id })" 
+                                                   class="btn btn-sm btn-info" title="Düzenle">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="@Url.Action("Details", "Reservation", new { id = reservation.Id })" 
+                                                   class="btn btn-sm btn-primary" title="Detaylar">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-sm btn-danger" 
+                                                        onclick="deleteReservation(@reservation.Id)" title="Sil">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .person-container {
+        background-color: #f9f7f4;
+        min-height: 100vh;
+    }
+    
+    .person-header {
+        background: linear-gradient(135deg, #b09a7b, #c7b59d);
+        color: white;
+        padding: 20px 0;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .person-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+    
+    .person-subtitle {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .add-person-btn {
+        background: white;
+        color: #b09a7b;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .add-person-btn:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+        color: #b09a7b;
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border-radius: 8px;
+    }
+
+    .table th {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table td {
+        vertical-align: middle;
+    }
+
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        border-radius: 0.2rem;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.5em 1em;
+        margin: 0 2px;
+        border: 1px solid #dee2e6;
+        background-color: #fff;
+        color: #6c757d !important;
+        border-radius: 4px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background-color: #f8f9fa;
+        border-color: #dee2e6;
+        color: #495057 !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background-color: #b09a7b;
+        border-color: #b09a7b;
+        color: #fff !important;
+    }
+
+    .dataTables_wrapper .dataTables_length select,
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 4px 8px;
+        background-color: #fff;
+        color: #6c757d;
+    }
+
+    .dataTables_wrapper .dataTables_length select:focus,
+    .dataTables_wrapper .dataTables_filter input:focus {
+        border-color: #b09a7b;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(176, 154, 123, 0.25);
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#reservationTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/tr.json"
+                },
+                "responsive": true,
+                "pageLength": 10,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Tümü"]],
+                "order": [[0, "desc"]]
+            });
+        });
+
+        function deleteReservation(id) {
+            if (confirm('Bu rezervasyonu silmek istediğinizden emin misiniz?')) {
+                $.post('@Url.Action("Delete", "Reservation")', { id: id })
+                    .done(function () {
+                        location.reload();
+                    })
+                    .fail(function () {
+                        alert('Rezervasyon silinirken bir hata oluştu.');
+                    });
+            }
+        }
+    </script>
+}

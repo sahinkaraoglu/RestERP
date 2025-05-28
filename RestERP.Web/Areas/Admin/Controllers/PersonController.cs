@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using RestERP.Application.Services.Interfaces;
 using RestERP.Domain.Enums;
 using RestERP.Core.Doman.Entities;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace RestERP.Web.Areas.Admin.Controllers
 {
@@ -11,26 +12,20 @@ namespace RestERP.Web.Areas.Admin.Controllers
     {
         private readonly ILogger<PersonController> _logger;
         private readonly IUserService _userService;
-        private readonly UserManager<ApplicationUser> _userManager;
 
         public PersonController(
             ILogger<PersonController> logger, 
-            IUserService userService,
-            UserManager<ApplicationUser> userManager)
+            IUserService userService)
         {
             _logger = logger;
             _userService = userService;
-            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
             try
             {
-                // Tüm kullanıcıları çekelim
                 var users = await _userService.GetAllUsersAsync();
-                
-                // Kullanıcıları doğrudan model olarak View'a gönderelim
                 return View(users);
             }
             catch (Exception ex)
@@ -41,13 +36,11 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        // GET: Person/PersonAdd
         public IActionResult PersonAdd()
         {
             return View("~/Areas/Admin/Views/Person/PersonAdd.cshtml");
         }
 
-        // POST: Person/PersonAdd
         [HttpPost]
         public async Task<IActionResult> PersonAdd(ApplicationUser user, string password, string confirmPassword)
         {
@@ -61,22 +54,19 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    // Kullanıcı adını e-posta adresinden oluştur
                     user.UserName = user.Email;
                     user.IsActive = true;
+                    user.PasswordHash = HashPassword(password);
 
-                    var result = await _userManager.CreateAsync(user, password);
+                    var result = await _userService.CreateUserAsync(user);
 
-                    if (result.Succeeded)
+                    if (result)
                     {
-                        TempData["SuccessMessage"] = "Kullanıcı  başarıyla eklendi.";
+                        TempData["SuccessMessage"] = "Kullanıcı başarıyla eklendi.";
                         return RedirectToAction(nameof(Index));
                     }
                     
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
+                    ModelState.AddModelError("", "Kullanıcı eklenirken bir hata oluştu.");
                 }
                 return View("~/Areas/Admin/Views/Person/PersonAdd.cshtml", user);
             }
@@ -88,7 +78,6 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        // GET: Person/PersonUpdate
         public async Task<IActionResult> PersonUpdate(string id)
         {
             try
@@ -105,7 +94,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
                     return RedirectToAction(nameof(Index));
                 }
-            
+
                 return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", user);
             }
             catch (Exception ex)
@@ -116,7 +105,6 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        // POST: Person/PersonUpdate
         [HttpPost]
         public async Task<IActionResult> PersonUpdate(string id, ApplicationUser model, string? currentPassword, string? newPassword, string? confirmPassword)
         {
@@ -157,25 +145,14 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     }
 
                     // Mevcut şifreyi kontrol et
-                    var isCurrentPasswordValid = await _userManager.CheckPasswordAsync(user, currentPassword);
-                    if (!isCurrentPasswordValid)
+                    if (!VerifyPassword(currentPassword, user.PasswordHash))
                     {
                         ModelState.AddModelError("", "Mevcut şifre yanlış.");
                         return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                     }
 
-                    // Şifreyi değiştir
-                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
-
-                    if (!result.Succeeded)
-                    {
-                        foreach (var error in result.Errors)
-                        {
-                            ModelState.AddModelError("", error.Description);
-                        }
-                        return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
-                    }
+                    // Şifreyi güncelle
+                    user.PasswordHash = HashPassword(newPassword);
                 }
 
                 // Diğer bilgileri güncelle
@@ -204,7 +181,6 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        // GET: Person/PersonDelete
         public async Task<IActionResult> PersonDelete(string id)
         {
             try
@@ -232,7 +208,6 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        // POST: Person/PersonDelete
         [HttpPost]
         [ActionName("PersonDelete")]
         public async Task<IActionResult> PersonDeleteConfirmed(string id)
@@ -252,14 +227,16 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var result = await _userManager.DeleteAsync(user);
-                if (!result.Succeeded)
+                var result = await _userService.DeleteUserAsync(id);
+                if (result)
                 {
-                    TempData["ErrorMessage"] = "Kullanıcı silinirken bir hata oluştu: " + string.Join(", ", result.Errors.Select(e => e.Description));
-                    return View("~/Areas/Admin/Views/Person/PersonDelete.cshtml", user);
+                    TempData["SuccessMessage"] = "Kullanıcı başarıyla silindi.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Kullanıcı silinirken bir hata oluştu.";
                 }
 
-                TempData["SuccessMessage"] = "Kullanıcı başarıyla silindi.";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -268,6 +245,21 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 TempData["ErrorMessage"] = "Kullanıcı silinirken bir hata oluştu: " + ex.Message;
                 return RedirectToAction(nameof(Index));
             }
+        }
+
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return Convert.ToBase64String(hashedBytes);
+            }
+        }
+
+        private bool VerifyPassword(string password, string hashedPassword)
+        {
+            var hashedInput = HashPassword(password);
+            return hashedInput == hashedPassword;
         }
     }
 } 

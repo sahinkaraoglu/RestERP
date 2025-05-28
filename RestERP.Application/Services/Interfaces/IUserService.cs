@@ -10,6 +10,8 @@ namespace RestERP.Application.Services.Interfaces
         Task<ApplicationUser> GetUserByIdAsync(string id);
         Task<ApplicationUser> GetUserByUsernameAsync(string username);
         Task<ApplicationUser> GetUserByEmailAsync(string email);
+        Task<bool> CreateUserAsync(ApplicationUser user);
         Task<bool> UpdateUserAsync(ApplicationUser user);
+        Task<bool> DeleteUserAsync(string id);
     }
 } 

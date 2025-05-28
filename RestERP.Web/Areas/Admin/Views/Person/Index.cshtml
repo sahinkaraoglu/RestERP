@@ -52,7 +52,8 @@
                                     <th>Pozisyon</th>  
                                     <th>Telefon</th>  
                                     <th>E-posta</th>  
-                                    <th>Durum</th>  
+                                    <th>Durum</th>
+                                    <th>Kayıt Tarihi</th>
                                     <th>İşlemler</th>  
                                 </tr>  
                             </thead>  
@@ -75,7 +76,8 @@
                                             {  
                                                 <span class="badge bg-danger">Pasif</span>  
                                             }  
-                                        </td>  
+                                        </td>
+                                        <td>@(person.CreatedDate.HasValue ? person.CreatedDate.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
                                         <td>  
                                             <a href="@Url.Action("PersonUpdate", "Person", new { id = person.Id })" class="btn btn-sm btn-info">  
                                                 <i class="bi bi-pencil"></i>  
@@ -133,7 +135,7 @@
                                                 <span class="badge bg-danger">Pasif</span>
                                             }
                                         </td>
-                                        <td>@person.CreatedDate.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>@(person.CreatedDate.HasValue ? person.CreatedDate.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
                                         <td>
                                             <div class="d-flex gap-1">
                                                 <a href="@Url.Action("PersonUpdate", "Person", new { id = person.Id })" class="btn btn-sm btn-info" title="Düzenle">
