@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using RestERP.Core.Doman.Entities;
 using RestERP.Infrastructure;
 using RestERP.Application.Services.Interfaces;
@@ -8,6 +9,7 @@ using System.Linq;
 
 namespace RestERP.Web.Controllers
 {
+    [Authorize(Roles = "Employee")]
     public class ReservationController : Controller
     {
         private readonly RestERPDbContext _context;

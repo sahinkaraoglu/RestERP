@@ -169,7 +169,8 @@ namespace RestERP.Web.Controllers
                     PhoneNumber = phoneNumber,
                     IsActive = true,
                     PasswordHash = HashPassword(password),
-                    RoleType = RestERP.Domain.Enums.Role.Customer
+                    RoleType = RestERP.Domain.Enums.Role.Customer,
+                    CreatedDate = DateTime.Now
                 };
 
                 var result = await _userService.CreateUserAsync(user);
@@ -189,6 +190,7 @@ namespace RestERP.Web.Controllers
 
                     Response.Cookies.Append("JWT", token, cookieOptions);
 
+                    TempData["SuccessMessage"] = "Kullanıcı başarıyla oluşturulmuştur.";
                     return RedirectToAction("Index", "Home");
                 }
 

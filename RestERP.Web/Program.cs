@@ -17,6 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddMemoryCache();
+builder.Services.AddHttpContextAccessor();
 
 // Veritabanı bağlantısı
 builder.Services.AddDbContext<RestERPDbContext>(options =>
@@ -57,6 +58,9 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("EmployeeOnly", policy =>
         policy.RequireRole("Employee"));
+        
+    options.AddPolicy("CustomerOnly", policy =>
+        policy.RequireRole("Customer"));
 });
 
 // Repository ve UnitOfWork kayıtları

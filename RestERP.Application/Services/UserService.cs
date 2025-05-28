@@ -6,16 +6,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace RestERP.Application.Services
 {
     public class UserService : IUserService
     {
         private readonly RestERPDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(RestERPDbContext context)
+        public UserService(RestERPDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetAllUsersAsync()
@@ -23,7 +27,7 @@ namespace RestERP.Application.Services
             return await _context.ApplicationUsers.ToListAsync();
         }
 
-        public async Task<ApplicationUser> GetUserByIdAsync(string id)
+        public async Task<ApplicationUser> GetUserByIdAsync(int id)
         {
             return await _context.ApplicationUsers.FindAsync(id);
         }
@@ -70,7 +74,7 @@ namespace RestERP.Application.Services
             }
         }
 
-        public async Task<bool> DeleteUserAsync(string id)
+        public async Task<bool> DeleteUserAsync(int id)
         {
             try
             {
@@ -86,6 +90,15 @@ namespace RestERP.Application.Services
             {
                 return false;
             }
+        }
+
+        public async Task<ApplicationUser> GetCurrentUserAsync()
+        {
+            var username = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(username))
+                return null;
+
+            return await GetUserByUsernameAsync(username);
         }
     }
 } 

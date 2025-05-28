@@ -7,11 +7,12 @@ namespace RestERP.Application.Services.Interfaces
     public interface IUserService
     {
         Task<IEnumerable<ApplicationUser>> GetAllUsersAsync();
-        Task<ApplicationUser> GetUserByIdAsync(string id);
+        Task<ApplicationUser> GetUserByIdAsync(int id);
         Task<ApplicationUser> GetUserByUsernameAsync(string username);
         Task<ApplicationUser> GetUserByEmailAsync(string email);
         Task<bool> CreateUserAsync(ApplicationUser user);
         Task<bool> UpdateUserAsync(ApplicationUser user);
-        Task<bool> DeleteUserAsync(string id);
+        Task<bool> DeleteUserAsync(int id);
+        Task<ApplicationUser> GetCurrentUserAsync();
     }
 } 

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using RestERP.Core.Doman.Entities;
 using RestERP.Web.Areas.Admin.Models;
@@ -20,20 +19,17 @@ public class OrderController : Controller
     private readonly IOrderService _orderService;
     private readonly IFoodService _foodService;
     private readonly IUserService _userService;
-    private readonly SignInManager<ApplicationUser> _signInManager;
 
     public OrderController(
         ILogger<OrderController> logger, 
         IOrderService orderService,
         IFoodService foodService,
-        IUserService userService,
-        SignInManager<ApplicationUser> signInManager)
+        IUserService userService)
     {
         _logger = logger;
         _orderService = orderService;
         _foodService = foodService;
         _userService = userService;
-        _signInManager = signInManager;
     }
 
     public async Task<IActionResult> Index()
@@ -45,7 +41,8 @@ public class OrderController : Controller
         try
         {
             // Kullanıcı girişi kontrolü
-            if (!_signInManager.IsSignedIn(User))
+            var currentUser = await _userService.GetCurrentUserAsync();
+            if (currentUser == null)
             {
                 return View(new List<Order>());
             }

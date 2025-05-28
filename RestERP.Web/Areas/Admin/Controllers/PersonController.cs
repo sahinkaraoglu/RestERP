@@ -57,6 +57,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     user.UserName = user.Email;
                     user.IsActive = true;
                     user.PasswordHash = HashPassword(password);
+                    user.RoleType = Role.Employee;
 
                     var result = await _userService.CreateUserAsync(user);
 
@@ -78,11 +79,11 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        public async Task<IActionResult> PersonUpdate(string id)
+        public async Task<IActionResult> PersonUpdate(int id)
         {
             try
             {
-                if (string.IsNullOrEmpty(id))
+                if (id <= 0)
                 {
                     TempData["ErrorMessage"] = "Geçersiz kullanıcı ID'si.";
                     return RedirectToAction(nameof(Index));
@@ -106,11 +107,11 @@ namespace RestERP.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PersonUpdate(string id, ApplicationUser model, string? currentPassword, string? newPassword, string? confirmPassword)
+        public async Task<IActionResult> PersonUpdate(int id, ApplicationUser model, string? currentPassword, string? newPassword, string? confirmPassword)
         {
             try
             {
-                if (string.IsNullOrEmpty(id))
+                if (id <= 0)
                 {
                     TempData["ErrorMessage"] = "Geçersiz kullanıcı ID'si.";
                     return RedirectToAction(nameof(Index));
@@ -162,6 +163,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 user.PhoneNumber = model.PhoneNumber;
                 user.IsActive = model.IsActive;
                 user.RoleType = model.RoleType;
+                user.CreatedDate = model.CreatedDate;
             
                 var updateResult = await _userService.UpdateUserAsync(user);
                 if (!updateResult)
@@ -181,11 +183,11 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        public async Task<IActionResult> PersonDelete(string id)
+        public async Task<IActionResult> PersonDelete(int id)
         {
             try
             {
-                if (string.IsNullOrEmpty(id))
+                if (id <= 0)
                 {
                     TempData["ErrorMessage"] = "Geçersiz kullanıcı ID'si.";
                     return RedirectToAction(nameof(Index));
@@ -210,11 +212,11 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ActionName("PersonDelete")]
-        public async Task<IActionResult> PersonDeleteConfirmed(string id)
+        public async Task<IActionResult> PersonDeleteConfirmed(int id)
         {
             try
             {
-                if (string.IsNullOrEmpty(id))
+                if (id <= 0)
                 {
                     TempData["ErrorMessage"] = "Geçersiz kullanıcı ID'si.";
                     return RedirectToAction(nameof(Index));
