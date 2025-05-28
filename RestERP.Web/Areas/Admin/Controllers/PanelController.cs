@@ -71,7 +71,7 @@ public class PanelController : Controller
             var totalCustomers = users.Count(u => u.RoleType == Role.Customer);
             var activeCustomers = users.Count(u => u.RoleType == Role.Customer && u.IsActive);
 
-            var alltotal = totalEmployees + activeEmployees;
+            var alltotal = totalEmployees + totalCustomers;
             var allactive = activeEmployees + activeCustomers;
 
             var model = new 
