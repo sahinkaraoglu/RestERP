@@ -111,7 +111,7 @@
                                     @foreach (var item in order.OrderItems)
                                     {
                                         <tr>
-                                            <td>@(item.Food?.Name ?? "Ürün Bulunamadı")</td>
+                                            <td>@(item.Food?.TurkishName ?? "Ürün Bulunamadı")</td>
                                             <td>@item.Quantity</td>
                                             <td>@item.UnitPrice.ToString("C2")</td>
                                             <td>@item.TotalPrice.ToString("C2")</td>

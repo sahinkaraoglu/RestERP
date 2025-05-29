@@ -54,7 +54,17 @@ namespace RestERP.Application.Services
 
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
-            return await _unitOfWork.Repository<Order>().GetAllAsync();
+            var orders = await _unitOfWork.Repository<Order>().GetAllAsync();
+            foreach (var order in orders)
+            {
+                var orderItems = await _unitOfWork.Repository<OrderItem>().GetAsync(oi => oi.OrderId == order.Id);
+                foreach (var item in orderItems)
+                {
+                    item.Food = await _unitOfWork.Repository<Food>().GetByIdAsync(item.FoodId);
+                }
+                order.OrderItems = orderItems.ToList();
+            }
+            return orders;
         }
 
         public async Task<IEnumerable<Order>> GetActiveOrdersAsync()
@@ -105,17 +115,18 @@ namespace RestERP.Application.Services
 
         public async Task<Order> GetOrderWithDetailsAsync(int id)
         {
-            var orders = await _unitOfWork.Repository<Order>()
-                .GetAsync(o => o.Id == id);
+            var orders = await _unitOfWork.Repository<Order>().GetAsync(o => o.Id == id);
 
             var order = orders.FirstOrDefault();
             if (order == null)
                 throw new KeyNotFoundException($"Sipariş bulunamadı. Id: {id}");
 
-            // Sipariş kalemlerini ayrıca yükle
-            var orderItems = await _unitOfWork.Repository<OrderItem>()
-                .GetAsync(oi => oi.OrderId == id);
-
+            // Sipariş kalemlerini ve Food bilgisini yükle
+            var orderItems = await _unitOfWork.Repository<OrderItem>().GetAsync(oi => oi.OrderId == id);
+            foreach (var item in orderItems)
+            {
+                item.Food = await _unitOfWork.Repository<Food>().GetByIdAsync(item.FoodId);
+            }
             order.OrderItems = orderItems.ToList();
 
             return order;

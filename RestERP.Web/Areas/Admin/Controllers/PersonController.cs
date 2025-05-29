@@ -58,6 +58,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     user.IsActive = true;
                     user.PasswordHash = HashPassword(password);
                     user.RoleType = Role.Employee;
+                    user.PhoneNumber = user.PhoneNumber;
 
                     var result = await _userService.CreateUserAsync(user);
 

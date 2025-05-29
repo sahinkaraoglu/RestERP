@@ -48,7 +48,7 @@ namespace RestERP.Infrastructure
             builder.Entity<OrderItem>()
                 .HasOne(oi => oi.Food)
                 .WithMany()
-                .HasForeignKey(oi => oi.ProductId);
+                .HasForeignKey(oi => oi.FoodId);
             
             // Order konfigürasyonu
             builder.Entity<Order>()

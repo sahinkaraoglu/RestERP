@@ -1,4 +1,5 @@
 using RestERP.Core.Doman.Entities.Base;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RestERP.Core.Doman.Entities
 {
@@ -8,7 +9,9 @@ namespace RestERP.Core.Doman.Entities
     public class OrderItem : BaseEntity
     {
         public int OrderId { get; set; }
-        public int ProductId { get; set; }
+        
+        [ForeignKey("Food")]
+        public int FoodId { get; set; }
         public int Quantity { get; set; } = 1;
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }

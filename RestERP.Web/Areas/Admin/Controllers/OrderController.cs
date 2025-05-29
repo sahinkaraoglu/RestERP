@@ -63,7 +63,7 @@ public class OrderController : Controller
                     // Her bir sipariş kalemi için ürün bilgilerini yükle
                     foreach (var item in order.OrderItems)
                     {
-                        item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                        item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
                     }
 
                     ViewData["ShowSingleOrder"] = true;
@@ -88,11 +88,11 @@ public class OrderController : Controller
                 {
                     try
                     {
-                        item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                        item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. ProductId: {item.ProductId}");
+                        _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. FoodId: {item.FoodId}");
                     }
                 }
             }
@@ -128,7 +128,7 @@ public class OrderController : Controller
             // Her bir sipariş kalemi için ürün bilgilerini yükle
             foreach (var item in orderWithDetails.OrderItems)
             {
-                item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
             }
 
             ViewData["ShowSingleOrder"] = true;
@@ -164,11 +164,11 @@ public class OrderController : Controller
                 {
                     try
                     {
-                        item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                        item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. ProductId: {item.ProductId}");
+                        _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. FoodId: {item.FoodId}");
                     }
                 }
             }
@@ -202,7 +202,7 @@ public class OrderController : Controller
                 TotalAmount = model.Items.Sum(i => i.Price * i.Quantity),
                 OrderItems = model.Items.Select(i => new OrderItem
                 {
-                    ProductId = i.ProductId,
+                    FoodId = i.FoodId,
                     Quantity = i.Quantity,
                     UnitPrice = i.Price,
                     TotalPrice = i.Price * i.Quantity
@@ -290,7 +290,7 @@ public class OrderController : Controller
                         o.IsPaid,
                         Items = o.OrderItems.Select(i => new
                         {
-                            i.ProductId,
+                            i.FoodId,
                             i.Quantity,
                             i.UnitPrice,
                             i.TotalPrice

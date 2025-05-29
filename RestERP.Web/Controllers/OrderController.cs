@@ -62,11 +62,11 @@ namespace RestERP.Web.Controllers
                     {
                         try
                         {
-                            item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                            item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. ProductId: {item.ProductId}");
+                            _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. FoodId: {item.FoodId}");
                         }
                     }
                 }
@@ -99,11 +99,11 @@ namespace RestERP.Web.Controllers
                     {
                         try
                         {
-                            item.Food = await _foodService.GetFoodByIdAsync(item.ProductId);
+                            item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. ProductId: {item.ProductId}");
+                            _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. FoodId: {item.FoodId}");
                         }
                     }
                 }
@@ -115,6 +115,57 @@ namespace RestERP.Web.Controllers
                 _logger.LogError(ex, $"Masa {tableId} siparişleri yüklenirken hata oluştu");
                 TempData["ErrorMessage"] = "Siparişler yüklenirken bir hata oluştu.";
                 return View(new List<Order>());
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateOrder([FromBody] OrderViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(new { success = false, message = "Geçersiz sipariş bilgileri." });
+                }
+
+                // Kullanıcı kontrolü
+                if (!User.Identity.IsAuthenticated)
+                {
+                    return Unauthorized(new { success = false, message = "Sipariş verebilmek için giriş yapmalısınız." });
+                }
+
+                var currentUser = await _userService.GetUserByUsernameAsync(User.Identity.Name);
+                if (currentUser == null)
+                {
+                    return BadRequest(new { success = false, message = "Kullanıcı bilgileri bulunamadı." });
+                }
+
+                // Sipariş oluştur
+                var order = new Order
+                {
+                    TableId = model.CustomerInfo.Type == "dine-in" ? model.CustomerInfo.TableNumber : null,
+                    CustomerId = currentUser.Id,
+                    Status = OrderStatus.New,
+                    TotalAmount = model.Items.Sum(i => i.Price * i.Quantity),
+                    OrderItems = model.Items.Select(i => new OrderItem
+                    {
+                        FoodId = i.FoodId,
+                        Quantity = i.Quantity,
+                        UnitPrice = i.Price,
+                        TotalPrice = i.Price * i.Quantity
+                    }).ToList()
+                };
+
+                // Siparişi kaydet
+                var result = await _orderService.CreateOrderAsync(order);
+
+                // Başarılı sonuç dön
+                return Json(new { success = true, orderId = result.Id, message = "Siparişiniz başarıyla oluşturuldu." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Sipariş oluşturulurken hata oluştu");
+                return Json(new { success = false, message = "Sipariş oluşturulurken bir hata oluştu: " + ex.Message });
             }
         }
     }

@@ -262,12 +262,12 @@
                 const quantity = parseInt(quantityElement.textContent);
                 if (quantity <= 0) return;
                 
-                const productId = parseInt(quantityElement.id.replace('quantity-', ''));
+                const foodId = parseInt(quantityElement.id.replace('quantity-', ''));
                 const name = row.querySelector('.food-title').textContent;
                 const price = parseFloat(row.querySelector('.subcategory-price').textContent);
                 
                 items.push({
-                    productId: productId,
+                    foodId: foodId,
                     name: name,
                     quantity: quantity,
                     price: price,
@@ -304,108 +304,108 @@
 
         // Sipariş verme işlemi
         document.getElementById('orderButton').addEventListener('click', async function() {
-            // Kullanıcı giriş kontrolü
-            const isAuthenticated = @User.Identity.IsAuthenticated.ToString().ToLower();
-            
-            if (!isAuthenticated) {
-                Swal.fire({
-                    title: 'Giriş Gerekli',
-                    text: 'Sipariş verebilmek için önce giriş yapmalısınız.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Giriş Yap',
-                    cancelButtonText: 'İptal',
-                    confirmButtonColor: '#6a563d',
-                    cancelButtonColor: '#d6c6af'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = '/Login/Index';
-                    }
-                });
-                return;
-            }
-
-            const cartItems = getCartItems();
-            if (cartItems.length === 0) {
-                Swal.fire({
-                    title: 'Sepet Boş',
-                    text: 'Lütfen sepete ürün ekleyiniz!',
-                    icon: 'warning',
-                    confirmButtonColor: '#6a563d'
-                });
-                return;
-            }
-
-            const activeTabId = document.querySelector('.tab-btn.active').getAttribute('data-tab');
-            let customerInfo = {};
-            let isValid = true;
-
-            if (activeTabId === 'dine-in') {
-                const tableNumber = document.getElementById('tableNumber').value;
-                if (!tableNumber || tableNumber < 1) {
-                    Swal.fire({
-                        title: 'Hata',
-                        text: 'Lütfen geçerli bir masa numarası giriniz!',
-                        icon: 'error',
-                        confirmButtonColor: '#6a563d'
-                    });
-                    isValid = false;
-                } else {
-                    customerInfo.type = 'dine-in';
-                    customerInfo.tableNumber = parseInt(tableNumber);
-                }
-            } else if (activeTabId === 'delivery') {
-                const name = document.getElementById('deliveryName').value;
-                const phone = document.getElementById('deliveryPhone').value;
-                const address = document.getElementById('deliveryAddress').value;
-                
-                if (!name || name.trim() === '') {
-                    Swal.fire({
-                        title: 'Hata',
-                        text: 'Lütfen adınızı giriniz!',
-                        icon: 'error',
-                        confirmButtonColor: '#6a563d'
-                    });
-                    isValid = false;
-                } else if (!phone || phone.trim() === '') {
-                    Swal.fire({
-                        title: 'Hata',
-                        text: 'Lütfen telefon numaranızı giriniz!',
-                        icon: 'error',
-                        confirmButtonColor: '#6a563d'
-                    });
-                    isValid = false;
-                } else if (!address || address.trim() === '') {
-                    Swal.fire({
-                        title: 'Hata',
-                        text: 'Lütfen adresinizi giriniz!',
-                        icon: 'error',
-                        confirmButtonColor: '#6a563d'
-                    });
-                    isValid = false;
-                } else {
-                    customerInfo.type = 'delivery';
-                    customerInfo.name = name;
-                    customerInfo.phone = phone;
-                    customerInfo.address = address;
-                }
-            }
-            
-            if (!isValid) return;
-
-            // Sipariş notunu al
-            const orderNote = document.getElementById('orderNote').value;
-            if (orderNote && orderNote.trim() !== '') {
-                customerInfo.note = orderNote;
-            }
-
-            // Sipariş verilerini hazırla
-            const orderData = {
-                items: cartItems,
-                customerInfo: customerInfo
-            };
-
             try {
+                // Kullanıcı giriş kontrolü
+                const isAuthenticated = @User.Identity.IsAuthenticated.ToString().ToLower();
+                
+                if (!isAuthenticated) {
+                    Swal.fire({
+                        title: 'Giriş Gerekli',
+                        text: 'Sipariş verebilmek için önce giriş yapmalısınız.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Giriş Yap',
+                        cancelButtonText: 'İptal',
+                        confirmButtonColor: '#6a563d',
+                        cancelButtonColor: '#d6c6af'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/Login/Index';
+                        }
+                    });
+                    return;
+                }
+
+                const cartItems = getCartItems();
+                if (cartItems.length === 0) {
+                    Swal.fire({
+                        title: 'Sepet Boş',
+                        text: 'Lütfen sepete ürün ekleyiniz!',
+                        icon: 'warning',
+                        confirmButtonColor: '#6a563d'
+                    });
+                    return;
+                }
+
+                const activeTabId = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+                let customerInfo = {};
+                let isValid = true;
+
+                if (activeTabId === 'dine-in') {
+                    const tableNumber = document.getElementById('tableNumber').value;
+                    if (!tableNumber || tableNumber < 1) {
+                        Swal.fire({
+                            title: 'Hata',
+                            text: 'Lütfen geçerli bir masa numarası giriniz!',
+                            icon: 'error',
+                            confirmButtonColor: '#6a563d'
+                        });
+                        isValid = false;
+                    } else {
+                        customerInfo.type = 'dine-in';
+                        customerInfo.tableNumber = parseInt(tableNumber);
+                    }
+                } else if (activeTabId === 'delivery') {
+                    const name = document.getElementById('deliveryName').value;
+                    const phone = document.getElementById('deliveryPhone').value;
+                    const address = document.getElementById('deliveryAddress').value;
+                    
+                    if (!name || name.trim() === '') {
+                        Swal.fire({
+                            title: 'Hata',
+                            text: 'Lütfen adınızı giriniz!',
+                            icon: 'error',
+                            confirmButtonColor: '#6a563d'
+                        });
+                        isValid = false;
+                    } else if (!phone || phone.trim() === '') {
+                        Swal.fire({
+                            title: 'Hata',
+                            text: 'Lütfen telefon numaranızı giriniz!',
+                            icon: 'error',
+                            confirmButtonColor: '#6a563d'
+                        });
+                        isValid = false;
+                    } else if (!address || address.trim() === '') {
+                        Swal.fire({
+                            title: 'Hata',
+                            text: 'Lütfen adresinizi giriniz!',
+                            icon: 'error',
+                            confirmButtonColor: '#6a563d'
+                        });
+                        isValid = false;
+                    } else {
+                        customerInfo.type = 'delivery';
+                        customerInfo.name = name;
+                        customerInfo.phone = phone;
+                        customerInfo.address = address;
+                    }
+                }
+                
+                if (!isValid) return;
+
+                // Sipariş notunu al
+                const orderNote = document.getElementById('orderNote').value;
+                if (orderNote && orderNote.trim() !== '') {
+                    customerInfo.note = orderNote;
+                }
+
+                // Sipariş verilerini hazırla
+                const orderData = {
+                    items: cartItems,
+                    customerInfo: customerInfo
+                };
+
                 // Yükleniyor göster
                 Swal.fire({
                     title: 'Sipariş Oluşturuluyor',
@@ -417,14 +417,22 @@
                     }
                 });
 
+                // Anti-forgery token'ı al
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
                 // Siparişi gönder
                 const response = await fetch('/Order/CreateOrder', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
                     },
                     body: JSON.stringify(orderData)
                 });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
                 const result = await response.json();
 
@@ -432,7 +440,7 @@
                     // Başarılı
                     Swal.fire({
                         title: 'Başarılı!',
-                        text: 'Siparişiniz başarıyla oluşturuldu.',
+                        text: result.message || 'Siparişiniz başarıyla oluşturuldu.',
                         icon: 'success',
                         confirmButtonColor: '#6a563d'
                     }).then(() => {
@@ -452,7 +460,7 @@
                 console.error('Sipariş gönderme hatası:', error);
                 Swal.fire({
                     title: 'Hata!',
-                    text: 'Sipariş gönderilirken bir hata oluştu.',
+                    text: 'Sipariş gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.',
                     icon: 'error',
                     confirmButtonColor: '#6a563d'
                 });
