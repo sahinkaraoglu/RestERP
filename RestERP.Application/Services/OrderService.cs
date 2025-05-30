@@ -159,5 +159,22 @@ namespace RestERP.Application.Services
 
             return orders;
         }
+
+        public async Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate)
+        {
+            var orders = await _unitOfWork.Repository<Order>().GetAsync(o => 
+                o.OrderDate.Date >= startDate.Date && 
+                o.OrderDate.Date <= endDate.Date && 
+                !o.IsDeleted);
+
+            foreach (var order in orders)
+            {
+                var orderItems = await _unitOfWork.Repository<OrderItem>()
+                    .GetAsync(oi => oi.OrderId == order.Id && !oi.IsDeleted);
+                order.OrderItems = orderItems.ToList();
+            }
+
+            return orders;
+        }
     }
 } 

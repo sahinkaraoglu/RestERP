@@ -79,6 +79,12 @@ public class PanelController : Controller
             var todayOrderCount = todayOrders.Count();
             var todayTotalRevenue = todayOrders.Sum(o => o.TotalAmount);
 
+            // Aylık istatistikleri hesapla
+            var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
+            var monthlyOrders = await _orderService.GetOrdersByDateRangeAsync(firstDayOfMonth, today);
+            var monthlyOrderCount = monthlyOrders.Count();
+            var monthlyRevenue = monthlyOrders.Sum(o => o.TotalAmount);
+
             var model = new 
             {
                 MenuItemCount = menuItemCount,
@@ -91,7 +97,9 @@ public class PanelController : Controller
                 AllTotal = alltotal,
                 AllActive = allactive,
                 TodayOrderCount = todayOrderCount,
-                TodayTotalRevenue = todayTotalRevenue
+                TodayTotalRevenue = todayTotalRevenue,
+                MonthlyOrderCount = monthlyOrderCount,
+                MonthlyRevenue = monthlyRevenue
             };
             
             return View(model);
