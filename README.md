@@ -1,4 +1,4 @@
-# RestERP - Restaurant Management System - SOON!
+# RestERP - Restaurant Management System
 
 RestERP is a comprehensive Enterprise Resource Planning (ERP) system developed for restaurant businesses. This application is built with **.NET Core 9.0** and follows Clean Architecture principles.
 
