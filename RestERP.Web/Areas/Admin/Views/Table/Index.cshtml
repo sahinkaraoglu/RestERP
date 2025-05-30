@@ -245,9 +245,19 @@
         background-color: #1E88E5;
     }
     
-    .action-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
+    .order-btn:disabled {
+        background-color: #a5d6a7 !important;
+        color: #fff !important;
+    }
+    
+    .checkout-btn:disabled {
+        background-color: #ffccbc !important;
+        color: #fff !important;
+    }
+    
+    .view-btn:disabled {
+        background-color: #b3e5fc !important;
+        color: #fff !important;
     }
     
     @@keyframes fadeIn {
@@ -330,22 +340,29 @@
         window.handleTableClick = function(number) {
             tableNumber.textContent = number;
             modal.style.display = 'block';
-            
             // API'den masa için aktif sipariş kontrolü yap
             fetch(`/api/orders/table/${number}`)
                 .then(response => response.json())
                 .then(orders => {
                     const hasActiveOrder = orders.some(order => 
-                        order.status !== 'Completed' && order.status !== 'Cancelled'
+                        order.status !== 'Completed' && order.status !== 'Cancelled' && !order.isPaid
                     );
-                    
                     // Siparişleri görüntüle ve hesap kapat butonlarının durumunu güncelle
-                    viewOrderBtn.disabled = !hasActiveOrder;
-                    viewOrderBtn.style.opacity = hasActiveOrder ? '1' : '0.5';
-                    checkoutBtn.disabled = !hasActiveOrder;
-                    checkoutBtn.style.opacity = hasActiveOrder ? '1' : '0.5';
-                    orderBtn.disabled = hasActiveOrder;
-                    orderBtn.style.opacity = hasActiveOrder ? '0.5' : '1';
+                    if (hasActiveOrder) {
+                        viewOrderBtn.disabled = false;
+                        viewOrderBtn.style.opacity = '1';
+                        checkoutBtn.disabled = false;
+                        checkoutBtn.style.opacity = '1';
+                        orderBtn.disabled = true;
+                        orderBtn.style.opacity = '0.5';
+                    } else {
+                        viewOrderBtn.disabled = true;
+                        viewOrderBtn.style.opacity = '0.5';
+                        checkoutBtn.disabled = true;
+                        checkoutBtn.style.opacity = '0.5';
+                        orderBtn.disabled = false;
+                        orderBtn.style.opacity = '1';
+                    }
                 })
                 .catch(error => {
                     console.error('Sipariş durumu kontrol edilirken hata:', error);
