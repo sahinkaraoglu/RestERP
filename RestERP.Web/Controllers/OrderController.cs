@@ -91,7 +91,7 @@ namespace RestERP.Web.Controllers
             try
             {
                 var orders = await _orderService.GetAllOrdersAsync();
-                var tableOrders = orders.Where(o => o.TableId == tableId).ToList();
+                var tableOrders = orders.Where(o => o.TableId == tableId && !o.IsPaid && o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled).ToList();
 
                 foreach (var order in tableOrders)
                 {

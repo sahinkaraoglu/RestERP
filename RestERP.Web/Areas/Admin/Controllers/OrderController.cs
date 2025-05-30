@@ -114,7 +114,7 @@ public class OrderController : Controller
         try
         {
             var orders = await _orderService.GetOrdersByTableIdAsync(tableId);
-            var activeOrder = orders.FirstOrDefault(o => o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled);
+            var activeOrder = orders.FirstOrDefault(o => o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled && !o.IsPaid);
             
             if (activeOrder == null)
             {
@@ -305,6 +305,42 @@ public class OrderController : Controller
         {
             _logger.LogError(ex, "Tüm masaların siparişleri alınırken hata oluştu");
             return StatusCode(500, "Siparişler alınırken bir hata oluştu");
+        }
+    }
+
+    [HttpPost]
+    [Route("api/orders/checkout/{tableId}")]
+    public async Task<IActionResult> CheckoutTable(int tableId)
+    {
+        try
+        {
+            // Masaya ait aktif siparişleri bul
+            var orders = await _orderService.GetOrdersByTableIdAsync(tableId);
+            var activeOrders = orders.Where(o => o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled && !o.IsPaid).ToList();
+
+            if (!activeOrders.Any())
+            {
+                return BadRequest(new { success = false, message = "Bu masada kapatılacak aktif bir hesap yok." });
+            }
+
+            foreach (var order in activeOrders)
+            {
+                order.IsPaid = true;
+                order.Status = OrderStatus.Completed;
+                // OrderItem'ların da IsPaid'ini true yap
+                foreach (var item in order.OrderItems)
+                {
+                    item.IsPaid = true;
+                }
+                await _orderService.UpdateOrderAsync(order);
+            }
+
+            return Ok(new { success = true, message = "Hesap kapatıldı" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Masa {tableId} için hesap kapatma işlemi sırasında hata oluştu");
+            return StatusCode(500, new { success = false, message = "Hesap kapatılırken bir hata oluştu." });
         }
     }
 }

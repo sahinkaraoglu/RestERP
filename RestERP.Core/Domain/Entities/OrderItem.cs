@@ -15,6 +15,7 @@ namespace RestERP.Core.Doman.Entities
         public int Quantity { get; set; } = 1;
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
+        public bool IsPaid { get; set; } = false;
         
         // İlişkiler
         public Order Order { get; set; } = null!;

@@ -165,6 +165,11 @@ public class TableController : Controller
         }
     }
 
+    public IActionResult IsPaid()
+    {
+        return View();
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

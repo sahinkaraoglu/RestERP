@@ -1,0 +1,51 @@
+@{
+    ViewData["Title"] = "Hesap Kapat";
+    var tableId = Context.Request.Query["tableId"].ToString();
+}
+@if (string.IsNullOrEmpty(tableId))
+{
+    <div style="text-align:center; margin-top:60px;">
+        <h2 style="color:#FF5722;">Hatalı istek!</h2>
+        <p>Masa numarası bulunamadı.</p>
+        <a href="/Admin/Table/Index" class="btn btn-secondary" style="margin-top:20px;">Ana Sayfaya Dön</a>
+    </div>
+}
+else
+{
+<div style="text-align:center; margin-top:60px;">
+    <h2 style="color:#FF5722;">Hesap kapatılsın mı?</h2>
+    <p>Masa <b>@tableId</b> için hesabı kapatmak istiyor musunuz?</p>
+    <button id="evetBtn" class="btn btn-success" style="margin:10px;">Evet</button>
+    <a href="/Admin/Table/Index" class="btn btn-secondary" style="margin:10px;">Hayır</a>
+    <div id="sonuc" style="margin-top:30px;"></div>
+</div>
+<script>
+    document.getElementById('evetBtn').onclick = function() {
+        var tableId = '@tableId';
+        fetch('/api/orders/checkout/' + tableId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(async response => {
+            let data;
+            try {
+                data = await response.json();
+            } catch {
+                throw new Error('Sunucudan beklenmeyen cevap alındı.');
+            }
+            return data;
+        })
+        .then(data => {
+            if (data.success) {
+                document.getElementById('sonuc').innerHTML = '<span style="color:#4CAF50;font-size:1.2em;">Hesap kapatıldı!</span><br><a href="/Admin/Table/Index" class="btn btn-success" style="margin-top:20px;">Ana Sayfaya Dön</a>';
+                document.getElementById('evetBtn').disabled = true;
+            } else {
+                document.getElementById('sonuc').innerHTML = '<span style="color:#FF5722;">' + (data.message || 'Hesap kapatılamadı!') + '</span>';
+            }
+        })
+        .catch(error => {
+            document.getElementById('sonuc').innerHTML = '<span style="color:#FF5722;">Bir hata oluştu: ' + error + '</span>';
+        });
+    };
+</script>
+}

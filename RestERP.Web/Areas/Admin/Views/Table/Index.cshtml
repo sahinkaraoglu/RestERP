@@ -308,12 +308,10 @@
                 .then(response => response.json())
                 .then(orders => {
                     const hasActiveOrder = orders.some(order => 
-                        order.status !== 'Completed' && order.status !== 'Cancelled'
+                        order.status !== 'Completed' && order.status !== 'Cancelled' && !order.isPaid
                     );
-                    
                     const tableBox = document.querySelector(`#table-${tableId} .table-box`);
                     const tableStatus = document.querySelector(`#table-${tableId} .table-status`);
-                    
                     if (hasActiveOrder) {
                         tableBox.classList.add('occupied');
                         tableStatus.classList.remove('available');
@@ -369,7 +367,7 @@
         // Hesap kapat butonuna tıklandığında
         checkoutBtn.addEventListener('click', function() {
             const tableNo = tableNumber.textContent;
-            window.location.href = `/Order/Checkout?tableId=${tableNo}`;
+            window.location.href = '/Admin/Table/IsPaid?tableId=' + tableNo;
         });
         
         // Modal kapatma
