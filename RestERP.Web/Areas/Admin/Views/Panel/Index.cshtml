@@ -138,11 +138,11 @@
                         <p class="card-desc">Rezervasyonları yönetin ve masa planı yapın</p>
                         <div class="card-stats">
                             <div class="mini-stat">
-                                <span class="mini-stat-value">8</span>
+                                <span class="mini-stat-value" id="todayReservations">-</span>
                                 <span class="mini-stat-label">Bugün</span>
                             </div>
                             <div class="mini-stat">
-                                <span class="mini-stat-value">17</span>
+                                <span class="mini-stat-value" id="tomorrowReservations">-</span>
                                 <span class="mini-stat-label">Yarın</span>
                             </div>
                         </div>
@@ -352,3 +352,15 @@
 </style>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Rezervasyon istatistiklerini getir
+            $.get('/Admin/Reservation/GetReservationStats', function(data) {
+                $('#todayReservations').text(data.todayCount);
+                $('#tomorrowReservations').text(data.tomorrowCount);
+            });
+        });
+    </script>
+}

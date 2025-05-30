@@ -155,5 +155,18 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
             return View("Index", reservations);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetReservationStats()
+        {
+            var reservations = await _reservationService.GetAllReservationsAsync();
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            var todayCount = reservations.Count(r => r.Date.Date == today);
+            var tomorrowCount = reservations.Count(r => r.Date.Date == tomorrow);
+
+            return Json(new { todayCount, tomorrowCount });
+        }
     }
 } 
