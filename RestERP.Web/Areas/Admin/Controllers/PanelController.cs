@@ -74,6 +74,11 @@ public class PanelController : Controller
             var alltotal = totalEmployees + totalCustomers;
             var allactive = activeEmployees + activeCustomers;
 
+            var today = DateTime.Today;
+            var todayOrders = await _orderService.GetOrdersByDateAsync(today);
+            var todayOrderCount = todayOrders.Count();
+            var todayTotalRevenue = todayOrders.Sum(o => o.TotalAmount);
+
             var model = new 
             {
                 MenuItemCount = menuItemCount,
@@ -84,8 +89,9 @@ public class PanelController : Controller
                 ActiveEmployees = activeEmployees,
                 OccupiedTables = occupiedTables,
                 AllTotal = alltotal,
-                AllActive = allactive
-
+                AllActive = allactive,
+                TodayOrderCount = todayOrderCount,
+                TodayTotalRevenue = todayTotalRevenue
             };
             
             return View(model);

@@ -14,11 +14,11 @@
                 <div class="col-lg-4">
                     <div class="quick-stats">
                         <div class="stat-item">
-                            <span class="stat-value">12</span>
+                            <span class="stat-value">@Model.TodayOrderCount</span>
                             <span class="stat-label">Bugünkü Sipariş</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-value">₺2,480</span>
+                            <span class="stat-value">₺@Model.TodayTotalRevenue.ToString("N0")</span>
                             <span class="stat-label">Günlük Gelir</span>
                         </div>
                     </div>

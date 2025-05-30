@@ -143,5 +143,21 @@ namespace RestERP.Application.Services
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
+
+        public async Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date)
+        {
+            var orders = await _unitOfWork.Repository<Order>().GetAsync(o => 
+                o.OrderDate.Date == date.Date && 
+                !o.IsDeleted);
+
+            foreach (var order in orders)
+            {
+                var orderItems = await _unitOfWork.Repository<OrderItem>()
+                    .GetAsync(oi => oi.OrderId == order.Id && !oi.IsDeleted);
+                order.OrderItems = orderItems.ToList();
+            }
+
+            return orders;
+        }
     }
 } 

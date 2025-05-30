@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RestERP.Domain.Enums;
@@ -16,5 +17,6 @@ namespace RestERP.Application.Services.Interfaces
         Task<Order> UpdateOrderAsync(Order order);
         Task<bool> DeleteOrderAsync(int id);
         Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status);
+        Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date);
     }
 } 
