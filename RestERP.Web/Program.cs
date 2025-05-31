@@ -6,7 +6,7 @@ using RestERP.Application.Services;
 using RestERP.Application.Services.Interfaces;
 using RestERP.Core.Doman.Entities;
 using RestERP.Domain.Interfaces;
-using RestERP.Infrastructure;
+using RestERP.Infrastructure.Context;
 using RestERP.Infrastructure.Repositories;
 using RestERP.Web.Middleware;
 using RestERP.Web.Services;

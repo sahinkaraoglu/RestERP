@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using RestERP.Core.Doman.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 
-namespace RestERP.Infrastructure
+namespace RestERP.Infrastructure.Context
 {
     public class RestERPDbContext : DbContext
     {

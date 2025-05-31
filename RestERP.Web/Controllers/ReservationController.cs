@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using RestERP.Core.Doman.Entities;
-using RestERP.Infrastructure;
 using RestERP.Application.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using RestERP.Infrastructure.Context;
 
 namespace RestERP.Web.Controllers
 {

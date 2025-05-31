@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using RestERP.Domain.Interfaces;
 using RestERP.Core.Doman.Entities.Base;
+using RestERP.Infrastructure.Context;
 
 namespace RestERP.Infrastructure.Repositories
 {
