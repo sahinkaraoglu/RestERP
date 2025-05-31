@@ -8,10 +8,33 @@
 @using Microsoft.AspNetCore.Identity
 @using RestERP.Application.Services.Interfaces
 @using RestERP.Core.Doman.Entities
+@using Microsoft.Extensions.Caching.Memory
 @inject IUserService UserService
+@inject IMemoryCache MemoryCache
 
 @{
     var currentUser = await UserService.GetUserByUsernameAsync(User.Identity.Name);
+    
+    // Cache key'leri
+    var categoriesCacheKey = "FoodCategories";
+    var foodsCacheKey = "Foods";
+    var imagesCacheKey = "FoodImages";
+    
+    // Cache'den verileri al veya yoksa ViewBag'den al
+    var categories = await MemoryCache.GetOrCreateAsync(categoriesCacheKey, async entry => {
+        entry.SlidingExpiration = TimeSpan.FromMinutes(30);
+        return (ViewBag.Categories as List<FoodCategory>) ?? new List<FoodCategory>();
+    });
+    
+    var allFoods = await MemoryCache.GetOrCreateAsync(foodsCacheKey, async entry => {
+        entry.SlidingExpiration = TimeSpan.FromMinutes(30);
+        return (ViewBag.Foods as List<Food>) ?? new List<Food>();
+    });
+    
+    var allImages = await MemoryCache.GetOrCreateAsync(imagesCacheKey, async entry => {
+        entry.SlidingExpiration = TimeSpan.FromMinutes(30);
+        return (ViewBag.Images as List<Image>) ?? new List<Image>();
+    });
 }
 
 <div class="admin-order-page">
@@ -34,12 +57,6 @@
     </div>
 
     <div class="order-container">
-        @{
-            var categories = (ViewBag.Categories as List<FoodCategory>) ?? new List<FoodCategory>();
-            var allFoods = (ViewBag.Foods as List<Food>) ?? new List<Food>();
-            var allImages = (ViewBag.Images as List<Image>) ?? new List<Image>();
-        }
-
         <div class="order-layout">
             <div class="menu-section">
                 @if (categories.Any())
