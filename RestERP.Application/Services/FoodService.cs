@@ -82,5 +82,15 @@ namespace RestERP.Application.Services
             await _unitOfWork.Repository<Food>().UpdateAsync(Food);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<FoodCategory>> GetAllFoodCategoriesAsync()
+        {
+            return await _unitOfWork.Repository<FoodCategory>().GetAllAsync();
+        }
+
+        public async Task<IEnumerable<Image>> GetAllFoodImagesAsync()
+        {
+            return await _unitOfWork.Repository<Image>().GetAllAsync();
+        }
     }
 } 

@@ -13,5 +13,7 @@ namespace RestERP.Application.Services.Interfaces
         Task<Food> CreateFoodAsync(Food food);
         Task UpdateFoodAsync(Food food);
         Task DeleteFoodAsync(int id);
+        Task<IEnumerable<FoodCategory>> GetAllFoodCategoriesAsync();
+        Task<IEnumerable<Image>> GetAllFoodImagesAsync();
     }
 } 

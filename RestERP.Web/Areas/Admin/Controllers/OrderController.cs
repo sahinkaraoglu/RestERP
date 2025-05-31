@@ -343,6 +343,29 @@ public class OrderController : Controller
             return StatusCode(500, new { success = false, message = "Hesap kapatılırken bir hata oluştu." });
         }
     }
+
+    [HttpGet]
+    public async Task<IActionResult> CreateOrder(int tableId)
+    {
+        try
+        {
+            var categories = await _foodService.GetAllFoodCategoriesAsync();
+            var foods = await _foodService.GetAllFoodsAsync();
+            var images = await _foodService.GetAllFoodImagesAsync();
+
+            ViewBag.Categories = categories;
+            ViewBag.Foods = foods;
+            ViewBag.Images = images;
+
+            return View();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Sipariş oluşturma sayfası açılırken hata oluştu");
+            TempData["ErrorMessage"] = "Sipariş oluşturma sayfası açılırken bir hata oluştu: " + ex.Message;
+            return RedirectToAction("Index", "Table");
+        }
+    }
 }
 
 public class OrderStatusUpdateModel
