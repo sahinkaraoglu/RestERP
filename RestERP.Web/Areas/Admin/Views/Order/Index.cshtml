@@ -6,6 +6,7 @@
 }
 
 <div class="container-fluid">
+    <br />
     <h2 class="mb-4">Siparişler</h2>
 
     <div class="row">
@@ -15,7 +16,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Masa @tableGroup.Key</h5>
-                        <button class="btn btn-danger btn-sm" onclick="cancelTableOrders(@tableGroup.Key)">
+                        <button class="btn btn-danger btn-sm" onclick="window.location.href='@Url.Action("CancelOrder", "Order", new { area = "Admin", id = tableGroup.First().Id })'">
                             Masa Siparişlerini İptal Et
                         </button>
                     </div>
@@ -29,19 +30,15 @@
                                         <p class="mb-1">Durum: @order.Status</p>
                                         <p class="mb-1">Tarih: @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
                                     </div>
-                                    @if (order.Status != OrderStatus.Cancelled)
-                                    {
-                                        <button class="btn btn-danger btn-sm" onclick="showCancelModal(@order.Id)">
-                                            İptal Et
-                                        </button>
-                                    }
                                 </div>
                                 <div class="mt-2">
                                     <h6>Ürünler:</h6>
                                     <ul class="list-unstyled">
                                         @foreach (var item in order.OrderItems)
                                         {
-                                            <li>@item.Quantity x @item.Food.Name</li>
+                                            <li>
+                                                @item.Quantity x @item.Food.TurkishName
+                                            </li>
                                         }
                                     </ul>
                                 </div>
@@ -56,31 +53,23 @@
 
 @section Scripts {
     <script>
-        function showCancelModal(orderId) {
-            $.get('@Url.Action("CancelOrder", "Order", new { area = "Admin" })/' + orderId, function(data) {
-                $('#cancelOrderModal').html(data);
-                $('#cancelOrderModal').modal('show');
-            });
-        }
-
-        function cancelTableOrders(tableNumber) {
-            if (confirm('Bu masadaki tüm siparişleri iptal etmek istediğinizden emin misiniz?')) {
-                $.ajax({
-                    url: '@Url.Action("CancelTableOrders", "Order", new { area = "Admin" })',
-                    type: 'POST',
-                    data: { tableNumber: tableNumber },
-                    success: function(result) {
-                        if (result.success) {
-                            location.reload();
-                        } else {
-                            alert('Siparişler iptal edilirken bir hata oluştu.');
-                        }
-                    },
-                    error: function() {
-                        alert('Bir hata oluştu.');
+        function cancelOrderItem(orderId, orderItemId) {
+            if (!confirm('Bu ürünü iptal etmek istediğinize emin misiniz?')) return;
+            $.ajax({
+                url: '@Url.Action("CancelOrderItem", "Order", new { area = "Admin" })',
+                type: 'POST',
+                data: { orderId: orderId, orderItemId: orderItemId },
+                success: function (result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message || 'Ürün iptal edilirken bir hata oluştu.');
                     }
-                });
-            }
+                },
+                error: function () {
+                    alert('Bir hata oluştu.');
+                }
+            });
         }
     </script>
 }

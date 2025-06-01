@@ -176,5 +176,15 @@ namespace RestERP.Application.Services
 
             return orders;
         }
+
+        public async Task<bool> DeleteOrderItemAsync(int orderItemId)
+        {
+            var item = await _unitOfWork.Repository<OrderItem>().GetByIdAsync(orderItemId);
+            if (item == null)
+                return false;
+            await _unitOfWork.Repository<OrderItem>().DeleteAsync(item);
+            await _unitOfWork.SaveChangesAsync();
+            return true;
+        }
     }
 } 

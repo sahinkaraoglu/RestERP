@@ -367,13 +367,47 @@ public class OrderController : Controller
         }
     }
 
-    [HttpPost]
+    [HttpGet]
     public async Task<IActionResult> CancelOrder(int id)
     {
         try
         {
-            var result = await _orderService.UpdateOrderStatusAsync(id, OrderStatus.Cancelled);
-            return Json(new { success = result });
+            var order = await _orderService.GetOrderWithDetailsAsync(id);
+            if (order == null)
+            {
+                return NotFound("Sipariş bulunamadı.");
+            }
+            return View(order);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Sipariş iptal sayfası açılırken hata oluştu. OrderId: {id}");
+            return View("Error");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CancelOrder(int id, bool cancelAll = false, int? tableNumber = null)
+    {
+        try
+        {
+            if (cancelAll && tableNumber.HasValue)
+            {
+                var orders = await _orderService.GetOrdersByTableIdAsync(tableNumber.Value);
+                var activeOrders = orders.Where(o => o.Status != OrderStatus.Cancelled);
+
+                foreach (var order in activeOrders)
+                {
+                    await _orderService.UpdateOrderStatusAsync(order.Id, OrderStatus.Cancelled);
+                }
+
+                return Json(new { success = true, message = "Masadaki tüm siparişler iptal edildi." });
+            }
+            else
+            {
+                var result = await _orderService.UpdateOrderStatusAsync(id, OrderStatus.Cancelled);
+                return Json(new { success = result, message = "Sipariş iptal edildi." });
+            }
         }
         catch (Exception ex)
         {
@@ -401,6 +435,23 @@ public class OrderController : Controller
         {
             _logger.LogError(ex, $"Masa {tableNumber} siparişleri iptal edilirken hata oluştu");
             return Json(new { success = false, message = "Siparişler iptal edilirken bir hata oluştu." });
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CancelOrderItem(int orderId, int orderItemId)
+    {
+        try
+        {
+            var result = await _orderService.DeleteOrderItemAsync(orderItemId);
+            if (!result)
+                return Json(new { success = false, message = "Sipariş ürünü bulunamadı veya silinemedi." });
+            return Json(new { success = true, message = "Ürün iptal edildi." });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Sipariş ürünü iptal edilirken hata oluştu. OrderId: {orderId}, OrderItemId: {orderItemId}");
+            return Json(new { success = false, message = "Sipariş ürünü iptal edilirken bir hata oluştu." });
         }
     }
 }

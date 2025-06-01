@@ -1,43 +1,83 @@
 @model RestERP.Core.Domain.Entities.Order
 
-<div class="modal fade" id="cancelOrderModal" tabindex="-1" role="dialog" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cancelOrderModalLabel">Sipariş İptali</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Bu siparişi iptal etmek istediğinizden emin misiniz?</p>
-                <p>Sipariş No: @Model.Id</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Vazgeç</button>
-                <button type="button" class="btn btn-danger" onclick="confirmCancel(@Model.Id)">İptal Et</button>
+@{
+    ViewData["Title"] = "Sipariş İptali";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Sipariş İptali</h5>
+                </div>
+                <div class="card-body">
+                    <p>Bu siparişi iptal etmek istediğinizden emin misiniz?</p>
+                    <p><strong>Sipariş No:</strong> @Model.Id</p>
+                    <p><strong>Masa No:</strong> @Model.TableId</p>
+                    
+                    <h6 class="mt-4">Ürünler:</h6>
+                    <ul class="list-unstyled">
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <li class="mb-2">
+                                @item.Quantity x @item.Food.TurkishName
+                                <button class="btn btn-danger btn-sm ms-2" onclick="cancelOrderItem(@Model.Id, @item.Id)">İptal Et</button>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="@Url.Action("Index", "Order", new { area = "Admin" })" class="btn btn-secondary">Vazgeç</a>
+                    <button type="button" class="btn btn-danger" onclick="confirmCancel(@Model.Id)">Tüm Siparişleri İptal Et</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    function confirmCancel(orderId) {
-        $.ajax({
-            url: '@Url.Action("CancelOrder", "Order", new { area = "Admin" })',
-            type: 'POST',
-            data: { id: orderId },
-            success: function (result) {
-                if (result.success) {
-                    $('#cancelOrderModal').modal('hide');
-                    location.reload();
-                } else {
-                    alert('Sipariş iptal edilirken bir hata oluştu.');
+@section Scripts {
+    <script>
+        function confirmCancel(orderId) {
+            const tableNumber = @Model.TableId;
+            const cancelAll = true;
+            $.ajax({
+                url: '@Url.Action("CancelOrder", "Order", new { area = "Admin" })',
+                type: 'POST',
+                data: { 
+                    id: orderId,
+                    cancelAll: cancelAll,
+                    tableNumber: tableNumber
+                },
+                success: function (result) {
+                    if (result.success) {
+                        window.location.href = '@Url.Action("Index", "Order", new { area = "Admin" })';
+                    } else {
+                        alert('Sipariş iptal edilirken bir hata oluştu.');
+                    }
+                },
+                error: function () {
+                    alert('Bir hata oluştu.');
                 }
-            },
-            error: function () {
-                alert('Bir hata oluştu.');
-            }
-        });
-    }
-</script>
+            });
+        }
+
+        function cancelOrderItem(orderId, orderItemId) {
+            $.ajax({
+                url: '@Url.Action("CancelOrderItem", "Order", new { area = "Admin" })',
+                type: 'POST',
+                data: { orderId: orderId, orderItemId: orderItemId },
+                success: function (result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message || 'Ürün iptal edilirken bir hata oluştu.');
+                    }
+                },
+                error: function () {
+                    alert('Bir hata oluştu.');
+                }
+            });
+        }
+    </script>
+}

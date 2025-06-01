@@ -19,5 +19,6 @@ namespace RestERP.Application.Services.Interfaces
         Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status);
         Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date);
         Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate);
+        Task<bool> DeleteOrderItemAsync(int orderItemId);
     }
 } 
