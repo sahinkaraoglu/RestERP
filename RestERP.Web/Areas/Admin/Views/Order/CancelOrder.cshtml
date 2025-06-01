@@ -4,28 +4,136 @@
     ViewData["Title"] = "Sipariş İptali";
 }
 
-<div class="container mt-4">
+<style>
+    .cancel-order-container {
+        max-width: 800px;
+        margin: 2rem auto;
+    }
+    
+    .card {
+        border: none;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        border-radius: 15px;
+    }
+    
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #eee;
+        padding: 1.5rem;
+        border-radius: 15px 15px 0 0 !important;
+    }
+    
+    .card-title {
+        color: #dc3545;
+        font-weight: 600;
+        font-size: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .order-info {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .order-info p {
+        margin-bottom: 0.5rem;
+        color: #495057;
+    }
+    
+    .order-info strong {
+        color: #212529;
+    }
+    
+    .product-list {
+        margin-top: 1.5rem;
+    }
+    
+    .product-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        border-bottom: 1px solid #eee;
+        transition: background-color 0.2s;
+    }
+    
+    .product-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .btn-cancel-item {
+        padding: 0.375rem 1rem;
+        font-size: 0.875rem;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+    
+    .btn-cancel-item:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(220, 53, 69, 0.2);
+    }
+    
+    .card-footer {
+        background-color: #f8f9fa;
+        border-top: 1px solid #eee;
+        padding: 1.5rem;
+        border-radius: 0 0 15px 15px !important;
+    }
+    
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        transform: translateY(-1px);
+    }
+    
+    .btn-danger {
+        padding: 0.5rem 1.5rem;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+    
+    .btn-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(220, 53, 69, 0.2);
+    }
+</style>
+
+<div class="container cancel-order-container">
     <div class="row">
-        <div class="col-md-8 offset-md-2">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">Sipariş İptali</h5>
                 </div>
                 <div class="card-body">
-                    <p>Bu siparişi iptal etmek istediğinizden emin misiniz?</p>
-                    <p><strong>Sipariş No:</strong> @Model.Id</p>
-                    <p><strong>Masa No:</strong> @Model.TableId</p>
+                    <div class="order-info">
+                        <p>Bu siparişi iptal etmek istediğinizden emin misiniz?</p>
+                        <p><strong>Sipariş No:</strong> @Model.Id</p>
+                        <p><strong>Masa No:</strong> @Model.TableId</p>
+                    </div>
                     
-                    <h6 class="mt-4">Ürünler:</h6>
-                    <ul class="list-unstyled">
+                    <h6 class="mt-4 mb-3">Ürünler:</h6>
+                    <div class="product-list">
                         @foreach (var item in Model.OrderItems)
                         {
-                            <li class="mb-2">
-                                @item.Quantity x @item.Food.TurkishName
-                                <button class="btn btn-danger btn-sm ms-2" onclick="cancelOrderItem(@Model.Id, @item.Id)">İptal Et</button>
-                            </li>
+                            <div class="product-item">
+                                <span>@item.Quantity x @item.Food.TurkishName</span>
+                                <button class="btn btn-danger btn-cancel-item" onclick="cancelOrderItem(@Model.Id, @item.Id)">İptal Et</button>
+                            </div>
                         }
-                    </ul>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <a href="@Url.Action("Index", "Order", new { area = "Admin" })" class="btn btn-secondary">Vazgeç</a>
