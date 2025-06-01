@@ -1,7 +1,7 @@
-using RestERP.Core.Doman.Entities.Base;
+using RestERP.Core.Domain.Entities.Base;
 using RestERP.Domain.Enums;
 
-namespace RestERP.Core.Doman.Entities
+namespace RestERP.Core.Domain.Entities
 {
     /// <summary>
     /// Sipariş entity sınıfı

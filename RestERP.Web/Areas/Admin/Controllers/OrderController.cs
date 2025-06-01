@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using RestERP.Core.Doman.Entities;
+using RestERP.Core.Domain.Entities;
 using RestERP.Web.Areas.Admin.Models;
 
 namespace RestERP.Web.Areas.Admin.Controllers;
@@ -364,6 +364,43 @@ public class OrderController : Controller
             _logger.LogError(ex, "Sipariş oluşturma sayfası açılırken hata oluştu");
             TempData["ErrorMessage"] = "Sipariş oluşturma sayfası açılırken bir hata oluştu: " + ex.Message;
             return RedirectToAction("Index", "Table");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CancelOrder(int id)
+    {
+        try
+        {
+            var result = await _orderService.UpdateOrderStatusAsync(id, OrderStatus.Cancelled);
+            return Json(new { success = result });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Sipariş iptal edilirken hata oluştu. OrderId: {id}");
+            return Json(new { success = false, message = "Sipariş iptal edilirken bir hata oluştu." });
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CancelTableOrders(int tableNumber)
+    {
+        try
+        {
+            var orders = await _orderService.GetOrdersByTableIdAsync(tableNumber);
+            var activeOrders = orders.Where(o => o.Status != OrderStatus.Cancelled);
+
+            foreach (var order in activeOrders)
+            {
+                await _orderService.UpdateOrderStatusAsync(order.Id, OrderStatus.Cancelled);
+            }
+
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Masa {tableNumber} siparişleri iptal edilirken hata oluştu");
+            return Json(new { success = false, message = "Siparişler iptal edilirken bir hata oluştu." });
         }
     }
 }

@@ -1,6 +1,6 @@
-using RestERP.Core.Doman.Entities.Base;
+using RestERP.Core.Domain.Entities.Base;
 
-namespace RestERP.Core.Doman.Entities
+namespace RestERP.Core.Domain.Entities
 {
     /// <summary>
     /// Rezervasyon entity sınıfı

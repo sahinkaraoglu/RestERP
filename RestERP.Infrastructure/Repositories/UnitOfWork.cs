@@ -5,7 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using RestERP.Core.Doman.Entities.Base;
+using RestERP.Core.Domain.Entities.Base;
 using RestERP.Infrastructure.Context;
 
 namespace RestERP.Infrastructure.Repositories

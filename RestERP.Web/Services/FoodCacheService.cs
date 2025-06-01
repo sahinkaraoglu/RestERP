@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
-using RestERP.Core.Doman.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Application.Services.Interfaces;
+using RestERP.Core.Domain.Entities;
 
 namespace RestERP.Web.Services
 {

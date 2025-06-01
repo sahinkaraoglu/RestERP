@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using RestERP.Core.Doman.Entities;
+using RestERP.Core.Domain.Entities;
 
 namespace RestERP.Application.Services
 {

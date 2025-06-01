@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Application.Services.Interfaces;
 using RestERP.Domain.Enums;
-using RestERP.Core.Doman.Entities;
+using RestERP.Core.Domain.Entities;
 using System.Security.Cryptography;
 using System.Text;
 

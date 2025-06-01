@@ -1,9 +1,9 @@
-using RestERP.Core.Doman.Entities.Base;
+using RestERP.Core.Domain.Entities.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace RestERP.Core.Doman.Entities
+namespace RestERP.Core.Domain.Entities
 {
     public class Food : BaseEntity
     {

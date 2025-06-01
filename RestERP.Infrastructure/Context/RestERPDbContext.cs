@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using RestERP.Core.Doman.Entities;
+using RestERP.Core.Domain.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 
 namespace RestERP.Infrastructure.Context

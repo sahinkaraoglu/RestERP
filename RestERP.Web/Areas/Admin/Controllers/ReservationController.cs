@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Core.Doman.Entities;
+using RestERP.Core.Domain.Entities;
 using RestERP.Application.Services.Interfaces;
 using RestERP.Domain.Enums;
 

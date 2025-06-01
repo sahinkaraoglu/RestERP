@@ -1,4 +1,4 @@
-﻿using RestERP.Core.Doman.Entities;
+﻿using RestERP.Core.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

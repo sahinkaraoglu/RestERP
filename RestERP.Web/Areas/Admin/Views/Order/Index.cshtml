@@ -1,0 +1,86 @@
+@using RestERP.Domain.Enums
+@model IEnumerable<RestERP.Core.Domain.Entities.Order>
+
+@{
+    ViewData["Title"] = "Siparişler";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4">Siparişler</h2>
+
+    <div class="row">
+        @foreach (var tableGroup in Model.GroupBy(o => o.TableId))
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Masa @tableGroup.Key</h5>
+                        <button class="btn btn-danger btn-sm" onclick="cancelTableOrders(@tableGroup.Key)">
+                            Masa Siparişlerini İptal Et
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var order in tableGroup.OrderByDescending(o => o.OrderDate))
+                        {
+                            <div class="order-item mb-3 p-3 border rounded">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6>Sipariş No: @order.Id</h6>
+                                        <p class="mb-1">Durum: @order.Status</p>
+                                        <p class="mb-1">Tarih: @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                                    </div>
+                                    @if (order.Status != OrderStatus.Cancelled)
+                                    {
+                                        <button class="btn btn-danger btn-sm" onclick="showCancelModal(@order.Id)">
+                                            İptal Et
+                                        </button>
+                                    }
+                                </div>
+                                <div class="mt-2">
+                                    <h6>Ürünler:</h6>
+                                    <ul class="list-unstyled">
+                                        @foreach (var item in order.OrderItems)
+                                        {
+                                            <li>@item.Quantity x @item.Food.Name</li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showCancelModal(orderId) {
+            $.get('@Url.Action("CancelOrder", "Order", new { area = "Admin" })/' + orderId, function(data) {
+                $('#cancelOrderModal').html(data);
+                $('#cancelOrderModal').modal('show');
+            });
+        }
+
+        function cancelTableOrders(tableNumber) {
+            if (confirm('Bu masadaki tüm siparişleri iptal etmek istediğinizden emin misiniz?')) {
+                $.ajax({
+                    url: '@Url.Action("CancelTableOrders", "Order", new { area = "Admin" })',
+                    type: 'POST',
+                    data: { tableNumber: tableNumber },
+                    success: function(result) {
+                        if (result.success) {
+                            location.reload();
+                        } else {
+                            alert('Siparişler iptal edilirken bir hata oluştu.');
+                        }
+                    },
+                    error: function() {
+                        alert('Bir hata oluştu.');
+                    }
+                });
+            }
+        }
+    </script>
+}

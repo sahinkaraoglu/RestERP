@@ -1,8 +1,8 @@
-using RestERP.Core.Doman.Entities.Base;
+using RestERP.Core.Domain.Entities.Base;
 using RestERP.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace RestERP.Core.Doman.Entities
+namespace RestERP.Core.Domain.Entities
 {
     public class ApplicationUser : BaseEntity
     {

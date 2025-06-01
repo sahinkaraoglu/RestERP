@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Application.Services.Interfaces;
-using RestERP.Core.Doman.Entities;
+using RestERP.Core.Domain.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Areas.Admin.Models;
 using RestERP.Web.Services;

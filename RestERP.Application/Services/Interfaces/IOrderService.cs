@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RestERP.Domain.Enums;
-using RestERP.Core.Doman.Entities;
+using RestERP.Core.Domain.Entities;
 
 namespace RestERP.Application.Services.Interfaces
 {
