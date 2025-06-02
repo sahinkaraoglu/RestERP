@@ -55,7 +55,12 @@ public class PanelController : Controller
                 .Select(o => o.TableId)
                 .Distinct()
                 .Count();
-            
+
+            var occupiedOrders = activeOrders
+                .Select(o => o.OrderNumber)
+                .Distinct()
+                .Count();
+
             int tableOccupancyPercentage = 0;
             if (totalTables > 0)
             {
@@ -94,6 +99,7 @@ public class PanelController : Controller
                 TotalEmployees = totalEmployees,
                 ActiveEmployees = activeEmployees,
                 OccupiedTables = occupiedTables,
+                OccupiedOrders = occupiedOrders,
                 AllTotal = alltotal,
                 AllActive = allactive,
                 TodayOrderCount = todayOrderCount,
