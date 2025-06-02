@@ -85,6 +85,9 @@ namespace RestERP.Application.Services
                                   !oi.IsDeleted && 
                                   oi.Status != OrderStatus.Cancelled);
                 order.OrderItems = orderItems.ToList();
+                
+                // Toplam tutarı sadece aktif sipariş kalemlerinden hesapla
+                order.TotalAmount = orderItems.Sum(oi => oi.TotalPrice);
             }
 
             return orders;
