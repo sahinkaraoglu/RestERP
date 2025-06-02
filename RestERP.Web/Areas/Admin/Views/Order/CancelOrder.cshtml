@@ -4,6 +4,43 @@
     ViewData["Title"] = "Sipariş İptali";
 }
 
+
+<div class="container cancel-order-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Sipariş İptali</h5>
+                </div>
+                <div class="card-body">
+                    <div class="order-info">
+                        <p>Bu siparişi iptal etmek istediğinizden emin misiniz?</p>
+                        <p><strong>Sipariş No:</strong> @Model.Id</p>
+                        <p><strong>Masa No:</strong> @Model.TableId</p>
+                    </div>
+                    
+                    <h6 class="mt-4 mb-3">Ürünler:</h6>
+                    <div class="product-list">
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <div class="product-item">
+                                <span>@item.Quantity x @item.Food.TurkishName</span>
+                                <button class="btn btn-danger btn-cancel-item" onclick="cancelOrderItem(@Model.Id, @item.Id)">İptal Et</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="@Url.Action("Index", "Order", new { area = "Admin" })" class="btn btn-secondary">Vazgeç</a>
+                    <button type="button" class="btn btn-danger" onclick="confirmCancel(@Model.Id)">Tüm Siparişleri İptal Et</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <style>
     .cancel-order-container {
         max-width: 800px;
@@ -109,40 +146,6 @@
         box-shadow: 0 2px 5px rgba(220, 53, 69, 0.2);
     }
 </style>
-
-<div class="container cancel-order-container">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Sipariş İptali</h5>
-                </div>
-                <div class="card-body">
-                    <div class="order-info">
-                        <p>Bu siparişi iptal etmek istediğinizden emin misiniz?</p>
-                        <p><strong>Sipariş No:</strong> @Model.Id</p>
-                        <p><strong>Masa No:</strong> @Model.TableId</p>
-                    </div>
-                    
-                    <h6 class="mt-4 mb-3">Ürünler:</h6>
-                    <div class="product-list">
-                        @foreach (var item in Model.OrderItems)
-                        {
-                            <div class="product-item">
-                                <span>@item.Quantity x @item.Food.TurkishName</span>
-                                <button class="btn btn-danger btn-cancel-item" onclick="cancelOrderItem(@Model.Id, @item.Id)">İptal Et</button>
-                            </div>
-                        }
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <a href="@Url.Action("Index", "Order", new { area = "Admin" })" class="btn btn-secondary">Vazgeç</a>
-                    <button type="button" class="btn btn-danger" onclick="confirmCancel(@Model.Id)">Tüm Siparişleri İptal Et</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
