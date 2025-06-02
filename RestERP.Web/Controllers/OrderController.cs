@@ -46,7 +46,7 @@ namespace RestERP.Web.Controllers
                 ViewBag.Tables = tables;
 
                 // Tüm siparişleri getir
-                var orders = await _orderService.GetAllOrdersAsync();
+                var orders = await _orderService.GetActiveOrdersAsync();
 
                 // Masa filtresi varsa uygula
                 if (tableId.HasValue)
