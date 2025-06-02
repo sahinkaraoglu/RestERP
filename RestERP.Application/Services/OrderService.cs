@@ -94,7 +94,7 @@ namespace RestERP.Application.Services
                     .Sum(oi => oi.TotalPrice);
             }
 
-            return orders;
+            return orders.Where(o => o.OrderItems != null && o.OrderItems.Any());
         }
 
         public async Task<Order> GetOrderByIdAsync(int id)
