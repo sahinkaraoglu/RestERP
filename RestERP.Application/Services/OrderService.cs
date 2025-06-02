@@ -81,7 +81,9 @@ namespace RestERP.Application.Services
             foreach (var order in orders)
             {
                 var orderItems = await _unitOfWork.Repository<OrderItem>()
-                    .GetAsync(oi => oi.OrderId == order.Id && !oi.IsDeleted);
+                    .GetAsync(oi => oi.OrderId == order.Id && 
+                                  !oi.IsDeleted && 
+                                  oi.Status != OrderStatus.Cancelled);
                 order.OrderItems = orderItems.ToList();
             }
 
@@ -122,7 +124,10 @@ namespace RestERP.Application.Services
                 throw new KeyNotFoundException($"Sipariş bulunamadı. Id: {id}");
 
             // Sipariş kalemlerini ve Food bilgisini yükle
-            var orderItems = await _unitOfWork.Repository<OrderItem>().GetAsync(oi => oi.OrderId == id);
+            var orderItems = await _unitOfWork.Repository<OrderItem>().GetAsync(oi => 
+                oi.OrderId == id && 
+                oi.Status != OrderStatus.Cancelled);
+                
             foreach (var item in orderItems)
             {
                 item.Food = await _unitOfWork.Repository<Food>().GetByIdAsync(item.FoodId);
@@ -182,7 +187,9 @@ namespace RestERP.Application.Services
             var item = await _unitOfWork.Repository<OrderItem>().GetByIdAsync(orderItemId);
             if (item == null)
                 return false;
-            await _unitOfWork.Repository<OrderItem>().DeleteAsync(item);
+            
+            item.Status = OrderStatus.Cancelled;
+            await _unitOfWork.Repository<OrderItem>().UpdateAsync(item);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
