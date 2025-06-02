@@ -71,10 +71,12 @@ namespace RestERP.Application.Services
         {
             // Aktif sipariş statüsündeki siparişleri filtreler
             // New, InProgress, Ready statüsündeki siparişler aktif kabul edilir
+            // Cancelled statüsündeki siparişler hariç tutulur
             var orders = await _unitOfWork.Repository<Order>().GetAsync(o => 
                 (o.Status == OrderStatus.New || 
                 o.Status == OrderStatus.InProgress || 
                 o.Status == OrderStatus.Ready) &&
+                o.Status != OrderStatus.Cancelled &&
                 !o.IsDeleted);
 
             // Her sipariş için sipariş kalemlerini yükle
@@ -87,7 +89,9 @@ namespace RestERP.Application.Services
                 order.OrderItems = orderItems.ToList();
                 
                 // Toplam tutarı sadece aktif sipariş kalemlerinden hesapla
-                order.TotalAmount = orderItems.Sum(oi => oi.TotalPrice);
+                order.TotalAmount = orderItems
+                    .Where(oi => oi.Status != OrderStatus.Cancelled && !oi.IsDeleted)
+                    .Sum(oi => oi.TotalPrice);
             }
 
             return orders;
@@ -129,7 +133,8 @@ namespace RestERP.Application.Services
             // Sipariş kalemlerini ve Food bilgisini yükle
             var orderItems = await _unitOfWork.Repository<OrderItem>().GetAsync(oi => 
                 oi.OrderId == id && 
-                oi.Status != OrderStatus.Cancelled);
+                oi.Status != OrderStatus.Cancelled &&
+                !oi.IsDeleted);
                 
             foreach (var item in orderItems)
             {

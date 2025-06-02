@@ -5,54 +5,191 @@
     ViewData["Title"] = "Siparişler";
 }
 
-<div class="container-fluid">
-    <br />
-    <h2 class="mb-4">Siparişler</h2>
+<style>
+    .order-container {
+        background-color: #fffcf7;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        padding: 2rem;
+        margin-top: 2rem;
+    }
 
-    <div class="row">
-        @foreach (var tableGroup in Model.GroupBy(o => o.TableId))
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Masa @tableGroup.Key</h5>
-                        <button class="btn btn-danger btn-sm" onclick="window.location.href='@Url.Action("CancelOrder", "Order", new { area = "Admin", id = tableGroup.First().Id })'">
-                            Masa Siparişlerini İptal Et
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        @foreach (var order in tableGroup.OrderByDescending(o => o.OrderDate))
-                        {
-                            <div class="order-item mb-3 p-3 border rounded">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6>Sipariş No: @order.Id</h6>
-                                        <p class="mb-1">Durum: @order.Status</p>
-                                        <p class="mb-1">Tarih: @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+    .page-title {
+        color: #5d4b38;
+        font-size: 2.2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 3px;
+        background: linear-gradient(to right, #b09a7b, #d2c4af);
+        border-radius: 2px;
+    }
+
+    .no-order-alert {
+        background-color: #f8f4ec;
+        border: 1px solid #e5e0d5;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        color: #5d4b38;
+        font-size: 1.1rem;
+        margin: 2rem 0;
+    }
+
+    .no-order-alert i {
+        font-size: 2rem;
+        color: #b09a7b;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .order-card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #f0e9df;
+        transition: transform 0.2s ease;
+    }
+
+    .order-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .card-header {
+        background-color: #f8f4ec;
+        border-bottom: 1px solid #e5e0d5;
+        padding: 1rem 1.5rem;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .card-header h5 {
+        color: #5d4b38;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .cancel-btn {
+        background-color: #dc3545;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        color: white;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+    .cancel-btn:hover {
+        background-color: #c82333;
+        transform: translateY(-1px);
+    }
+
+    .order-item {
+        background-color: #fffcf7;
+        border: 1px solid #f0e9df;
+        border-radius: 8px;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .order-item h6 {
+        color: #5d4b38;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-item p {
+        color: #7d6b57;
+        margin-bottom: 0.5rem;
+    }
+
+    .order-items-list {
+        margin-top: 1rem;
+        padding-left: 1rem;
+    }
+
+    .order-items-list li {
+        color: #7d6b57;
+        margin-bottom: 0.3rem;
+    }
+
+    .total-amount {
+        color: #5d4b38;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid #f0e9df;
+    }
+</style>
+
+<div class="order-container">
+    <h2 class="page-title">Siparişler</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="no-order-alert">
+            <i class="bi bi-info-circle"></i>
+            Sipariş bulunmamaktadır.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var tableGroup in Model.GroupBy(o => o.TableId))
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="order-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>Masa @tableGroup.Key</h5>
+                            <button class="cancel-btn" onclick="window.location.href='@Url.Action("CancelOrder", "Order", new { area = "Admin", id = tableGroup.First().Id })'">
+                                <i class="bi bi-x-circle"></i> İptal Et
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            @foreach (var order in tableGroup.OrderByDescending(o => o.OrderDate))
+                            {
+                                <div class="order-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6>Sipariş No: @order.Id</h6>
+                                            <p>Durum: @order.Status</p>
+                                            <p>Tarih: @order.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                                        </div>
                                     </div>
+                                    <div class="mt-2">
+                                        <h6>Ürünler:</h6>
+                                        <ul class="order-items-list">
+                                            @foreach (var item in order.OrderItems.Where(x => x.Status != RestERP.Domain.Enums.OrderStatus.Cancelled && !x.IsDeleted))
+                                            {
+                                                <li>
+                                                    @item.Quantity x @item.Food.TurkishName
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                    @if (order.Status != OrderStatus.Cancelled)
+                                    {
+                                        <p class="total-amount">Toplam Tutar: @order.TotalAmount ₺</p>
+                                    }
                                 </div>
-                                <div class="mt-2">
-                                    <h6>Ürünler:</h6>
-                                    <ul class="list-unstyled">
-                                        @foreach (var item in order.OrderItems)
-                                        {
-                                            <li>
-                                                @item.Quantity x @item.Food.TurkishName
-                                            </li>
-                                        }
-                                    </ul>
-                                </div>
-                                @if (order.Status != OrderStatus.Cancelled)
-                                {
-                                    <p class="mb-1">Toplam Tutar: @order.TotalAmount</p>
-                                }
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }
 </div>
 
 @section Scripts {

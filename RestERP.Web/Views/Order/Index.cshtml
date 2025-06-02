@@ -108,7 +108,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in order.OrderItems)
+                                    @foreach (var item in order.OrderItems.Where(x => x.Status != RestERP.Domain.Enums.OrderStatus.Cancelled && !x.IsDeleted))
                                     {
                                         <tr>
                                             <td>@(item.Food?.TurkishName ?? "Ürün Bulunamadı")</td>
