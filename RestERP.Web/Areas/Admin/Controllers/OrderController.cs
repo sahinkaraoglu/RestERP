@@ -391,23 +391,24 @@ public class OrderController : Controller
     {
         try
         {
-            if (cancelAll && tableNumber.HasValue)
+            var order = await _orderService.GetOrderWithDetailsAsync(id);
+            if (order == null)
             {
-                var orders = await _orderService.GetOrdersByTableIdAsync(tableNumber.Value);
-                var activeOrders = orders.Where(o => o.Status != OrderStatus.Cancelled);
-
-                foreach (var order in activeOrders)
-                {
-                    await _orderService.UpdateOrderStatusAsync(order.Id, OrderStatus.Cancelled);
-                }
-
-                return Json(new { success = true, message = "Masadaki tüm siparişler iptal edildi." });
+                return Json(new { success = false, message = "Sipariş bulunamadı." });
             }
-            else
+
+            // Tüm sipariş öğelerinin durumunu Cancelled olarak güncelle
+            foreach (var item in order.OrderItems)
             {
-                var result = await _orderService.UpdateOrderStatusAsync(id, OrderStatus.Cancelled);
-                return Json(new { success = result, message = "Sipariş iptal edildi." });
+                item.Status = OrderStatus.Cancelled;
             }
+
+            // Siparişin kendisini de iptal et
+            order.Status = OrderStatus.Cancelled;
+            
+            await _orderService.UpdateOrderAsync(order);
+
+            return Json(new { success = true });
         }
         catch (Exception ex)
         {
