@@ -1,4 +1,5 @@
 using RestERP.Core.Domain.Entities.Base;
+using RestERP.Domain.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RestERP.Core.Domain.Entities
@@ -16,7 +17,9 @@ namespace RestERP.Core.Domain.Entities
         public decimal UnitPrice { get; set; }
         public decimal TotalPrice { get; set; }
         public bool IsPaid { get; set; } = false;
-        
+
+        public OrderStatus Status { get; set; } = OrderStatus.New;
+
         // İlişkiler
         public Order Order { get; set; } = null!;
         public Food Food { get; set; } = null!;

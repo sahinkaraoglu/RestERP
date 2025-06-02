@@ -152,6 +152,7 @@ namespace RestERP.Web.Controllers
                         FoodId = i.FoodId,
                         Quantity = i.Quantity,
                         UnitPrice = i.Price,
+                        Status = OrderStatus.New,
                         TotalPrice = i.Price * i.Quantity
                     }).ToList()
                 };
