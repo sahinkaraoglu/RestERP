@@ -184,69 +184,36 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        public async Task<IActionResult> PersonDelete(int id)
-        {
-            try
-            {
-                if (id <= 0)
-                {
-                    TempData["ErrorMessage"] = "Geçersiz kullanıcı ID'si.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                var user = await _userService.GetUserByIdAsync(id);
-                if (user == null)
-                {
-                    TempData["ErrorMessage"] = "Silinecek kullanıcı bulunamadı.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                return View("~/Areas/Admin/Views/Person/PersonDelete.cshtml", user);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Kullanıcı silme sayfası açılırken hata oluştu. Id: {Id}", id);
-                TempData["ErrorMessage"] = "Kullanıcı silme sayfası açılırken bir hata oluştu: " + ex.Message;
-                return RedirectToAction(nameof(Index));
-            }
-        }
-
         [HttpPost]
-        [ActionName("PersonDelete")]
-        public async Task<IActionResult> PersonDeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
                 if (id <= 0)
                 {
-                    TempData["ErrorMessage"] = "Geçersiz kullanıcı ID'si.";
-                    return RedirectToAction(nameof(Index));
+                    return Json(new { success = false, message = "Geçersiz kullanıcı ID'si." });
                 }
 
                 var user = await _userService.GetUserByIdAsync(id);
                 if (user == null)
                 {
-                    TempData["ErrorMessage"] = "Silinecek kullanıcı bulunamadı.";
-                    return RedirectToAction(nameof(Index));
+                    return Json(new { success = false, message = "Silinecek kullanıcı bulunamadı." });
                 }
 
                 var result = await _userService.DeleteUserAsync(id);
                 if (result)
                 {
-                    TempData["SuccessMessage"] = "Kullanıcı başarıyla silindi.";
+                    return Json(new { success = true, message = "Kullanıcı başarıyla silindi." });
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Kullanıcı silinirken bir hata oluştu.";
+                    return Json(new { success = false, message = "Kullanıcı silinirken bir hata oluştu." });
                 }
-
-                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Kullanıcı silinirken hata oluştu. Id: {Id}", id);
-                TempData["ErrorMessage"] = "Kullanıcı silinirken bir hata oluştu: " + ex.Message;
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = false, message = "Kullanıcı silinirken bir hata oluştu: " + ex.Message });
             }
         }
 

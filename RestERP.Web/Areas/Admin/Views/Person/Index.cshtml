@@ -82,7 +82,7 @@
                                             <a href="@Url.Action("Edit", "Person", new { id = person.Id })" class="btn btn-sm btn-info">  
                                                 <i class="bi bi-pencil"></i>  
                                             </a>  
-                                            <a href="@Url.Action("PersonDelete", "Person", new { id = person.Id })" class="btn btn-sm btn-danger">  
+                                            <a href="javascript:void(0)" onclick="deletePerson('@person.Id')" class="btn btn-sm btn-danger">  
                                                 <i class="bi bi-trash"></i>  
                                             </a>  
                                         </td>  
@@ -141,7 +141,7 @@
                                                 <a href="@Url.Action("Edit", "Person", new { id = person.Id })" class="btn btn-sm btn-info" title="Düzenle">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <a href="@Url.Action("PersonDelete", "Person", new { id = person.Id })" class="btn btn-sm btn-danger" title="Sil">
+                                                <a href="javascript:void(0)" onclick="deletePerson('@person.Id')" class="btn btn-sm btn-danger" title="Sil">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             </div>
@@ -284,4 +284,46 @@
             behavior: 'smooth'
         });
     }
+
+    function deletePerson(id) {
+        Swal.fire({
+            title: 'Emin misiniz?',
+            text: "Bu işlem geri alınamaz!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Evet, sil!',
+            cancelButtonText: 'İptal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("Delete", "Person")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        Swal.fire(
+                            'Silindi!',
+                            'Kullanıcı başarıyla silindi.',
+                            'success'
+                        ).then(() => {
+                            window.location.reload();
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Hata!',
+                            'Kullanıcı silinirken bir hata oluştu.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
 </script>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+}
