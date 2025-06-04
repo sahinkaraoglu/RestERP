@@ -79,7 +79,7 @@
                                         </td>
                                         <td>@(person.CreatedDate.HasValue ? person.CreatedDate.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
                                         <td>  
-                                            <a href="@Url.Action("Edit", "Person", new { id = person.Id })" class="btn btn-sm btn-info">  
+                                            <a href="@Url.Action("PersonUpdate", "Person", new { id = person.Id })" class="btn btn-sm btn-info">  
                                                 <i class="bi bi-pencil"></i>  
                                             </a>  
                                             <a href="javascript:void(0)" onclick="deletePerson('@person.Id')" class="btn btn-sm btn-danger">  
@@ -138,7 +138,7 @@
                                         <td>@(person.CreatedDate.HasValue ? person.CreatedDate.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
                                         <td>
                                             <div class="d-flex gap-1">
-                                                <a href="@Url.Action("Edit", "Person", new { id = person.Id })" class="btn btn-sm btn-info" title="Düzenle">
+                                                <a href="@Url.Action("PersonUpdate", "Person", new { id = person.Id })" class="btn btn-sm btn-info" title="Düzenle">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                                 <a href="javascript:void(0)" onclick="deletePerson('@person.Id')" class="btn btn-sm btn-danger" title="Sil">

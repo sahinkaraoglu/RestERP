@@ -80,7 +80,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> PersonUpdate(int id)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                return View("~/Areas/Admin/Views/Person/Edit.cshtml", user);
+                return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", user);
             }
             catch (Exception ex)
             {
@@ -108,7 +108,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, ApplicationUser model, string? currentPassword, string? newPassword, string? confirmPassword)
+        public async Task<IActionResult> PersonUpdate(int id, ApplicationUser model, string? currentPassword, string? newPassword, string? confirmPassword)
         {
             try
             {
@@ -131,26 +131,26 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     if (string.IsNullOrEmpty(currentPassword))
                     {
                         ModelState.AddModelError("", "Mevcut şifrenizi girmelisiniz.");
-                        return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                        return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                     }
 
                     if (string.IsNullOrEmpty(newPassword) || newPassword.Length < 6)
                     {
                         ModelState.AddModelError("", "Yeni şifre en az 6 karakter uzunluğunda olmalıdır.");
-                        return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                        return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                     }
 
                     if (newPassword != confirmPassword)
                     {
                         ModelState.AddModelError("", "Yeni şifreler eşleşmiyor.");
-                        return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                        return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                     }
 
                     // Mevcut şifreyi kontrol et
                     if (!VerifyPassword(currentPassword, user.PasswordHash))
                     {
                         ModelState.AddModelError("", "Mevcut şifre yanlış.");
-                        return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                        return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                     }
 
                     // Şifreyi güncelle
@@ -170,7 +170,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 if (!updateResult)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı güncellenirken bir hata oluştu.";
-                    return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                    return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
                 }
             
                 TempData["SuccessMessage"] = "Kullanıcı başarıyla güncellendi.";
@@ -180,7 +180,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
             {
                 _logger.LogError(ex, "Kullanıcı güncellenirken hata oluştu. Id: {Id}", id);
                 TempData["ErrorMessage"] = "Kullanıcı güncellenirken bir hata oluştu: " + ex.Message;
-                return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                return View("~/Areas/Admin/Views/Person/PersonUpdate.cshtml", model);
             }
         }
 
