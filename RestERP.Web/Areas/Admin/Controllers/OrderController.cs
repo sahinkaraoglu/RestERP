@@ -368,7 +368,7 @@ public class OrderController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> CancelOrder(int id)
+    public async Task<IActionResult> Cancel(int id)
     {
         try
         {
@@ -387,7 +387,7 @@ public class OrderController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CancelOrder(int id, bool cancelAll = false, int? tableNumber = null)
+    public async Task<IActionResult> Cancel(int id, bool cancelAll = false, int? tableNumber = null)
     {
         try
         {

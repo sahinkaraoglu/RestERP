@@ -165,7 +165,7 @@
                     const tableNumber = @Model.TableId;
                     const cancelAll = true;
                     $.ajax({
-                        url: '@Url.Action("CancelOrder", "Order", new { area = "Admin" })',
+                        url: '@Url.Action("Cancel", "Order", new { area = "Admin" })',
                         type: 'POST',
                         data: { 
                             id: orderId,

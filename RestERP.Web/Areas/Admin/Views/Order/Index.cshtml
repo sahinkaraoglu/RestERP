@@ -25,7 +25,7 @@
                     <div class="order-card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5>Masa @tableGroup.Key</h5>
-                            <button class="cancel-btn" onclick="window.location.href='@Url.Action("CancelOrder", "Order", new { area = "Admin", id = tableGroup.First().Id })'">
+                            <button class="cancel-btn" onclick="window.location.href='@Url.Action("Cancel", "Order", new { area = "Admin", id = tableGroup.First().Id })'">
                                 <i class="bi bi-x-circle"></i> İptal Et
                             </button>
                         </div>
