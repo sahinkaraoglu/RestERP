@@ -420,7 +420,7 @@
                 const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
                 // Siparişi gönder
-                const response = await fetch('/Order/CreateOrder', {
+                const response = await fetch('/Order/Create', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

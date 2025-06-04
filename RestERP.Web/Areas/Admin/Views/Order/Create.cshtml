@@ -547,6 +547,15 @@
         }
 
         try {
+            console.log('Gönderilen veri:', {
+                items: orderItems,
+                customerInfo: {
+                    type: 'dine-in',
+                    tableNumber: parseInt(tableNumber),
+                    note: orderNote
+                }
+            });
+
             const response = await fetch('/Admin/Order/CreateOrder', {
                 method: 'POST',
                 headers: {
@@ -561,6 +570,12 @@
                     }
                 })
             });
+
+            if (!response.ok) {
+                const errorData = await response.text();
+                console.error('Sunucu yanıtı:', response.status, errorData);
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorData}`);
+            }
 
             const result = await response.json();
 

@@ -345,7 +345,7 @@ public class OrderController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> CreateOrder(int tableId)
+    public async Task<IActionResult> Create(int tableId)
     {
         try
         {
