@@ -98,7 +98,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        public async Task<IActionResult> MenuUpdate(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 ViewBag.FoodCategories = foodcategories;
                 ViewBag.Food = food;
 
-                return View("~/Areas/Admin/Views/Menu/MenuUpdate.cshtml");
+                return View("~/Areas/Admin/Views/Menu/Edit.cshtml");
             }
             catch (Exception ex)
             {
@@ -125,7 +125,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> MenuUpdatePost(int Id, int CategoryId, string Name, string TurkishName, string? Description, decimal Price)
+        public async Task<IActionResult> Edit(int Id, int CategoryId, string Name, string TurkishName, string? Description, decimal Price)
         {
             try
             {
@@ -170,7 +170,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     };
 
                     ViewBag.Food = updatedFood;
-                    return View("~/Areas/Admin/Views/Menu/MenuUpdate.cshtml");
+                    return View("~/Areas/Admin/Views/Menu/Edit.cshtml");
                 }
 
                 var existingFood = await _foodService.GetFoodByIdAsync(Id);
@@ -211,7 +211,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 };
 
                 ViewBag.Food = updatedFood;
-                return View("~/Areas/Admin/Views/Menu/MenuUpdate.cshtml");
+                return View("~/Areas/Admin/Views/Menu/Edit.cshtml");
             }
         }
 

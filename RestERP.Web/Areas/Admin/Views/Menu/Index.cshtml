@@ -108,7 +108,7 @@
                                                 <p class="menu-desc">@item.Name</p>
                                             </div>
                                             <div class="menu-actions">
-                                                <a asp-area="Admin" asp-controller="Menu" asp-action="MenuUpdate" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                <a asp-area="Admin" asp-controller="Menu" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                                 <a href="/Admin/Menu/MenuDelete?id=@item.Id" class="btn btn-sm btn-outline-danger">
@@ -452,7 +452,7 @@
     // Ürün düzenleme fonksiyonu
     function editMenuItem(id) {
         // Düzenleme sayfasına yönlendir
-        window.location.href = `/Admin/Menu/MenuUpdate?id=${id}`;
+        window.location.href = `/Admin/Menu/Edit?id=${id}`;
     }
 
     // Ürün silme fonksiyonu
