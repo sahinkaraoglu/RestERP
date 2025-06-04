@@ -126,7 +126,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 }
 
                 // Şifre değişikliği kontrolü
-                if (!string.IsNullOrEmpty(currentPassword) || !string.IsNullOrEmpty(newPassword) || !string.IsNullOrEmpty(confirmPassword))
+                if (!string.IsNullOrEmpty(newPassword) || !string.IsNullOrEmpty(confirmPassword))
                 {
                     if (string.IsNullOrEmpty(currentPassword))
                     {
