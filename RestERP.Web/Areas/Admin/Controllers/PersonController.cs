@@ -59,6 +59,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     user.PasswordHash = HashPassword(password);
                     user.RoleType = Role.Employee;
                     user.PhoneNumber = user.PhoneNumber;
+                    user.CreatedDate = DateTime.Now;
 
                     var result = await _userService.CreateUserAsync(user);
 
@@ -165,6 +166,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 user.IsActive = model.IsActive;
                 user.RoleType = model.RoleType;
                 user.CreatedDate = model.CreatedDate;
+                user.UpdatedDate = model.UpdatedDate;
             
                 var updateResult = await _userService.UpdateUserAsync(user);
                 if (!updateResult)
