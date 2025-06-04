@@ -50,7 +50,7 @@
         </nav>
     </header>
     <div class="container flex-grow-1 px-0">
-        @if (TempData["SuccessMessage"] != null && !(ViewContext.RouteData.Values["controller"]?.ToString() == "Reservation" && ViewContext.RouteData.Values["action"]?.ToString() == "Index"))
+        @if (TempData["SuccessMessage"] != null && !(ViewContext.RouteData.Values["controller"]?.ToString() == "Reservation" && ViewContext.RouteData.Values["action"]?.ToString() == "Index") && !(ViewContext.RouteData.Values["controller"]?.ToString() == "Person" && ViewContext.RouteData.Values["action"]?.ToString() == "Index"))
         {
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 @TempData["SuccessMessage"]
