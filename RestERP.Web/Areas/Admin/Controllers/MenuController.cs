@@ -215,31 +215,8 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        public async Task<IActionResult> MenuDelete(int id)
-        {
-            try
-            {
-                var food = await _foodService.GetFoodByIdAsync(id);
-                
-                if (food == null)
-                {
-                    TempData["ErrorMessage"] = "Silinecek ürün bulunamadı.";
-                    return RedirectToAction("Index", "Menu", new { area = "Admin" });
-                }
-                
-                ViewBag.Food = food;
-                return View("~/Areas/Admin/Views/Menu/MenuDelete.cshtml");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Ürün silme sayfası açılırken hata oluştu");
-                TempData["ErrorMessage"] = "Ürün silme sayfası açılırken bir hata oluştu: " + ex.Message;
-                return RedirectToAction("Index", "Menu", new { area = "Admin" });
-            }
-        }
-
         [HttpPost]
-        public async Task<IActionResult> MenuDeleteConfirm(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
@@ -247,21 +224,18 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 
                 if (food == null)
                 {
-                    TempData["ErrorMessage"] = "Silinecek ürün bulunamadı.";
-                    return RedirectToAction("Index", "Menu", new { area = "Admin" });
+                    return Json(new { success = false, message = "Silinecek ürün bulunamadı." });
                 }
                 
                 await _foodService.DeleteFoodAsync(id);
                 _foodCacheService.ClearCache();
                 
-                TempData["SuccessMessage"] = "Ürün başarıyla silindi.";
-                return RedirectToAction("Index", "Menu", new { area = "Admin" });
+                return Json(new { success = true, message = "Ürün başarıyla silindi." });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Ürün silinirken hata oluştu");
-                TempData["ErrorMessage"] = "Ürün silinirken bir hata oluştu: " + ex.Message;
-                return RedirectToAction("Index", "Menu", new { area = "Admin" });
+                return Json(new { success = false, message = "Ürün silinirken bir hata oluştu: " + ex.Message });
             }
         }
     }
