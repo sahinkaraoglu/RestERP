@@ -5,25 +5,24 @@ using RestERP.Application.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
-using RestERP.Infrastructure.Context;
 
 namespace RestERP.Web.Controllers
 {
     [Authorize(Roles = "Employee")]
     public class ReservationController : Controller
     {
-        private readonly RestERPDbContext _context;
         private readonly IReservationService _reservationService;
+        private readonly ITableService _tableService;
 
-        public ReservationController(RestERPDbContext context, IReservationService reservationService)
+        public ReservationController(IReservationService reservationService, ITableService tableService)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
             _reservationService = reservationService ?? throw new ArgumentNullException(nameof(reservationService));
+            _tableService = tableService ?? throw new ArgumentNullException(nameof(tableService));
         }
 
         public async Task<IActionResult> Index()
         {
-            var tables = await Task.FromResult(_context.Tables.ToList());
+            var tables = await _tableService.GetAllTablesAsync();
             ViewBag.Reservations = await _reservationService.GetAllReservationsAsync();
             return View(tables);
         }
