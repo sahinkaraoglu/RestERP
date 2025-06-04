@@ -53,12 +53,12 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        public IActionResult MenuAdd()
+        public IActionResult Create()
         {
             var categories = FoodCategorySeedData.GetFoodCategories();
             ViewBag.Categories = categories;
 
-            return View("~/Areas/Admin/Views/Menu/MenuAdd.cshtml");
+            return View("~/Areas/Admin/Views/Menu/Create.cshtml");
         }
 
         [HttpPost]
