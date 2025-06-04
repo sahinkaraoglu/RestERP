@@ -36,20 +36,20 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
-        public IActionResult PersonAdd()
+        public IActionResult Create()
         {
-            return View("~/Areas/Admin/Views/Person/PersonAdd.cshtml");
+            return View("~/Areas/Admin/Views/Person/Create.cshtml");
         }
 
         [HttpPost]
-        public async Task<IActionResult> PersonAdd(ApplicationUser user, string password, string confirmPassword)
+        public async Task<IActionResult> Create(ApplicationUser user, string password, string confirmPassword)
         {
             try
             {
                 if (password != confirmPassword)
                 {
                     ModelState.AddModelError("", "Şifreler eşleşmiyor!");
-                    return View("~/Areas/Admin/Views/Person/PersonAdd.cshtml", user);
+                    return View("~/Areas/Admin/Views/Person/Create.cshtml", user);
                 }
 
                 if (ModelState.IsValid)
@@ -70,13 +70,13 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     
                     ModelState.AddModelError("", "Kullanıcı eklenirken bir hata oluştu.");
                 }
-                return View("~/Areas/Admin/Views/Person/PersonAdd.cshtml", user);
+                return View("~/Areas/Admin/Views/Person/Create.cshtml", user);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Kullanıcı eklenirken hata oluştu");
                 TempData["ErrorMessage"] = "Kullanıcı eklenirken bir hata oluştu: " + ex.Message;
-                return View("~/Areas/Admin/Views/Person/PersonAdd.cshtml", user);
+                return View("~/Areas/Admin/Views/Person/Create.cshtml", user);
             }
         }
 
