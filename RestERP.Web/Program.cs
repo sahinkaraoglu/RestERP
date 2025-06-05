@@ -73,9 +73,8 @@ builder.Services.AddTransient<IFoodService, FoodService>();
 builder.Services.AddTransient<IFoodCategoryService, FoodCategoryService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IReservationService, ReservationService>();
 builder.Services.AddTransient<FoodCacheService>();
-builder.Services.AddTransient<RestERP.Core.Services.Abstract.IReservationService, RestERP.Core.Services.Concrete.ReservationService>();
-builder.Services.AddTransient<RestERP.Application.Services.Interfaces.IReservationService, RestERP.Application.Services.ReservationService>();
 
 var app = builder.Build();
 

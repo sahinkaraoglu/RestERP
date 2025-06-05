@@ -14,22 +14,11 @@ namespace RestERP.Application.Services
 
         public ReservationService(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Reservation> CreateReservationAsync(Reservation reservation)
         {
-            ValidateReservation(reservation);
-
-            // Aynı tarih ve saatte başka rezervasyon var mı kontrolü
-            var existingReservations = await _unitOfWork.Repository<Reservation>().GetAllAsync();
-            if (existingReservations.Any(r => 
-                r.Date.Date == reservation.Date.Date && 
-                r.Time == reservation.Time))
-            {
-                throw new InvalidOperationException("Bu tarih ve saatte başka bir rezervasyon bulunmaktadır.");
-            }
-
             await _unitOfWork.Repository<Reservation>().AddAsync(reservation);
             await _unitOfWork.SaveChangesAsync();
             return reservation;
@@ -37,12 +26,6 @@ namespace RestERP.Application.Services
 
         public async Task UpdateReservationAsync(Reservation reservation)
         {
-            ValidateReservation(reservation);
-
-            var existingReservation = await _unitOfWork.Repository<Reservation>().GetByIdAsync(reservation.Id);
-            if (existingReservation == null)
-                throw new KeyNotFoundException($"ID: {reservation.Id} olan rezervasyon bulunamadı.");
-
             await _unitOfWork.Repository<Reservation>().UpdateAsync(reservation);
             await _unitOfWork.SaveChangesAsync();
         }
@@ -50,26 +33,33 @@ namespace RestERP.Application.Services
         public async Task DeleteReservationAsync(int id)
         {
             var reservation = await _unitOfWork.Repository<Reservation>().GetByIdAsync(id);
-            if (reservation == null)
-                throw new KeyNotFoundException($"ID: {id} olan rezervasyon bulunamadı.");
-
-            await _unitOfWork.Repository<Reservation>().DeleteAsync(reservation);
-            await _unitOfWork.SaveChangesAsync();
+            if (reservation != null)
+            {
+                await _unitOfWork.Repository<Reservation>().DeleteAsync(reservation);
+                await _unitOfWork.SaveChangesAsync();
+            }
         }
 
         public async Task<Reservation> GetReservationByIdAsync(int id)
         {
-            var reservation = await _unitOfWork.Repository<Reservation>().GetByIdAsync(id);
-            if (reservation == null)
-                throw new KeyNotFoundException($"ID: {id} olan rezervasyon bulunamadı.");
-
-            return reservation;
+            return await _unitOfWork.Repository<Reservation>().GetByIdAsync(id);
         }
 
         public async Task<List<Reservation>> GetAllReservationsAsync()
         {
             var result = await _unitOfWork.Repository<Reservation>().GetAllAsync();
-            return new List<Reservation>(result);
+            return result.ToList();
+        }
+
+        public async Task<List<Reservation>> GetAllAsync()
+        {
+            var result = await _unitOfWork.Repository<Reservation>().GetAllAsync();
+            return result.ToList();
+        }
+
+        public async Task<Reservation> GetByIdAsync(int id)
+        {
+            return await _unitOfWork.Repository<Reservation>().GetByIdAsync(id);
         }
 
         private void ValidateReservation(Reservation reservation)

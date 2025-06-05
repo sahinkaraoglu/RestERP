@@ -11,5 +11,7 @@ namespace RestERP.Application.Services.Interfaces
         Task DeleteReservationAsync(int id);
         Task<Reservation> GetReservationByIdAsync(int id);
         Task<List<Reservation>> GetAllReservationsAsync();
+        Task<List<Reservation>> GetAllAsync();
+        Task<Reservation> GetByIdAsync(int id);
     }
 }
