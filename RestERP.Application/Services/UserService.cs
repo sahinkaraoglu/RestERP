@@ -8,46 +8,50 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using RestERP.Infrastructure.Context;
 using RestERP.Core.Domain.Entities;
+using RestERP.Domain.Interfaces;
 
 namespace RestERP.Application.Services
 {
     public class UserService : IUserService
     {
-        private readonly RestERPDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(RestERPDbContext context, IHttpContextAccessor httpContextAccessor)
+        public UserService(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetAllUsersAsync()
         {
-            return await _context.ApplicationUsers.ToListAsync();
+            var result = await _unitOfWork.Repository<ApplicationUser>().GetAllAsync();
+            return result.ToList();
         }
 
         public async Task<ApplicationUser> GetUserByIdAsync(int id)
         {
-            return await _context.ApplicationUsers.FindAsync(id);
+            return await _unitOfWork.Repository<ApplicationUser>().GetByIdAsync(id);
         }
 
         public async Task<ApplicationUser> GetUserByUsernameAsync(string username)
         {
-            return await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.UserName == username);
+            var users = await _unitOfWork.Repository<ApplicationUser>().GetAllAsync();
+            return users.FirstOrDefault(u => u.UserName == username);
         }
 
         public async Task<ApplicationUser> GetUserByEmailAsync(string email)
         {
-            return await _context.ApplicationUsers.FirstOrDefaultAsync(u => u.Email == email);
+            var users = await _unitOfWork.Repository<ApplicationUser>().GetAllAsync();
+            return users.FirstOrDefault(u => u.Email == email);
         }
         
         public async Task<bool> CreateUserAsync(ApplicationUser user)
         {
             try
             {
-                await _context.ApplicationUsers.AddAsync(user);
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Repository<ApplicationUser>().AddAsync(user);
+                await _unitOfWork.SaveChangesAsync();
                 return true;
             }
             catch
@@ -60,12 +64,8 @@ namespace RestERP.Application.Services
         {
             try
             {
-                var existingUser = await _context.ApplicationUsers.FindAsync(user.Id);
-                if (existingUser == null)
-                    return false;
-
-                _context.Entry(existingUser).CurrentValues.SetValues(user);
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Repository<ApplicationUser>().UpdateAsync(user);
+                await _unitOfWork.SaveChangesAsync();
                 return true;
             }
             catch
@@ -78,13 +78,14 @@ namespace RestERP.Application.Services
         {
             try
             {
-                var user = await _context.ApplicationUsers.FindAsync(id);
-                if (user == null)
-                    return false;
-
-                _context.ApplicationUsers.Remove(user);
-                await _context.SaveChangesAsync();
-                return true;
+                var user = await _unitOfWork.Repository<ApplicationUser>().GetByIdAsync(id);
+                if (user != null)
+                {
+                    await _unitOfWork.Repository<ApplicationUser>().DeleteAsync(user);
+                    await _unitOfWork.SaveChangesAsync();
+                    return true;
+                }
+                return false;
             }
             catch
             {
@@ -94,7 +95,7 @@ namespace RestERP.Application.Services
 
         public async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            var username = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value;
+            var username = _httpContextAccessor.HttpContext?.User?.Identity?.Name;
             if (string.IsNullOrEmpty(username))
                 return null;
 
