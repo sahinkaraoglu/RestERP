@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using RestERP.Domain.Interfaces;
+using RestERP.Core.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;

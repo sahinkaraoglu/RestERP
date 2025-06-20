@@ -1,7 +1,7 @@
 using RestERP.Core.Domain.Entities.Base;
 using System.Linq.Expressions;
 
-namespace RestERP.Domain.Interfaces
+namespace RestERP.Core.Interfaces
 {
     /// <summary>
     /// Generic repository arayüzü

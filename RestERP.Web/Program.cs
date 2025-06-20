@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using RestERP.Application.Services;
 using RestERP.Application.Services.Interfaces;
 using RestERP.Core.Domain.Entities;
-using RestERP.Domain.Interfaces;
+using RestERP.Core.Interfaces;
 using RestERP.Infrastructure.Context;
 using RestERP.Infrastructure.Repositories;
 using RestERP.Web.Middleware;

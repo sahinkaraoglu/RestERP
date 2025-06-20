@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using RestERP.Domain.Interfaces;
+using RestERP.Core.Interfaces;
 using RestERP.Core.Domain.Entities.Base;
 using RestERP.Infrastructure.Context;
 

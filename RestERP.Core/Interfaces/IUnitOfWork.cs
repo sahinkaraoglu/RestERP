@@ -1,6 +1,6 @@
 using RestERP.Core.Domain.Entities.Base;
 
-namespace RestERP.Domain.Interfaces
+namespace RestERP.Core.Interfaces
 {
     /// <summary>
     /// UnitOfWork deseni için arayüz
