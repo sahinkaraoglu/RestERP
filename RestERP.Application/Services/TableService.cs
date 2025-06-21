@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using RestERP.Application.Services.Interfaces;
 using RestERP.Core.Domain.Entities;
-using RestERP.Domain.Interfaces;
+using RestERP.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

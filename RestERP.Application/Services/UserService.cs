@@ -9,7 +9,6 @@ using System.Security.Claims;
 using RestERP.Infrastructure.Context;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces;
-using RestERP.Domain.Interfaces;
 
 namespace RestERP.Application.Services
 {
