@@ -78,6 +78,22 @@ builder.Services.AddTransient<FoodCacheService>();
 
 var app = builder.Build();
 
+// Otomatik migration uygula
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<RestERPDbContext>();
+        context.Database.Migrate();
+        Console.WriteLine("Veritabanı migration'ları başarıyla uygulandı.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Migration sırasında hata oluştu: {ex.Message}");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

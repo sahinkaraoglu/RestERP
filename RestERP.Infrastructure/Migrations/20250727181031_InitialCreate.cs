@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RestERP.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Migration1 : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -211,6 +211,8 @@ namespace RestERP.Infrastructure.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedById = table.Column<long>(type: "bigint", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -232,6 +234,16 @@ namespace RestERP.Infrastructure.Migrations
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "ApplicationUsers",
+                columns: new[] { "Id", "Address", "CreatedById", "CreatedDate", "Email", "FirstName", "IsActive", "IsDeleted", "LastName", "PasswordHash", "PhoneNumber", "RoleType", "UpdatedById", "UpdatedDate", "UserName" },
+                values: new object[,]
+                {
+                    { 1, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@resterp.com", "Admin", true, false, "User", "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=", "05551234567", 2, null, null, "admin" },
+                    { 2, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "employee@resterp.com", "Çalışan", true, false, "User", "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=", "05559876543", 2, null, null, "employee" },
+                    { 3, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "customer@test.com", "Test", true, false, "Customer", "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=", "05551111111", 1, null, null, "customer" }
                 });
 
             migrationBuilder.InsertData(

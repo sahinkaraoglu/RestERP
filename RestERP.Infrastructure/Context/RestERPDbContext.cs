@@ -65,6 +65,7 @@ namespace RestERP.Infrastructure.Context
             builder.Entity<Food>().HasData(FoodSeedData.GetFood());
             builder.Entity<Table>().HasData(TableSeedData.GetTable());
             builder.Entity<Image>().HasData(ImageSeedData.GetImages());
+            builder.Entity<ApplicationUser>().HasData(UserSeedData.GetUsers());
         }
     }
 }

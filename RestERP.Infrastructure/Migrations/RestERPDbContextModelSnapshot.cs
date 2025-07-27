@@ -87,6 +87,50 @@ namespace RestERP.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ApplicationUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@resterp.com",
+                            FirstName = "Admin",
+                            IsActive = true,
+                            IsDeleted = false,
+                            LastName = "User",
+                            PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=",
+                            PhoneNumber = "05551234567",
+                            RoleType = 2,
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "employee@resterp.com",
+                            FirstName = "Çalışan",
+                            IsActive = true,
+                            IsDeleted = false,
+                            LastName = "User",
+                            PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=",
+                            PhoneNumber = "05559876543",
+                            RoleType = 2,
+                            UserName = "employee"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "customer@test.com",
+                            FirstName = "Test",
+                            IsActive = true,
+                            IsDeleted = false,
+                            LastName = "Customer",
+                            PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=",
+                            PhoneNumber = "05551111111",
+                            RoleType = 1,
+                            UserName = "customer"
+                        });
                 });
 
             modelBuilder.Entity("RestERP.Core.Domain.Entities.Customer", b =>
@@ -1831,6 +1875,9 @@ namespace RestERP.Infrastructure.Migrations
                     b.Property<bool>("IsOccupied")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("TableCom")
+                        .HasColumnType("bit");
+
                     b.Property<long?>("UpdatedById")
                         .HasColumnType("bigint");
 
@@ -1846,91 +1893,106 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 1,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 2,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 3,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 4,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 5,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 6,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 7,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 8,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 9,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 10,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 11,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 12,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 13,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 14,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 15,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         });
                 });
 

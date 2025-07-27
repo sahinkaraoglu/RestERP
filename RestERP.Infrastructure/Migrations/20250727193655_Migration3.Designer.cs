@@ -12,8 +12,8 @@ using RestERP.Infrastructure.Context;
 namespace RestERP.Infrastructure.Migrations
 {
     [DbContext(typeof(RestERPDbContext))]
-    [Migration("20250530191112_Migration5")]
-    partial class Migration5
+    [Migration("20250727193655_Migration3")]
+    partial class Migration3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace RestERP.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.ApplicationUser", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -90,9 +90,53 @@ namespace RestERP.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ApplicationUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@resterp.com",
+                            FirstName = "Admin",
+                            IsActive = true,
+                            IsDeleted = false,
+                            LastName = "User",
+                            PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=",
+                            PhoneNumber = "05551234567",
+                            RoleType = 2,
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "employee@resterp.com",
+                            FirstName = "Çalışan",
+                            IsActive = true,
+                            IsDeleted = false,
+                            LastName = "User",
+                            PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=",
+                            PhoneNumber = "05559876543",
+                            RoleType = 2,
+                            UserName = "employee"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "customer@test.com",
+                            FirstName = "Test",
+                            IsActive = true,
+                            IsDeleted = false,
+                            LastName = "Customer",
+                            PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=",
+                            PhoneNumber = "05551111111",
+                            RoleType = 1,
+                            UserName = "customer"
+                        });
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.Customer", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,7 +181,7 @@ namespace RestERP.Infrastructure.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.Food", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Food", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -968,7 +1012,7 @@ namespace RestERP.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.FoodCategory", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.FoodCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1066,7 +1110,7 @@ namespace RestERP.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.Image", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1652,7 +1696,7 @@ namespace RestERP.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.Order", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1707,7 +1751,7 @@ namespace RestERP.Infrastructure.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.OrderItem", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1728,10 +1772,16 @@ namespace RestERP.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
@@ -1757,7 +1807,7 @@ namespace RestERP.Infrastructure.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.Reservation", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Reservation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1807,7 +1857,7 @@ namespace RestERP.Infrastructure.Migrations
                     b.ToTable("Reservations");
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.Table", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Table", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1828,6 +1878,9 @@ namespace RestERP.Infrastructure.Migrations
                     b.Property<bool>("IsOccupied")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("TableCom")
+                        .HasColumnType("bit");
+
                     b.Property<long?>("UpdatedById")
                         .HasColumnType("bigint");
 
@@ -1843,97 +1896,112 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 1,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 2,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 3,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 4,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 5,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 6,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 7,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 8,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 9,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 10,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 11,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 12,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 13,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 14,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         },
                         new
                         {
                             Id = 15,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            TableCom = false
                         });
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.Food", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Food", b =>
                 {
-                    b.HasOne("RestERP.Core.Doman.Entities.FoodCategory", "Category")
+                    b.HasOne("RestERP.Core.Domain.Entities.FoodCategory", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1942,9 +2010,9 @@ namespace RestERP.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.Image", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Image", b =>
                 {
-                    b.HasOne("RestERP.Core.Doman.Entities.Food", "Food")
+                    b.HasOne("RestERP.Core.Domain.Entities.Food", "Food")
                         .WithMany("Images")
                         .HasForeignKey("FoodId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1953,15 +2021,15 @@ namespace RestERP.Infrastructure.Migrations
                     b.Navigation("Food");
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.OrderItem", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.OrderItem", b =>
                 {
-                    b.HasOne("RestERP.Core.Doman.Entities.Food", "Food")
+                    b.HasOne("RestERP.Core.Domain.Entities.Food", "Food")
                         .WithMany()
                         .HasForeignKey("FoodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RestERP.Core.Doman.Entities.Order", "Order")
+                    b.HasOne("RestERP.Core.Domain.Entities.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1972,12 +2040,12 @@ namespace RestERP.Infrastructure.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.Food", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Food", b =>
                 {
                     b.Navigation("Images");
                 });
 
-            modelBuilder.Entity("RestERP.Core.Doman.Entities.Order", b =>
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
                 });

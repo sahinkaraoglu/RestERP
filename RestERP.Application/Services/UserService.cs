@@ -37,7 +37,18 @@ namespace RestERP.Application.Services
         public async Task<ApplicationUser> GetUserByUsernameAsync(string username)
         {
             var users = await _unitOfWork.Repository<ApplicationUser>().GetAllAsync();
-            return users.FirstOrDefault(u => u.UserName == username);
+            var user = users.FirstOrDefault(u => u.UserName == username);
+            
+            // Debug için konsola yazdır
+            Console.WriteLine($"GetUserByUsernameAsync called with username: {username}");
+            Console.WriteLine($"Total users found: {users.Count()}");
+            Console.WriteLine($"User found: {user != null}");
+            if (user != null)
+            {
+                Console.WriteLine($"User details - Id: {user.Id}, UserName: {user.UserName}, IsActive: {user.IsActive}");
+            }
+            
+            return user;
         }
 
         public async Task<ApplicationUser> GetUserByEmailAsync(string email)

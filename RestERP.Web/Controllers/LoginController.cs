@@ -92,24 +92,37 @@ namespace RestERP.Web.Controllers
         {
             try
             {
+                _logger.LogInformation($"Login attempt for username: {username}");
+                
                 if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 {
+                    _logger.LogWarning("Username or password is empty");
                     ModelState.AddModelError(string.Empty, "Kullanıcı adı ve şifre gereklidir.");
                     return View("Index");
                 }
 
                 var user = await _userService.GetUserByUsernameAsync(username);
+                _logger.LogInformation($"User found: {user != null}, IsActive: {user?.IsActive}");
+                
                 if (user == null || !user.IsActive)
                 {
+                    _logger.LogWarning($"User not found or inactive. Username: {username}");
                     ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre.");
                     return View("Index");
                 }
 
+                var hashedInput = HashPassword(password);
+                _logger.LogInformation($"Input password hash: {hashedInput}");
+                _logger.LogInformation($"Stored password hash: {user.PasswordHash}");
+                
                 if (!VerifyPassword(password, user.PasswordHash))
                 {
+                    _logger.LogWarning($"Password verification failed for user: {username}");
                     ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre.");
                     return View("Index");
                 }
+
+                _logger.LogInformation($"Password verification successful for user: {username}");
 
                 // JWT token oluştur
                 var token = GenerateJwtToken(user);
@@ -125,6 +138,7 @@ namespace RestERP.Web.Controllers
 
                 Response.Cookies.Append("JWT", token, cookieOptions);
 
+                _logger.LogInformation($"Login successful for user: {username}");
                 // Başarılı giriş sonrası Home/Index'e yönlendir
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
