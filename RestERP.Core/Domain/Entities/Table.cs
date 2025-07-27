@@ -8,6 +8,5 @@ namespace RestERP.Core.Domain.Entities
     public class Table : BaseEntity
     {
         public bool IsOccupied { get; set; } = false;
-        public bool TableCom { get; set; } = false;
     }
 } 
