@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RestERP.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Migration1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -241,9 +241,9 @@ namespace RestERP.Infrastructure.Migrations
                 columns: new[] { "Id", "Address", "CreatedById", "CreatedDate", "Email", "FirstName", "IsActive", "IsDeleted", "LastName", "PasswordHash", "PhoneNumber", "RoleType", "UpdatedById", "UpdatedDate", "UserName" },
                 values: new object[,]
                 {
-                    { 1, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@resterp.com", "Admin", true, false, "User", "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=", "05551234567", 2, null, null, "admin" },
-                    { 2, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "employee@resterp.com", "Çalışan", true, false, "User", "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=", "05559876543", 2, null, null, "employee" },
-                    { 3, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "customer@test.com", "Test", true, false, "Customer", "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=", "05551111111", 1, null, null, "customer" }
+                    { 1, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@resterp.com", "Admin", true, false, "User", "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=", "05551234567", 2, null, null, "admin" },
+                    { 2, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "employee@resterp.com", "Çalışan", true, false, "User", "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=", "05559876543", 2, null, null, "employee" },
+                    { 3, null, null, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "customer@test.com", "Test", true, false, "Customer", "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=", "05551111111", 1, null, null, "customer" }
                 });
 
             migrationBuilder.InsertData(
