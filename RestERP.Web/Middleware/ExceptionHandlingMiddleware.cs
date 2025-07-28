@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using RestERP.Application.Interfaces;
 
 namespace RestERP.Web.Middleware
 {
@@ -11,11 +12,13 @@ namespace RestERP.Web.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger, IServiceProvider serviceProvider)
         {
             _next = next;
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -26,21 +29,43 @@ namespace RestERP.Web.Middleware
             }
             catch (KeyNotFoundException ex)
             {
-                await HandleExceptionAsync(context, ex, HttpStatusCode.NotFound, "Kaynak bulunamadı");
+                await HandleExceptionAsync(context, ex, HttpStatusCode.NotFound, "Kaynak bulunamadı", "KeyNotFoundException");
             }
             catch (ArgumentException ex)
             {
-                await HandleExceptionAsync(context, ex, HttpStatusCode.BadRequest, "Geçersiz argüman");
+                await HandleExceptionAsync(context, ex, HttpStatusCode.BadRequest, "Geçersiz argüman", "ArgumentException");
             }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex, HttpStatusCode.InternalServerError, "Sunucu hatası");
+                await HandleExceptionAsync(context, ex, HttpStatusCode.InternalServerError, "Sunucu hatası", "Exception");
             }
         }
 
-        private async Task HandleExceptionAsync(HttpContext context, Exception exception, HttpStatusCode statusCode, string message)
+        private async Task HandleExceptionAsync(HttpContext context, Exception exception, HttpStatusCode statusCode, string message, string exceptionType)
         {
             _logger.LogError(exception, exception.Message);
+
+            // Log'u veritabanına kaydet
+            try
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var logService = scope.ServiceProvider.GetRequiredService<ILogService>();
+                
+                var userId = context.User?.Identity?.IsAuthenticated == true ? context.User.Identity.Name : null;
+                var additionalData = JsonSerializer.Serialize(new
+                {
+                    StatusCode = (int)statusCode,
+                    ExceptionType = exceptionType,
+                    RequestPath = context.Request.Path,
+                    RequestMethod = context.Request.Method
+                });
+
+                await logService.LogErrorAsync(exception, "ExceptionHandlingMiddleware", userId, additionalData);
+            }
+            catch (Exception logException)
+            {
+                _logger.LogError(logException, "Log kaydetme sırasında hata oluştu");
+            }
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;
