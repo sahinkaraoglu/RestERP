@@ -102,6 +102,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Global logging middleware
+app.UseMiddleware<LoggingMiddleware>();
+
 // Global exception handling middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
