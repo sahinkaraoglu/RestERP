@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RestERP.Application.Services;
 using RestERP.Application.Services.Interfaces;
-using RestERP.Application.Interfaces;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces;
 using RestERP.Infrastructure.Context;
@@ -76,9 +75,6 @@ builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IReservationService, ReservationService>();
 builder.Services.AddTransient<FoodCacheService>();
-
-// Log servisi kaydet
-builder.Services.AddScoped<ILogService, LogService>();
 
 var app = builder.Build();
 

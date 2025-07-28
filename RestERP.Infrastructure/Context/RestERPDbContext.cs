@@ -20,7 +20,6 @@ namespace RestERP.Infrastructure.Context
         public DbSet<Image> Images { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<Log> Logs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -29,7 +28,6 @@ namespace RestERP.Infrastructure.Context
             builder.Entity<OrderItem>().HasQueryFilter(e => !e.IsDeleted);
             builder.Entity<Food>().HasQueryFilter(e => !e.IsDeleted);
             builder.Entity<Table>().HasQueryFilter(e => !e.IsDeleted);
-            // Log entity'si için soft delete filtresi yok çünkü loglar silinmemeli
 
             // Entity konfigürasyonları
             
