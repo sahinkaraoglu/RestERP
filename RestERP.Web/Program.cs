@@ -19,6 +19,21 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpContextAccessor();
 
+// Logging yapılandırması
+builder.Services.AddLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+    logging.AddDebug();
+    logging.AddEventSourceLogger();
+    
+    // Log seviyelerini yapılandır
+    logging.SetMinimumLevel(LogLevel.Information);
+    logging.AddFilter("Microsoft", LogLevel.Warning);
+    logging.AddFilter("System", LogLevel.Warning);
+    logging.AddFilter("RestERP", LogLevel.Information);
+});
+
 // Veritabanı bağlantısı
 builder.Services.AddDbContext<RestERPDbContext>(options =>
     options.UseSqlServer(
@@ -85,12 +100,64 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<RestERPDbContext>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        
+        logger.LogInformation("Veritabanı migration işlemi başlatılıyor...");
         context.Database.Migrate();
-        Console.WriteLine("Veritabanı migration'ları başarıyla uygulandı.");
+        
+        // Başarılı migration'ı log'a kaydet
+        var log = new Log
+        {
+            Level = "Information",
+            Message = "Veritabanı migration'ları başarıyla uygulandı.",
+            Exception = null,
+            StackTrace = null,
+            Source = "Program.cs - Database Migration",
+            UserId = "System",
+            UserName = "System",
+            RequestPath = "/",
+            RequestMethod = "SYSTEM",
+            IpAddress = "127.0.0.1",
+            Timestamp = DateTime.UtcNow
+        };
+        
+        context.Logs.Add(log);
+        await context.SaveChangesAsync();
+        
+        logger.LogInformation("Veritabanı migration'ları başarıyla uygulandı.");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Migration sırasında hata oluştu: {ex.Message}");
+        var context = services.GetRequiredService<RestERPDbContext>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        
+        // Migration hatasını log'a kaydet
+        var log = new Log
+        {
+            Level = "Error",
+            Message = $"Migration sırasında hata oluştu: {ex.Message}",
+            Exception = ex.ToString(),
+            StackTrace = ex.StackTrace,
+            Source = "Program.cs - Database Migration",
+            UserId = "System",
+            UserName = "System",
+            RequestPath = "/",
+            RequestMethod = "SYSTEM",
+            IpAddress = "127.0.0.1",
+            Timestamp = DateTime.UtcNow
+        };
+        
+        try
+        {
+            context.Logs.Add(log);
+            await context.SaveChangesAsync();
+        }
+        catch (Exception logEx)
+        {
+            logger.LogError(logEx, "Migration hatası log'a kaydedilirken hata oluştu");
+        }
+        
+        logger.LogError(ex, "Migration sırasında hata oluştu: {Message}", ex.Message);
     }
 }
 
