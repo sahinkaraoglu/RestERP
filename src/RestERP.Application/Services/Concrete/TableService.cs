@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using RestERP.Application.Services.Interfaces;
+using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces;
 using System;

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Application.Services.Interfaces;
+using RestERP.Application.Services.Abstract;
 
 namespace RestERP.Web.Areas.Admin.Panel.Controllers;
 

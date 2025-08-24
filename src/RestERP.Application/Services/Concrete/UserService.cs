@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using RestERP.Application.Services.Interfaces;
+using RestERP.Application.Services.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Linq;

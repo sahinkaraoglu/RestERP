@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Core.Domain.Entities;
-using RestERP.Application.Services.Interfaces;
+using RestERP.Application.Services.Abstract;
 using RestERP.Domain.Enums;
 
 namespace RestERP.Web.Areas.Admin.Controllers

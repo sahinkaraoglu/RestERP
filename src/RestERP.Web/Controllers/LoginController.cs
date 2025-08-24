@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using RestERP.Core.Domain.Entities;
-using RestERP.Application.Services.Interfaces;
+using RestERP.Application.Services.Abstract;
 using System.Security.Cryptography;
 
 namespace RestERP.Web.Controllers

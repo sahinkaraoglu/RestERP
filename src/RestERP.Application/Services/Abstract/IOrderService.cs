@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using RestERP.Domain.Enums;
 using RestERP.Core.Domain.Entities;
 
-namespace RestERP.Application.Services.Interfaces
+namespace RestERP.Application.Services.Abstract
 {
     public interface IOrderService
     {

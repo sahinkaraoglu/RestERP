@@ -2,7 +2,7 @@ using RestERP.Core.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace RestERP.Application.Services.Interfaces
+namespace RestERP.Application.Services.Abstract
 {
     public interface IReservationService
     {
