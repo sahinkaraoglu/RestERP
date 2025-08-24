@@ -106,7 +106,7 @@ The following statuses are defined for orders:
 - Completed
 - Cancelled
 
-## 🔄 Repository Pattern
+## 🔄 Repository Pattern & Unit of Work
 
 The project uses Generic Repository and Unit of Work pattern, providing:
 - A standard interface for database operations
