@@ -82,6 +82,34 @@ namespace RestERP.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Logs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Level = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Exception = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StackTrace = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Source = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RequestPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RequestMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedById = table.Column<long>(type: "bigint", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedById = table.Column<long>(type: "bigint", nullable: true),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Logs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 columns: table => new
                 {
@@ -136,6 +164,7 @@ namespace RestERP.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IsOccupied = table.Column<bool>(type: "bit", nullable: false),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedById = table.Column<long>(type: "bigint", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -263,24 +292,24 @@ namespace RestERP.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Tables",
-                columns: new[] { "Id", "CreatedById", "CreatedDate", "IsDeleted", "IsOccupied", "UpdatedById", "UpdatedDate" },
+                columns: new[] { "Id", "CreatedById", "CreatedDate", "IsDeleted", "IsOccupied", "IsPaid", "UpdatedById", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, null, null, false, false, null, null },
-                    { 2, null, null, false, false, null, null },
-                    { 3, null, null, false, false, null, null },
-                    { 4, null, null, false, false, null, null },
-                    { 5, null, null, false, false, null, null },
-                    { 6, null, null, false, false, null, null },
-                    { 7, null, null, false, false, null, null },
-                    { 8, null, null, false, false, null, null },
-                    { 9, null, null, false, false, null, null },
-                    { 10, null, null, false, false, null, null },
-                    { 11, null, null, false, false, null, null },
-                    { 12, null, null, false, false, null, null },
-                    { 13, null, null, false, false, null, null },
-                    { 14, null, null, false, false, null, null },
-                    { 15, null, null, false, false, null, null }
+                    { 1, null, null, false, false, false, null, null },
+                    { 2, null, null, false, false, false, null, null },
+                    { 3, null, null, false, false, false, null, null },
+                    { 4, null, null, false, false, false, null, null },
+                    { 5, null, null, false, false, false, null, null },
+                    { 6, null, null, false, false, false, null, null },
+                    { 7, null, null, false, false, false, null, null },
+                    { 8, null, null, false, false, false, null, null },
+                    { 9, null, null, false, false, false, null, null },
+                    { 10, null, null, false, false, false, null, null },
+                    { 11, null, null, false, false, false, null, null },
+                    { 12, null, null, false, false, false, null, null },
+                    { 13, null, null, false, false, false, null, null },
+                    { 14, null, null, false, false, false, null, null },
+                    { 15, null, null, false, false, false, null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -485,6 +514,9 @@ namespace RestERP.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Images");
+
+            migrationBuilder.DropTable(
+                name: "Logs");
 
             migrationBuilder.DropTable(
                 name: "OrderItems");

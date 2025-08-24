@@ -12,7 +12,7 @@ using RestERP.Infrastructure.Context;
 namespace RestERP.Infrastructure.Migrations
 {
     [DbContext(typeof(RestERPDbContext))]
-    [Migration("20250727195756_Migration1")]
+    [Migration("20250824151200_Migration1")]
     partial class Migration1
     {
         /// <inheritdoc />
@@ -1696,6 +1696,78 @@ namespace RestERP.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Log", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<long?>("CreatedById")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Exception")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestPath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StackTrace")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("UpdatedById")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Logs");
+                });
+
             modelBuilder.Entity("RestERP.Core.Domain.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -1878,6 +1950,9 @@ namespace RestERP.Infrastructure.Migrations
                     b.Property<bool>("IsOccupied")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
                     b.Property<long?>("UpdatedById")
                         .HasColumnType("bigint");
 
@@ -1893,91 +1968,106 @@ namespace RestERP.Infrastructure.Migrations
                         {
                             Id = 1,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 2,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 3,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 4,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 5,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 6,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 7,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 8,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 9,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 10,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 11,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 12,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 13,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 14,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 15,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         });
                 });
 

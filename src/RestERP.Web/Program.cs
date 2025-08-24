@@ -93,72 +93,11 @@ builder.Services.AddTransient<FoodCacheService>();
 
 var app = builder.Build();
 
-// Otomatik migration uygula
+// Otomatik migration - veritabanını otomatik güncelle
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<RestERPDbContext>();
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        
-        logger.LogInformation("Veritabanı migration işlemi başlatılıyor...");
-        context.Database.Migrate();
-        
-        // Başarılı migration'ı log'a kaydet
-        var log = new Log
-        {
-            Level = "Information",
-            Message = "Veritabanı migration'ları başarıyla uygulandı.",
-            Exception = null,
-            StackTrace = null,
-            Source = "Program.cs - Database Migration",
-            UserId = "System",
-            UserName = "System",
-            RequestPath = "/",
-            RequestMethod = "SYSTEM",
-            IpAddress = "127.0.0.1",
-            Timestamp = DateTime.UtcNow
-        };
-        
-        context.Logs.Add(log);
-        await context.SaveChangesAsync();
-        
-        logger.LogInformation("Veritabanı migration'ları başarıyla uygulandı.");
-    }
-    catch (Exception ex)
-    {
-        var context = services.GetRequiredService<RestERPDbContext>();
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        
-        // Migration hatasını log'a kaydet
-        var log = new Log
-        {
-            Level = "Error",
-            Message = $"Migration sırasında hata oluştu: {ex.Message}",
-            Exception = ex.ToString(),
-            StackTrace = ex.StackTrace,
-            Source = "Program.cs - Database Migration",
-            UserId = "System",
-            UserName = "System",
-            RequestPath = "/",
-            RequestMethod = "SYSTEM",
-            IpAddress = "127.0.0.1",
-            Timestamp = DateTime.UtcNow
-        };
-        
-        try
-        {
-            context.Logs.Add(log);
-            await context.SaveChangesAsync();
-        }
-        catch (Exception logEx)
-        {
-            logger.LogError(logEx, "Migration hatası log'a kaydedilirken hata oluştu");
-        }
-        
-        logger.LogError(ex, "Migration sırasında hata oluştu: {Message}", ex.Message);
-    }
+    var context = scope.ServiceProvider.GetRequiredService<RestERPDbContext>();
+    context.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.

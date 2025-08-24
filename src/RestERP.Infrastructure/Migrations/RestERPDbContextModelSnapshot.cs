@@ -1941,13 +1941,13 @@ namespace RestERP.Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Is")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsOccupied")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
                     b.Property<long?>("UpdatedById")
@@ -1964,107 +1964,107 @@ namespace RestERP.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 2,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 3,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 4,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 5,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 6,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 7,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 8,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 9,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 10,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 11,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 12,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 13,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 14,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         },
                         new
                         {
                             Id = 15,
-                            Is = false,
                             IsDeleted = false,
-                            IsOccupied = false
+                            IsOccupied = false,
+                            IsPaid = false
                         });
                 });
 
