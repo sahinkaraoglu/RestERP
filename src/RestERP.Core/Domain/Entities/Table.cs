@@ -9,5 +9,6 @@ namespace RestERP.Core.Domain.Entities
     {
         public bool IsOccupied { get; set; } = false;
         public bool IsPaid { get; set; } = false;
+        public bool TryDEneme { get; set; } = false;
     }
 } 
