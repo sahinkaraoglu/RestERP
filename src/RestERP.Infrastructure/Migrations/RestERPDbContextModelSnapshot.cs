@@ -98,7 +98,7 @@ namespace RestERP.Infrastructure.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             LastName = "User",
-                            PasswordHash = "PrP+ZrMeO00Q+nC1ytSccRIpSvauTkdqHEBRVdRaoSE=",
+                            PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=",
                             PhoneNumber = "05551234567",
                             RoleType = 2,
                             UserName = "admin"
@@ -112,7 +112,7 @@ namespace RestERP.Infrastructure.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             LastName = "User",
-                            PasswordHash = "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=",
+                            PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=",
                             PhoneNumber = "05559876543",
                             RoleType = 2,
                             UserName = "employee"
@@ -126,7 +126,7 @@ namespace RestERP.Infrastructure.Migrations
                             IsActive = true,
                             IsDeleted = false,
                             LastName = "Customer",
-                            PasswordHash = "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=",
+                            PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=",
                             PhoneNumber = "05551111111",
                             RoleType = 1,
                             UserName = "customer"

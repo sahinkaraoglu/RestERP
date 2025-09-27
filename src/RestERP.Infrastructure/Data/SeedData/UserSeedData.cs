@@ -1,20 +1,10 @@
 ﻿using RestERP.Core.Domain.Entities;
 using RestERP.Domain.Enums;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace RestERP.Infrastructure.Data.SeedData
 {
     public class UserSeedData
     {
-        private static string HashPassword(string password)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
-        }
         public static List<ApplicationUser> GetUsers()
         {
             return new List<ApplicationUser>
@@ -28,14 +18,10 @@ namespace RestERP.Infrastructure.Data.SeedData
                     UserName = "admin",
                     Email = "admin@resterp.com",
                     PhoneNumber = "05551234567",
-                    PasswordHash = HashPassword("Admin123!"), // Şifre: Admin123!
+                    PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=", // Şifre: password
                     IsActive = true,
                     RoleType = Role.Employee,
-                    IsDeleted = false,
-                    CreatedById = null,
-                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedById = null,
-                    UpdatedDate = null
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 
                 // Employee Kullanıcısı
@@ -47,14 +33,10 @@ namespace RestERP.Infrastructure.Data.SeedData
                     UserName = "employee",
                     Email = "employee@resterp.com",
                     PhoneNumber = "05559876543",
-                    PasswordHash = HashPassword("password"), // Şifre: password
+                    PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=", // Şifre: password
                     IsActive = true,
                     RoleType = Role.Employee,
-                    IsDeleted = false,
-                    CreatedById = null,
-                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedById = null,
-                    UpdatedDate = null
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 
                 // Test Müşteri Kullanıcısı
@@ -66,14 +48,10 @@ namespace RestERP.Infrastructure.Data.SeedData
                     UserName = "customer",
                     Email = "customer@test.com",
                     PhoneNumber = "05551111111",
-                    PasswordHash = HashPassword("password"), // Şifre: password
+                    PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=", // Şifre: password
                     IsActive = true,
                     RoleType = Role.Customer,
-                    IsDeleted = false,
-                    CreatedById = null,
-                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedById = null,
-                    UpdatedDate = null
+                    CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }
             };
         }
