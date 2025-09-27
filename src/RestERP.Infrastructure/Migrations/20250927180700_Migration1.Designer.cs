@@ -12,8 +12,8 @@ using RestERP.Infrastructure.Context;
 namespace RestERP.Infrastructure.Migrations
 {
     [DbContext(typeof(RestERPDbContext))]
-    [Migration("20250903195124_Migration2")]
-    partial class Migration2
+    [Migration("20250927180700_Migration1")]
+    partial class Migration1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
