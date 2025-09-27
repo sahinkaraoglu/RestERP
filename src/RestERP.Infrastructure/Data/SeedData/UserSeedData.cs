@@ -18,7 +18,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     UserName = "admin",
                     Email = "admin@resterp.com",
                     PhoneNumber = "05551234567",
-                    PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=", // Şifre: password
+                    PasswordHash = "PrP+ZrMeO00Q+nC1ytSccRIpSvauTkdqHEBRVdRaoSE=", // Şifre: Admin123!
                     IsActive = true,
                     RoleType = Role.Employee,
                     CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
