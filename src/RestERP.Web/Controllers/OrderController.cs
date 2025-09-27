@@ -119,6 +119,7 @@ namespace RestERP.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateOrder([FromBody] OrderViewModel model)
         {
             try
@@ -144,7 +145,7 @@ namespace RestERP.Web.Controllers
                 var order = new Order
                 {
                     TableId = model.CustomerInfo.Type == "dine-in" ? model.CustomerInfo.TableNumber : null,
-                    CustomerId = currentUser.Id,
+                    CustomerId = currentUser.Id, // ApplicationUser.Id'yi kullan
                     Status = OrderStatus.New,
                     TotalAmount = model.Items.Sum(i => i.Price * i.Quantity),
                     OrderItems = model.Items.Select(i => new OrderItem
@@ -166,7 +167,16 @@ namespace RestERP.Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Sipariş oluşturulurken hata oluştu");
-                return Json(new { success = false, message = "Sipariş oluşturulurken bir hata oluştu: " + ex.Message });
+                
+                // İç hata detaylarını da logla
+                var innerException = ex.InnerException;
+                while (innerException != null)
+                {
+                    _logger.LogError(innerException, "İç hata: {Message}", innerException.Message);
+                    innerException = innerException.InnerException;
+                }
+                
+                return Json(new { success = false, message = "Sipariş oluşturulurken bir hata oluştu: " + ex.Message + (ex.InnerException != null ? " | İç hata: " + ex.InnerException.Message : "") });
             }
         }
     }

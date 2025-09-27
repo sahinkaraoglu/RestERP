@@ -55,6 +55,13 @@ namespace RestERP.Infrastructure.Context
             builder.Entity<Order>()
                 .Property(o => o.TotalAmount)
                 .HasPrecision(18, 2);
+                
+            // Order - ApplicationUser ilişkisi
+            builder.Entity<Order>()
+                .HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(o => o.CustomerId)
+                .IsRequired(false);
             
             // Product konfigürasyonu
             builder.Entity<Food>()

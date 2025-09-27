@@ -26,17 +26,13 @@ namespace RestERP.Application.Services
 
             // Sipariş numarası oluştur (örnek: ORD-20230814-001)
             order.OrderNumber = $"ORD-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000):000}";
+            order.OrderDate = DateTime.Now;
             
+            // Order'ı OrderItem'ları ile birlikte tek seferde ekle
+            // Entity Framework navigation property sayesinde OrderItem'ları otomatik ekleyecek
             await _unitOfWork.Repository<Order>().AddAsync(order);
-            
-            // Sipariş kalemleri için
-            foreach (var item in order.OrderItems)
-            {
-                item.OrderId = order.Id;
-                await _unitOfWork.Repository<OrderItem>().AddAsync(item);
-            }
-            
             await _unitOfWork.SaveChangesAsync();
+            
             return order;
         }
 
