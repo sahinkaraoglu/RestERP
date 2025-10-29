@@ -150,9 +150,11 @@ namespace RestERP.Web.Controllers
             }
         }
 
+        [HttpGet]
         [HttpPost]
         public IActionResult Logout()
         {
+            _logger.LogInformation("User logging out");
             Response.Cookies.Delete("JWT");
             return RedirectToAction("Index", "Home", new { area = "" });
         }
