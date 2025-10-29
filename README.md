@@ -85,15 +85,6 @@ The project uses the following core entities:
 | **OrderItem** | Order items |
 | **Table** | Table information |
 
-### Base Entity Properties
-All entities are derived from the `BaseEntity` class and contain the following properties:
-- `Id` (int): Unique identifier
-- `IsDeleted` (bool): Deletion status
-- `CreatedById` (long?): Creator user
-- `CreatedDate` (DateTime?): Creation date
-- `UpdatedById` (long?): Updater user
-- `UpdatedDate` (DateTime?): Update date
-
 ## 👥 Person Roles
 
 The system defines the following employee roles:
