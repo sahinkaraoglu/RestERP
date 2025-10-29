@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.5.2.0
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11111.16 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestERP.Web", "src\RestERP.Web\RestERP.Web.csproj", "{4331B507-736A-9C18-4EC3-2FE79577AF4D}"
 EndProject
@@ -11,9 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestERP.Application", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestERP.Infrastructure", "src\RestERP.Infrastructure\RestERP.Infrastructure.csproj", "{8F16300C-512B-4851-BE38-83102C0F3CC1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestERP.API", "src\RestERP.API\RestERP.API.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9C4EA7AE-4760-4EA6-8914-8531392E81CA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{960D715F-D527-4E6B-84C9-055AD016E2DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +41,10 @@ Global
 		{8F16300C-512B-4851-BE38-83102C0F3CC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F16300C-512B-4851-BE38-83102C0F3CC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F16300C-512B-4851-BE38-83102C0F3CC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +54,8 @@ Global
 		{9E240EE8-58B7-4B0C-82FC-AB23B322EA5B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{DA19E481-4BB7-4AD6-A572-5E3AFA399A71} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{8F16300C-512B-4851-BE38-83102C0F3CC1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890} = {960D715F-D527-4E6B-84C9-055AD016E2DD}
+		{960D715F-D527-4E6B-84C9-055AD016E2DD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2C125E94-D65E-4632-9058-A7BE50A0BA09}

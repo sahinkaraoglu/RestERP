@@ -20,6 +20,7 @@ namespace RestERP.Infrastructure.Context
         public DbSet<Image> Images { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Log> Logs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -62,6 +63,13 @@ namespace RestERP.Infrastructure.Context
                 .WithMany()
                 .HasForeignKey(o => o.CustomerId)
                 .IsRequired(false);
+            
+            // RefreshToken - ApplicationUser ilişkisi
+            builder.Entity<RefreshToken>()
+                .HasOne(rt => rt.User)
+                .WithMany()
+                .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
             
             // Product konfigürasyonu
             builder.Entity<Food>()
