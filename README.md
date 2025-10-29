@@ -32,6 +32,7 @@ The project has a layered architecture in line with Clean Architecture principle
 | **RestERP.Application** | Contains application services, validation rules, and business logic |
 | **RestERP.Infrastructure** | Contains database connection, repository implementations, and external services |
 | **RestERP.Web** | Contains user interface, controllers, and views |
+| **RestERP.API** | Contains RESTful API controllers with Swagger/OpenAPI documentation |
 
 ## 🛠️ Technologies
 
@@ -42,6 +43,7 @@ The project has a layered architecture in line with Clean Architecture principle
 - **SQL Server**: Database
 - **Repository Pattern & Unit of Work**: Data access layer pattern
 - **In-Memory Caching**: Caching for frequently accessed data
+- **JWT Authentication**: Token-based authentication for API and Web applications
 
 ### Development Tools
 - **Visual Studio 2022**: Primary IDE
@@ -113,6 +115,7 @@ The project uses Generic Repository and Unit of Work pattern, providing:
 - Prevention of code duplication
 - Increased testability
 - Simplified transaction management
+- **Automatic Migration**: The application automatically applies database migrations on startup
 
 ## 🚀 Performance Optimizations
 
