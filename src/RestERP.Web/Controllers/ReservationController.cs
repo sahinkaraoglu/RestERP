@@ -10,7 +10,7 @@ using System.Net.Http.Headers;
 
 namespace RestERP.Web.Controllers
 {
-    [Authorize(Roles = "Employee")]
+    [AllowAnonymous]
     public class ReservationController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -144,6 +144,7 @@ namespace RestERP.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> List()
         {
             try
@@ -182,6 +183,7 @@ namespace RestERP.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> Delete(int id)
         {
             try
