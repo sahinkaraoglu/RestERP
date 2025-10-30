@@ -25,7 +25,7 @@ namespace RestERP.API.Controllers
         /// </summary>
         /// <returns>Kullanıcı listesi</returns>
         [HttpGet]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetAllUsers()
         {
             try
@@ -46,7 +46,7 @@ namespace RestERP.API.Controllers
         /// <param name="id">Kullanıcı ID'si</param>
         /// <returns>Kullanıcı bilgisi</returns>
         [HttpGet("{id}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<ActionResult<ApplicationUser>> GetUserById(int id)
         {
             try
@@ -76,7 +76,7 @@ namespace RestERP.API.Controllers
         /// <param name="email">Email adresi</param>
         /// <returns>Kullanıcı bilgisi</returns>
         [HttpGet("email/{email}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<ActionResult<ApplicationUser>> GetUserByEmail(string email)
         {
             try
@@ -106,7 +106,7 @@ namespace RestERP.API.Controllers
         /// <param name="user">Kullanıcı bilgileri</param>
         /// <returns>Oluşturulan kullanıcı</returns>
         [HttpPost]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<ActionResult<ApplicationUser>> CreateUser([FromBody] ApplicationUser user)
         {
             try
@@ -137,7 +137,7 @@ namespace RestERP.API.Controllers
         /// <param name="user">Güncellenecek kullanıcı bilgileri</param>
         /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] ApplicationUser user)
         {
             try
@@ -177,7 +177,7 @@ namespace RestERP.API.Controllers
         /// <param name="id">Silinecek kullanıcı ID'si</param>
         /// <returns>Silme sonucu</returns>
         [HttpDelete("{id}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteUser(int id)
         {
             try

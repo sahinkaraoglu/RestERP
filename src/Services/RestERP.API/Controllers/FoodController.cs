@@ -113,7 +113,7 @@ namespace RestERP.API.Controllers
         /// <param name="food">Yemek bilgileri</param>
         /// <returns>Oluşturulan yemek</returns>
         [HttpPost]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<ActionResult<Food>> CreateFood([FromBody] Food food)
         {
             try
@@ -140,7 +140,7 @@ namespace RestERP.API.Controllers
         /// <param name="food">Güncellenecek yemek bilgileri</param>
         /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateFood(int id, [FromBody] Food food)
         {
             try
@@ -176,7 +176,7 @@ namespace RestERP.API.Controllers
         /// <param name="id">Silinecek yemek ID'si</param>
         /// <returns>Silme sonucu</returns>
         [HttpDelete("{id}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteFood(int id)
         {
             try

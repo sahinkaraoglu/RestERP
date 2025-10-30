@@ -4,6 +4,8 @@ using RestERP.Core.Domain.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Areas.Admin.Models;
 using RestERP.Web.Services;
+using System.Text;
+using System.Text.Json;
 
 namespace RestERP.Web.Areas.Admin.Controllers
 {
@@ -11,25 +13,16 @@ namespace RestERP.Web.Areas.Admin.Controllers
     public class FoodController : Controller
     {
         private readonly ILogger<FoodController> _logger;
-        private readonly IFoodService _foodService;
-        private readonly ITableService _tableService;
-        private readonly IUserService _userService;
-        private readonly IOrderService _orderService;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly FoodCacheService _foodCacheService;
 
         public FoodController(
             ILogger<FoodController> logger,
-            IFoodService foodService,
-            ITableService tableService,
-            IUserService userService,
-            IOrderService orderService,
+            IHttpClientFactory httpClientFactory,
             FoodCacheService foodCacheService)
         {
             _logger = logger;
-            _foodService = foodService;
-            _tableService = tableService;
-            _userService = userService;
-            _orderService = orderService;
+            _httpClientFactory = httpClientFactory;
             _foodCacheService = foodCacheService;
         }
 
@@ -86,10 +79,20 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     Price = model.Price,
                 };
 
-                await _foodService.CreateFoodAsync(food);
-                _foodCacheService.ClearCache();
+                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                var json = JsonSerializer.Serialize(food);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await httpClient.PostAsync("api/food", content);
 
-                return Json(new { success = true, message = "Ürün başarıyla eklendi" });
+                if (response.IsSuccessStatusCode)
+                {
+                    _foodCacheService.ClearCache();
+                    return Json(new { success = true, message = "Ürün başarıyla eklendi" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Ürün eklenirken bir hata oluştu" });
+                }
             }
             catch (Exception ex)
             {
@@ -103,7 +106,18 @@ namespace RestERP.Web.Areas.Admin.Controllers
             try
             {
                 var foodcategories = FoodCategorySeedData.GetFoodCategories();
-                var food = await _foodService.GetFoodByIdAsync(id);
+                
+                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                var response = await httpClient.GetAsync($"api/food/{id}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
+                    return RedirectToAction("Index", "Food", new { area = "Admin" });
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var food = JsonSerializer.Deserialize<Food>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
                 if (food == null)
                 {
@@ -173,7 +187,18 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return View("~/Areas/Admin/Views/Menu/Edit.cshtml");
                 }
 
-                var existingFood = await _foodService.GetFoodByIdAsync(Id);
+                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                var getResponse = await httpClient.GetAsync($"api/food/{Id}");
+                
+                if (!getResponse.IsSuccessStatusCode)
+                {
+                    TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
+                    return RedirectToAction("Index", "Food", new { area = "Admin" });
+                }
+
+                var existingJson = await getResponse.Content.ReadAsStringAsync();
+                var existingFood = JsonSerializer.Deserialize<Food>(existingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
                 if (existingFood == null)
                 {
                     TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
@@ -186,11 +211,21 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 existingFood.Description = Description;
                 existingFood.Price = Price;
 
-                await _foodService.UpdateFoodAsync(existingFood);
-                _foodCacheService.ClearCache();
+                var json = JsonSerializer.Serialize(existingFood);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var updateResponse = await httpClient.PutAsync($"api/food/{Id}", content);
 
-                TempData["SuccessMessage"] = "Ürün başarıyla güncellendi.";
-                return RedirectToAction("Index", "Food", new { area = "Admin" });
+                if (updateResponse.IsSuccessStatusCode)
+                {
+                    _foodCacheService.ClearCache();
+                    TempData["SuccessMessage"] = "Ürün başarıyla güncellendi.";
+                    return RedirectToAction("Index", "Food", new { area = "Admin" });
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Ürün güncellenirken bir hata oluştu.";
+                    return RedirectToAction("Index", "Food", new { area = "Admin" });
+                }
             }
             catch (Exception ex)
             {
@@ -220,17 +255,18 @@ namespace RestERP.Web.Areas.Admin.Controllers
         {
             try
             {
-                var food = await _foodService.GetFoodByIdAsync(id);
+                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                var response = await httpClient.DeleteAsync($"api/food/{id}");
                 
-                if (food == null)
+                if (response.IsSuccessStatusCode)
+                {
+                    _foodCacheService.ClearCache();
+                    return Json(new { success = true, message = "Ürün başarıyla silindi." });
+                }
+                else
                 {
                     return Json(new { success = false, message = "Silinecek ürün bulunamadı." });
                 }
-                
-                await _foodService.DeleteFoodAsync(id);
-                _foodCacheService.ClearCache();
-                
-                return Json(new { success = true, message = "Ürün başarıyla silindi." });
             }
             catch (Exception ex)
             {

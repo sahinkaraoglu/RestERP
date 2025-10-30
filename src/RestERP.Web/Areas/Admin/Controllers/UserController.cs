@@ -4,29 +4,40 @@ using RestERP.Domain.Enums;
 using RestERP.Core.Domain.Entities;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 
 namespace RestERP.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class PersonController : Controller
+    public class UserController : Controller
     {
-        private readonly ILogger<PersonController> _logger;
-        private readonly IUserService _userService;
+        private readonly ILogger<UserController> _logger;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public PersonController(
-            ILogger<PersonController> logger, 
-            IUserService userService)
+        public UserController(
+            ILogger<UserController> logger, 
+            IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
-            _userService = userService;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<IActionResult> Index()
         {
             try
             {
-                var users = await _userService.GetAllUsersAsync();
-                return View(users);
+                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                var response = await httpClient.GetAsync("api/user");
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["ErrorMessage"] = "Personel listesi alınırken bir hata oluştu.";
+                    return View(new List<ApplicationUser>());
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var users = JsonSerializer.Deserialize<List<ApplicationUser>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return View(users ?? new List<ApplicationUser>());
             }
             catch (Exception ex)
             {
@@ -38,7 +49,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            return View("~/Areas/Admin/Views/Person/Create.cshtml");
+            return View("~/Areas/Admin/Views/User/Create.cshtml");
         }
 
         [HttpPost]
@@ -49,7 +60,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 if (password != confirmPassword)
                 {
                     ModelState.AddModelError("", "Şifreler eşleşmiyor!");
-                    return View("~/Areas/Admin/Views/Person/Create.cshtml", user);
+                    return View("~/Areas/Admin/Views/User/Create.cshtml", user);
                 }
 
                 if (ModelState.IsValid)
@@ -61,9 +72,12 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     user.PhoneNumber = user.PhoneNumber;
                     user.CreatedDate = DateTime.Now;
 
-                    var result = await _userService.CreateUserAsync(user);
+                    var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                    var json = JsonSerializer.Serialize(user);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await httpClient.PostAsync("api/user", content);
 
-                    if (result)
+                    if (response.IsSuccessStatusCode)
                     {
                         TempData["SuccessMessage"] = "Kullanıcı başarıyla eklendi.";
                         return RedirectToAction(nameof(Index));
@@ -71,13 +85,13 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     
                     ModelState.AddModelError("", "Kullanıcı eklenirken bir hata oluştu.");
                 }
-                return View("~/Areas/Admin/Views/Person/Create.cshtml", user);
+                return View("~/Areas/Admin/Views/User/Create.cshtml", user);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Kullanıcı eklenirken hata oluştu");
                 TempData["ErrorMessage"] = "Kullanıcı eklenirken bir hata oluştu: " + ex.Message;
-                return View("~/Areas/Admin/Views/Person/Create.cshtml", user);
+                return View("~/Areas/Admin/Views/User/Create.cshtml", user);
             }
         }
 
@@ -91,14 +105,25 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var user = await _userService.GetUserByIdAsync(id);
+                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                var response = await httpClient.GetAsync($"api/user/{id}");
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var user = JsonSerializer.Deserialize<ApplicationUser>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                
                 if (user == null)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                return View("~/Areas/Admin/Views/Person/Edit.cshtml", user);
+                return View("~/Areas/Admin/Views/User/Edit.cshtml", user);
             }
             catch (Exception ex)
             {
@@ -119,7 +144,18 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var user = await _userService.GetUserByIdAsync(id);
+                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                var getResponse = await httpClient.GetAsync($"api/user/{id}");
+                
+                if (!getResponse.IsSuccessStatusCode)
+                {
+                    TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var json = await getResponse.Content.ReadAsStringAsync();
+                var user = JsonSerializer.Deserialize<ApplicationUser>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                
                 if (user == null)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
@@ -132,26 +168,26 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     if (string.IsNullOrEmpty(currentPassword))
                     {
                         ModelState.AddModelError("", "Mevcut şifrenizi girmelisiniz.");
-                        return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                        return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
                     }
 
                     if (string.IsNullOrEmpty(newPassword) || newPassword.Length < 6)
                     {
                         ModelState.AddModelError("", "Yeni şifre en az 6 karakter uzunluğunda olmalıdır.");
-                        return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                        return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
                     }
 
                     if (newPassword != confirmPassword)
                     {
                         ModelState.AddModelError("", "Yeni şifreler eşleşmiyor.");
-                        return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                        return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
                     }
 
                     // Mevcut şifreyi kontrol et
                     if (!VerifyPassword(currentPassword, user.PasswordHash))
                     {
                         ModelState.AddModelError("", "Mevcut şifre yanlış.");
-                        return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                        return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
                     }
 
                     // Şifreyi güncelle
@@ -168,21 +204,26 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 user.CreatedDate = model.CreatedDate;
                 user.UpdatedDate = model.UpdatedDate;
             
-                var updateResult = await _userService.UpdateUserAsync(user);
-                if (!updateResult)
+                var updateJson = JsonSerializer.Serialize(user);
+                var content = new StringContent(updateJson, Encoding.UTF8, "application/json");
+                var updateResponse = await httpClient.PutAsync($"api/user/{id}", content);
+                
+                if (updateResponse.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Kullanıcı başarıyla güncellendi.";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
                 {
                     TempData["ErrorMessage"] = "Kullanıcı güncellenirken bir hata oluştu.";
-                    return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                    return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
                 }
-            
-                TempData["SuccessMessage"] = "Kullanıcı başarıyla güncellendi.";
-                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Kullanıcı güncellenirken hata oluştu. Id: {Id}", id);
                 TempData["ErrorMessage"] = "Kullanıcı güncellenirken bir hata oluştu: " + ex.Message;
-                return View("~/Areas/Admin/Views/Person/Edit.cshtml", model);
+                return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
             }
         }
 
@@ -196,14 +237,10 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return Json(new { success = false, message = "Geçersiz kullanıcı ID'si." });
                 }
 
-                var user = await _userService.GetUserByIdAsync(id);
-                if (user == null)
-                {
-                    return Json(new { success = false, message = "Silinecek kullanıcı bulunamadı." });
-                }
-
-                var result = await _userService.DeleteUserAsync(id);
-                if (result)
+                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                var response = await httpClient.DeleteAsync($"api/user/{id}");
+                
+                if (response.IsSuccessStatusCode)
                 {
                     return Json(new { success = true, message = "Kullanıcı başarıyla silindi." });
                 }
@@ -235,3 +272,4 @@ namespace RestERP.Web.Areas.Admin.Controllers
         }
     }
 } 
+

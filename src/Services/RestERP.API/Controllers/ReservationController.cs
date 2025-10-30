@@ -24,7 +24,7 @@ namespace RestERP.API.Controllers
         /// </summary>
         /// <returns>Rezervasyon listesi</returns>
         [HttpGet]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetAllReservations()
         {
             try
@@ -100,7 +100,7 @@ namespace RestERP.API.Controllers
         /// <param name="reservation">Güncellenecek rezervasyon bilgileri</param>
         /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateReservation(int id, [FromBody] Reservation reservation)
         {
             try
@@ -136,7 +136,7 @@ namespace RestERP.API.Controllers
         /// <param name="id">Silinecek rezervasyon ID'si</param>
         /// <returns>Silme sonucu</returns>
         [HttpDelete("{id}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteReservation(int id)
         {
             try

@@ -13,7 +13,7 @@
                     <p class="person-subtitle">Personel ve Müşteri bilgilerini yönetin</p>  
                 </div>  
                 <div class="col-lg-4">  
-                    <a href="@Url.Action("Create", "Person")" class="btn btn-primary add-person-btn">  
+                    <a href="@Url.Action("Create", "User")" class="btn btn-primary add-person-btn">  
                         <i class="bi bi-plus-circle"></i> Yeni Ekle  
                     </a>  
                 </div>  
@@ -79,7 +79,7 @@
                                         </td>
                                         <td>@(person.CreatedDate.HasValue ? person.CreatedDate.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
                                         <td>  
-                                            <a href="@Url.Action("Edit", "Person", new { id = person.Id })" class="btn btn-sm btn-info">  
+                                            <a href="@Url.Action("Edit", "User", new { id = person.Id })" class="btn btn-sm btn-info">  
                                                 <i class="bi bi-pencil"></i>  
                                             </a>  
                                             <a href="javascript:void(0)" onclick="deletePerson('@person.Id')" class="btn btn-sm btn-danger">  
@@ -138,7 +138,7 @@
                                         <td>@(person.CreatedDate.HasValue ? person.CreatedDate.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
                                         <td>
                                             <div class="d-flex gap-1">
-                                                <a href="@Url.Action("Edit", "Person", new { id = person.Id })" class="btn btn-sm btn-info" title="Düzenle">
+                                                <a href="@Url.Action("Edit", "User", new { id = person.Id })" class="btn btn-sm btn-info" title="Düzenle">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                                 <a href="javascript:void(0)" onclick="deletePerson('@person.Id')" class="btn btn-sm btn-danger" title="Sil">
@@ -298,7 +298,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '@Url.Action("Delete", "Person")',
+                    url: '@Url.Action("Delete", "User")',
                     type: 'POST',
                     data: { id: id },
                     success: function(response) {
@@ -327,3 +327,4 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 }
+

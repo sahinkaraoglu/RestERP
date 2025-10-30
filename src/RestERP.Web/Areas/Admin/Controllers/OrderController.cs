@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using RestERP.Core.Domain.Entities;
 using RestERP.Web.Areas.Admin.Models;
+using System.Text;
 
 namespace RestERP.Web.Areas.Admin.Controllers;
 
@@ -16,20 +17,14 @@ namespace RestERP.Web.Areas.Admin.Controllers;
 public class OrderController : Controller
 {
     private readonly ILogger<OrderController> _logger;
-    private readonly IOrderService _orderService;
-    private readonly IFoodService _foodService;
-    private readonly IUserService _userService;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     public OrderController(
         ILogger<OrderController> logger, 
-        IOrderService orderService,
-        IFoodService foodService,
-        IUserService userService)
+        IHttpClientFactory httpClientFactory)
     {
         _logger = logger;
-        _orderService = orderService;
-        _foodService = foodService;
-        _userService = userService;
+        _httpClientFactory = httpClientFactory;
     }
 
     public async Task<IActionResult> Index()
@@ -40,12 +35,7 @@ public class OrderController : Controller
         }
         try
         {
-            // Kullanıcı girişi kontrolü
-            var currentUser = await _userService.GetCurrentUserAsync();
-            if (currentUser == null)
-            {
-                return View(new List<Order>());
-            }
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
 
             // Eğer sipariş ID'si belirtilmişse, o siparişin detaylarını göster
             if (Request.Query.ContainsKey("orderId"))
@@ -53,7 +43,16 @@ public class OrderController : Controller
                 var orderId = int.TryParse(Request.Query["orderId"], out int id) ? id : (int?)null;
                 if (orderId.HasValue)
                 {
-                    var order = await _orderService.GetOrderWithDetailsAsync(orderId.Value);
+                    var orderResponse = await httpClient.GetAsync($"api/order/{orderId.Value}/details");
+                    if (!orderResponse.IsSuccessStatusCode)
+                    {
+                        TempData["ErrorMessage"] = "Sipariş bulunamadı.";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    var orderJson = await orderResponse.Content.ReadAsStringAsync();
+                    var order = JsonSerializer.Deserialize<Order>(orderJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
                     if (order == null)
                     {
                         TempData["ErrorMessage"] = "Sipariş bulunamadı.";
@@ -63,7 +62,12 @@ public class OrderController : Controller
                     // Her bir sipariş kalemi için ürün bilgilerini yükle
                     foreach (var item in order.OrderItems)
                     {
-                        item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
+                        var foodResponse = await httpClient.GetAsync($"api/food/{item.FoodId}");
+                        if (foodResponse.IsSuccessStatusCode)
+                        {
+                            var foodJson = await foodResponse.Content.ReadAsStringAsync();
+                            item.Food = JsonSerializer.Deserialize<Food>(foodJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        }
                     }
 
                     ViewData["ShowSingleOrder"] = true;
@@ -72,10 +76,19 @@ public class OrderController : Controller
             }
             
             // Sipariş ID'si belirtilmemişse tüm aktif siparişleri göster
-            var activeOrders = await _orderService.GetActiveOrdersAsync();
+            var activeOrdersResponse = await httpClient.GetAsync("api/order/active");
+            
+            if (!activeOrdersResponse.IsSuccessStatusCode)
+            {
+                ViewData["ShowSingleOrder"] = false;
+                return View(new List<Order>());
+            }
+
+            var activeOrdersJson = await activeOrdersResponse.Content.ReadAsStringAsync();
+            var activeOrders = JsonSerializer.Deserialize<List<Order>>(activeOrdersJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             
             // Eğer aktif sipariş yoksa boş bir liste ile view'ı döndür
-            if (!activeOrders.Any())
+            if (activeOrders == null || !activeOrders.Any())
             {
                 ViewData["ShowSingleOrder"] = false;
                 return View(new List<Order>());
@@ -88,7 +101,12 @@ public class OrderController : Controller
                 {
                     try
                     {
-                        item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
+                        var foodResponse = await httpClient.GetAsync($"api/food/{item.FoodId}");
+                        if (foodResponse.IsSuccessStatusCode)
+                        {
+                            var foodJson = await foodResponse.Content.ReadAsStringAsync();
+                            item.Food = JsonSerializer.Deserialize<Food>(foodJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -113,7 +131,24 @@ public class OrderController : Controller
     {
         try
         {
-            var orders = await _orderService.GetOrdersByTableIdAsync(tableId);
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var ordersResponse = await httpClient.GetAsync($"api/order/table/{tableId}");
+            
+            if (!ordersResponse.IsSuccessStatusCode)
+            {
+                TempData["Message"] = "Bu masaya ait aktif sipariş bulunmamaktadır.";
+                return RedirectToAction("Index", "Table");
+            }
+
+            var ordersJson = await ordersResponse.Content.ReadAsStringAsync();
+            var orders = JsonSerializer.Deserialize<List<Order>>(ordersJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
+            if (orders == null || !orders.Any())
+            {
+                TempData["Message"] = "Bu masaya ait aktif sipariş bulunmamaktadır.";
+                return RedirectToAction("Index", "Table");
+            }
+
             var activeOrder = orders.FirstOrDefault(o => o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled && !o.IsPaid);
             
             if (activeOrder == null)
@@ -123,12 +158,32 @@ public class OrderController : Controller
             }
 
             // Sipariş detaylarını getir
-            var orderWithDetails = await _orderService.GetOrderWithDetailsAsync(activeOrder.Id);
+            var orderDetailsResponse = await httpClient.GetAsync($"api/order/{activeOrder.Id}/details");
             
+            if (!orderDetailsResponse.IsSuccessStatusCode)
+            {
+                TempData["ErrorMessage"] = "Sipariş detayları alınırken bir hata oluştu.";
+                return RedirectToAction("Index", "Table");
+            }
+
+            var orderDetailsJson = await orderDetailsResponse.Content.ReadAsStringAsync();
+            var orderWithDetails = JsonSerializer.Deserialize<Order>(orderDetailsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
+            if (orderWithDetails == null)
+            {
+                TempData["ErrorMessage"] = "Sipariş detayları alınırken bir hata oluştu.";
+                return RedirectToAction("Index", "Table");
+            }
+
             // Her bir sipariş kalemi için ürün bilgilerini yükle
             foreach (var item in orderWithDetails.OrderItems)
             {
-                item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
+                var foodResponse = await httpClient.GetAsync($"api/food/{item.FoodId}");
+                if (foodResponse.IsSuccessStatusCode)
+                {
+                    var foodJson = await foodResponse.Content.ReadAsStringAsync();
+                    item.Food = JsonSerializer.Deserialize<Food>(foodJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                }
             }
 
             ViewData["ShowSingleOrder"] = true;
@@ -148,10 +203,20 @@ public class OrderController : Controller
     {
         try
         {
-            var activeOrders = await _orderService.GetActiveOrdersAsync();
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var activeOrdersResponse = await httpClient.GetAsync("api/order/active");
+            
+            if (!activeOrdersResponse.IsSuccessStatusCode)
+            {
+                ViewData["ShowSingleOrder"] = false;
+                return View("Index", new List<Order>());
+            }
+
+            var activeOrdersJson = await activeOrdersResponse.Content.ReadAsStringAsync();
+            var activeOrders = JsonSerializer.Deserialize<List<Order>>(activeOrdersJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             
             // Eğer aktif sipariş yoksa boş bir liste ile view'ı döndür
-            if (!activeOrders.Any())
+            if (activeOrders == null || !activeOrders.Any())
             {
                 ViewData["ShowSingleOrder"] = false;
                 return View("Index", new List<Order>());
@@ -164,7 +229,12 @@ public class OrderController : Controller
                 {
                     try
                     {
-                        item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
+                        var foodResponse = await httpClient.GetAsync($"api/food/{item.FoodId}");
+                        if (foodResponse.IsSuccessStatusCode)
+                        {
+                            var foodJson = await foodResponse.Content.ReadAsStringAsync();
+                            item.Food = JsonSerializer.Deserialize<Food>(foodJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -209,11 +279,21 @@ public class OrderController : Controller
                 }).ToList()
             };
 
-            // Siparişi kaydet
-            var result = await _orderService.CreateOrderAsync(order);
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var json = JsonSerializer.Serialize(order);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync("api/order", content);
 
-            // Başarılı sonuç dön
-            return Json(new { success = true, orderId = result.Id });
+            if (response.IsSuccessStatusCode)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<Order>(responseJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return Json(new { success = true, orderId = result?.Id ?? 0 });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Sipariş oluşturulurken bir hata oluştu" });
+            }
         }
         catch (Exception ex)
         {
@@ -228,8 +308,16 @@ public class OrderController : Controller
     {
         try
         {
-            var orders = await _orderService.GetOrdersByTableIdAsync(tableId);
-            return Ok(orders);
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var response = await httpClient.GetAsync($"api/order/table/{tableId}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                return Content(json, "application/json");
+            }
+            
+            return StatusCode((int)response.StatusCode, "Siparişler alınırken bir hata oluştu");
         }
         catch (Exception ex)
         {
@@ -244,18 +332,23 @@ public class OrderController : Controller
     {
         try
         {
-            var order = await _orderService.GetOrderByIdAsync(orderId);
-            if (order == null)
-            {
-                return NotFound("Sipariş bulunamadı");
-            }
-
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            
             // Status string'ini enum'a çevir
             if (Enum.TryParse(model.Status, out OrderStatus newStatus))
             {
-                order.Status = newStatus;
-                await _orderService.UpdateOrderAsync(order);
-                return Ok();
+                var json = JsonSerializer.Serialize(newStatus);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var response = await httpClient.PutAsync($"api/order/{orderId}/status", content);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok();
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return NotFound("Sipariş bulunamadı");
+                }
             }
             
             return BadRequest("Geçersiz sipariş durumu");
@@ -273,7 +366,22 @@ public class OrderController : Controller
     {
         try
         {
-            var orders = await _orderService.GetAllOrdersAsync();
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var ordersResponse = await httpClient.GetAsync("api/order");
+            
+            if (!ordersResponse.IsSuccessStatusCode)
+            {
+                return StatusCode((int)ordersResponse.StatusCode, "Siparişler alınırken bir hata oluştu");
+            }
+
+            var ordersJson = await ordersResponse.Content.ReadAsStringAsync();
+            var orders = JsonSerializer.Deserialize<List<Order>>(ordersJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
+            if (orders == null)
+            {
+                return Ok(new List<object>());
+            }
+
             var tableOrders = orders
                 .Where(o => o.TableId.HasValue)
                 .GroupBy(o => o.TableId)
@@ -314,8 +422,24 @@ public class OrderController : Controller
     {
         try
         {
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            
             // Masaya ait aktif siparişleri bul
-            var orders = await _orderService.GetOrdersByTableIdAsync(tableId);
+            var ordersResponse = await httpClient.GetAsync($"api/order/table/{tableId}");
+            
+            if (!ordersResponse.IsSuccessStatusCode)
+            {
+                return BadRequest(new { success = false, message = "Bu masada kapatılacak aktif bir hesap yok." });
+            }
+
+            var ordersJson = await ordersResponse.Content.ReadAsStringAsync();
+            var orders = JsonSerializer.Deserialize<List<Order>>(ordersJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
+            if (orders == null || !orders.Any())
+            {
+                return BadRequest(new { success = false, message = "Bu masada kapatılacak aktif bir hesap yok." });
+            }
+
             var activeOrders = orders.Where(o => o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled && !o.IsPaid).ToList();
 
             if (!activeOrders.Any())
@@ -332,7 +456,10 @@ public class OrderController : Controller
                 {
                     item.IsPaid = true;
                 }
-                await _orderService.UpdateOrderAsync(order);
+                
+                var json = JsonSerializer.Serialize(order);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                await httpClient.PutAsync($"api/order/{order.Id}", content);
             }
 
             return Ok(new { success = true, message = "Hesap kapatıldı" });
@@ -349,13 +476,26 @@ public class OrderController : Controller
     {
         try
         {
-            var categories = await _foodService.GetAllFoodCategoriesAsync();
-            var foods = await _foodService.GetAllFoodsAsync();
-            var images = await _foodService.GetAllFoodImagesAsync();
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            
+            var categoriesResponse = await httpClient.GetAsync("api/food/categories");
+            var foodsResponse = await httpClient.GetAsync("api/food");
+            var imagesResponse = await httpClient.GetAsync("api/food/images");
 
-            ViewBag.Categories = categories;
-            ViewBag.Foods = foods;
-            ViewBag.Images = images;
+            if (categoriesResponse.IsSuccessStatusCode && foodsResponse.IsSuccessStatusCode && imagesResponse.IsSuccessStatusCode)
+            {
+                var categoriesJson = await categoriesResponse.Content.ReadAsStringAsync();
+                var foodsJson = await foodsResponse.Content.ReadAsStringAsync();
+                var imagesJson = await imagesResponse.Content.ReadAsStringAsync();
+
+                var categories = JsonSerializer.Deserialize<List<FoodCategory>>(categoriesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var foods = JsonSerializer.Deserialize<List<Food>>(foodsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var images = JsonSerializer.Deserialize<List<Image>>(imagesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                ViewBag.Categories = categories;
+                ViewBag.Foods = foods;
+                ViewBag.Images = images;
+            }
 
             return View();
         }
@@ -372,7 +512,17 @@ public class OrderController : Controller
     {
         try
         {
-            var order = await _orderService.GetOrderWithDetailsAsync(id);
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var response = await httpClient.GetAsync($"api/order/{id}/details");
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                return NotFound("Sipariş bulunamadı.");
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var order = JsonSerializer.Deserialize<Order>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
             if (order == null)
             {
                 return NotFound("Sipariş bulunamadı.");
@@ -391,7 +541,17 @@ public class OrderController : Controller
     {
         try
         {
-            var order = await _orderService.GetOrderWithDetailsAsync(id);
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var getResponse = await httpClient.GetAsync($"api/order/{id}/details");
+            
+            if (!getResponse.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Sipariş bulunamadı." });
+            }
+
+            var json = await getResponse.Content.ReadAsStringAsync();
+            var order = JsonSerializer.Deserialize<Order>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
             if (order == null)
             {
                 return Json(new { success = false, message = "Sipariş bulunamadı." });
@@ -406,9 +566,18 @@ public class OrderController : Controller
             // Siparişin kendisini de iptal et
             order.Status = OrderStatus.Cancelled;
             
-            await _orderService.UpdateOrderAsync(order);
+            var updateJson = JsonSerializer.Serialize(order);
+            var content = new StringContent(updateJson, Encoding.UTF8, "application/json");
+            var updateResponse = await httpClient.PutAsync($"api/order/{id}", content);
 
-            return Json(new { success = true });
+            if (updateResponse.IsSuccessStatusCode)
+            {
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Sipariş iptal edilirken bir hata oluştu." });
+            }
         }
         catch (Exception ex)
         {
@@ -422,12 +591,29 @@ public class OrderController : Controller
     {
         try
         {
-            var orders = await _orderService.GetOrdersByTableIdAsync(tableNumber);
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var ordersResponse = await httpClient.GetAsync($"api/order/table/{tableNumber}");
+            
+            if (!ordersResponse.IsSuccessStatusCode)
+            {
+                return Json(new { success = false, message = "Siparişler bulunamadı." });
+            }
+
+            var ordersJson = await ordersResponse.Content.ReadAsStringAsync();
+            var orders = JsonSerializer.Deserialize<List<Order>>(ordersJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
+            if (orders == null)
+            {
+                return Json(new { success = false, message = "Siparişler bulunamadı." });
+            }
+
             var activeOrders = orders.Where(o => o.Status != OrderStatus.Cancelled);
 
             foreach (var order in activeOrders)
             {
-                await _orderService.UpdateOrderStatusAsync(order.Id, OrderStatus.Cancelled);
+                var json = JsonSerializer.Serialize(OrderStatus.Cancelled);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                await httpClient.PutAsync($"api/order/{order.Id}/status", content);
             }
 
             return Json(new { success = true });
@@ -444,10 +630,17 @@ public class OrderController : Controller
     {
         try
         {
-            var result = await _orderService.DeleteOrderItemAsync(orderItemId);
-            if (!result)
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var response = await httpClient.DeleteAsync($"api/order/item/{orderItemId}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                return Json(new { success = true, message = "Ürün iptal edildi." });
+            }
+            else
+            {
                 return Json(new { success = false, message = "Sipariş ürünü bulunamadı veya silinemedi." });
-            return Json(new { success = true, message = "Ürün iptal edildi." });
+            }
         }
         catch (Exception ex)
         {

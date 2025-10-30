@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using RestERP.Core.Domain.Entities;
 using RestERP.Application.Services.Abstract;
 using RestERP.Domain.Enums;
+using System.Text;
+using System.Text.Json;
 
 namespace RestERP.Web.Areas.Admin.Controllers
 {
@@ -10,22 +12,41 @@ namespace RestERP.Web.Areas.Admin.Controllers
     [Authorize(Roles = "Employee")]
     public class ReservationController : Controller
     {
-        private readonly IReservationService _reservationService;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public ReservationController(IReservationService reservationService)
+        public ReservationController(IHttpClientFactory httpClientFactory)
         {
-            _reservationService = reservationService;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<IActionResult> Index()
         {
-            var reservations = await _reservationService.GetAllReservationsAsync();
-            return View(reservations);
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var response = await httpClient.GetAsync("api/reservation");
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                return View(new List<Reservation>());
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var reservations = JsonSerializer.Deserialize<List<Reservation>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return View(reservations ?? new List<Reservation>());
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var reservation = await _reservationService.GetReservationByIdAsync(id);
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var response = await httpClient.GetAsync($"api/reservation/{id}");
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                return NotFound();
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var reservation = JsonSerializer.Deserialize<Reservation>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
             if (reservation == null)
             {
                 return NotFound();
@@ -46,9 +67,20 @@ namespace RestERP.Web.Areas.Admin.Controllers
             {
                 try
                 {
-                    await _reservationService.CreateReservationAsync(reservation);
-                    TempData["SuccessMessage"] = "Rezervasyon başarıyla oluşturuldu.";
-                    return RedirectToAction(nameof(Index));
+                    var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                    var json = JsonSerializer.Serialize(reservation);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await httpClient.PostAsync("api/reservation", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["SuccessMessage"] = "Rezervasyon başarıyla oluşturuldu.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Rezervasyon oluşturulurken bir hata oluştu.";
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -60,7 +92,17 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            var reservation = await _reservationService.GetReservationByIdAsync(id);
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var response = await httpClient.GetAsync($"api/reservation/{id}");
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                return NotFound();
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var reservation = JsonSerializer.Deserialize<Reservation>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
             if (reservation == null)
             {
                 return NotFound();
@@ -81,9 +123,20 @@ namespace RestERP.Web.Areas.Admin.Controllers
             {
                 try
                 {
-                    await _reservationService.UpdateReservationAsync(reservation);
-                    TempData["SuccessMessage"] = "Rezervasyon başarıyla güncellendi.";
-                    return RedirectToAction(nameof(Index));
+                    var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                    var json = JsonSerializer.Serialize(reservation);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await httpClient.PutAsync($"api/reservation/{id}", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["SuccessMessage"] = "Rezervasyon başarıyla güncellendi.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Rezervasyon güncellenirken bir hata oluştu.";
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -99,8 +152,17 @@ namespace RestERP.Web.Areas.Admin.Controllers
         {
             try
             {
-                await _reservationService.DeleteReservationAsync(id);
-                TempData["SuccessMessage"] = "Rezervasyon başarıyla silindi.";
+                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                var response = await httpClient.DeleteAsync($"api/reservation/{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SuccessMessage"] = "Rezervasyon başarıyla silindi.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Rezervasyon silinirken bir hata oluştu.";
+                }
             }
             catch (Exception ex)
             {
@@ -112,7 +174,16 @@ namespace RestERP.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Export(string format)
         {
-            var reservations = await _reservationService.GetAllReservationsAsync();
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var response = await httpClient.GetAsync("api/reservation");
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest("Rezervasyonlar alınırken bir hata oluştu.");
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var reservations = JsonSerializer.Deserialize<List<Reservation>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             
             switch (format.ToLower())
             {
@@ -136,7 +207,16 @@ namespace RestERP.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Filter(DateTime? startDate, DateTime? endDate, string status)
         {
-            var reservations = await _reservationService.GetAllReservationsAsync();
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var response = await httpClient.GetAsync("api/reservation");
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                return View("Index", new List<Reservation>());
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var reservations = JsonSerializer.Deserialize<List<Reservation>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Reservation>();
 
             if (startDate.HasValue)
             {
@@ -159,7 +239,17 @@ namespace RestERP.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetReservationStats()
         {
-            var reservations = await _reservationService.GetAllReservationsAsync();
+            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+            var response = await httpClient.GetAsync("api/reservation");
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                return Json(new { todayCount = 0, tomorrowCount = 0 });
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var reservations = JsonSerializer.Deserialize<List<Reservation>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Reservation>();
+            
             var today = DateTime.Today;
             var tomorrow = today.AddDays(1);
 

@@ -25,7 +25,7 @@ namespace RestERP.API.Controllers
         /// </summary>
         /// <returns>Sipariş listesi</returns>
         [HttpGet]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Order>>> GetAllOrders()
         {
             try
@@ -123,7 +123,7 @@ namespace RestERP.API.Controllers
         /// </summary>
         /// <returns>Aktif sipariş listesi</returns>
         [HttpGet("active")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Order>>> GetActiveOrders()
         {
             try
@@ -144,7 +144,7 @@ namespace RestERP.API.Controllers
         /// <param name="date">Tarih</param>
         /// <returns>Tarihe ait sipariş listesi</returns>
         [HttpGet("date/{date}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByDate(DateTime date)
         {
             try
@@ -166,7 +166,7 @@ namespace RestERP.API.Controllers
         /// <param name="endDate">Bitiş tarihi</param>
         /// <returns>Tarih aralığına ait sipariş listesi</returns>
         [HttpGet("daterange")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByDateRange([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             try
@@ -213,7 +213,7 @@ namespace RestERP.API.Controllers
         /// <param name="order">Güncellenecek sipariş bilgileri</param>
         /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] Order order)
         {
             try
@@ -250,7 +250,7 @@ namespace RestERP.API.Controllers
         /// <param name="status">Yeni durum</param>
         /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{orderId}/status")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] OrderStatus status)
         {
             try
@@ -275,7 +275,7 @@ namespace RestERP.API.Controllers
         /// <param name="id">Silinecek sipariş ID'si</param>
         /// <returns>Silme sonucu</returns>
         [HttpDelete("{id}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             try
@@ -300,7 +300,7 @@ namespace RestERP.API.Controllers
         /// <param name="orderItemId">Silinecek sipariş öğesi ID'si</param>
         /// <returns>Silme sonucu</returns>
         [HttpDelete("item/{orderItemId}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteOrderItem(int orderItemId)
         {
             try

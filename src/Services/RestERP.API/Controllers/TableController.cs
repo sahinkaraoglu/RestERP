@@ -73,7 +73,7 @@ namespace RestERP.API.Controllers
         /// <param name="table">Masa bilgileri</param>
         /// <returns>Oluşturulan masa</returns>
         [HttpPost]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<ActionResult<Table>> CreateTable([FromBody] Table table)
         {
             try
@@ -100,7 +100,7 @@ namespace RestERP.API.Controllers
         /// <param name="table">Güncellenecek masa bilgileri</param>
         /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateTable(int id, [FromBody] Table table)
         {
             try
@@ -136,7 +136,7 @@ namespace RestERP.API.Controllers
         /// <param name="id">Silinecek masa ID'si</param>
         /// <returns>Silme sonucu</returns>
         [HttpDelete("{id}")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteTable(int id)
         {
             try
@@ -163,7 +163,7 @@ namespace RestERP.API.Controllers
         /// <param name="isOccupied">Dolu mu?</param>
         /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}/status")]
-        [Authorize(Policy = "EmployeeOnly")]
+        [AllowAnonymous]
         public async Task<IActionResult> SetTableOccupiedStatus(int id, [FromBody] bool isOccupied)
         {
             try

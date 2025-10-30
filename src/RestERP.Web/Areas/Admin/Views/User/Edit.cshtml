@@ -13,7 +13,7 @@
                     <p class="person-subtitle">Kullanıcı bilgilerini düzenleyin</p>
                 </div>
                 <div class="col-lg-4">
-                    <a href="@Url.Action("Index", "Person")" class="btn btn-secondary add-person-btn">
+                    <a href="@Url.Action("Index", "User")" class="btn btn-secondary add-person-btn">
                         <i class="bi bi-arrow-left"></i> Geri Dön
                     </a>
                 </div>
@@ -34,7 +34,7 @@
                             </div>
                         }
 
-                        <form asp-action="Edit" asp-controller="Person" asp-route-id="@Model.Id" method="post">
+                        <form asp-action="Edit" asp-controller="User" asp-route-id="@Model.Id" method="post">
                             <input type="hidden" asp-for="Id" />
 
                             <div class="mb-3">
@@ -128,7 +128,7 @@
                             </div>
 
                             <div class="d-flex justify-content-end gap-2">
-                                <a asp-action="Index" asp-controller="Person" class="btn btn-secondary">
+                                <a asp-action="Index" asp-controller="User" class="btn btn-secondary">
                                     <i class="bi bi-x-circle"></i> İptal
                                 </a>
                                 <button type="submit" class="btn btn-primary">
@@ -407,3 +407,4 @@
         checkPasswordMatch();
     </script>
 }
+
