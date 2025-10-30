@@ -5,7 +5,6 @@ using RestERP.Web.Models;
 using RestERP.Application.Services.Abstract;
 using RestERP.Domain.Enums;
 using RestERP.Core.Domain.Entities;
-using RestERP.Web.Services;
 using System.Text.Json;
 
 namespace RestERP.Web.Areas.Admin.Controllers;
@@ -15,16 +14,13 @@ public class PanelController : Controller
 {
     private readonly ILogger<PanelController> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly FoodCacheService _foodCacheService;
 
     public PanelController(
         ILogger<PanelController> logger, 
-        IHttpClientFactory httpClientFactory,
-        FoodCacheService foodCacheService)
+        IHttpClientFactory httpClientFactory)
     {
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _foodCacheService = foodCacheService;
     }
 
     public async Task<IActionResult> Index()

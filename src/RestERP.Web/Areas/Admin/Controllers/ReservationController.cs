@@ -9,7 +9,7 @@ using System.Text.Json;
 namespace RestERP.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Employee")]
+    [Authorize(Roles = "Admin,Employee")]
     public class ReservationController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
