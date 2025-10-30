@@ -7,29 +7,42 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using RestERP.Core.Domain.Entities;
 using RestERP.Web.Areas.Admin.Models;
+using System.Text.Json;
+using System.Net.Http.Headers;
 
 namespace RestERP.Web.Controllers
 {
     public class OrderController : Controller
     {
         private readonly ILogger<OrderController> _logger;
-        private readonly IOrderService _orderService;
-        private readonly IFoodService _foodService;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IUserService _userService;
         private readonly ITableService _tableService;
 
         public OrderController(
             ILogger<OrderController> logger,
-            IOrderService orderService,
-            IFoodService foodService,
+            IHttpClientFactory httpClientFactory,
             IUserService userService,
             ITableService tableService)
         {
             _logger = logger;
-            _orderService = orderService;
-            _foodService = foodService;
+            _httpClientFactory = httpClientFactory;
             _userService = userService;
             _tableService = tableService;
+        }
+
+        private HttpClient CreateHttpClient()
+        {
+            var client = _httpClientFactory.CreateClient("RestERPApi");
+            
+            // JWT token'ı cookie'den al ve header'a ekle
+            var token = Request.Cookies["JWT"];
+            if (!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+            
+            return client;
         }
 
         public async Task<IActionResult> Index(int? tableId = null)
@@ -45,30 +58,29 @@ namespace RestERP.Web.Controllers
                 var tables = await _tableService.GetAllTablesAsync();
                 ViewBag.Tables = tables;
 
-                // Tüm siparişleri getir
-                var orders = await _orderService.GetActiveOrdersAsync();
+                // API'den aktif siparişleri getir
+                var client = CreateHttpClient();
+                var response = await client.GetAsync("api/order/active");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("API'den sipariş verileri alınamadı. Status: {StatusCode}", response.StatusCode);
+                    TempData["ErrorMessage"] = "Sipariş verileri yüklenirken bir hata oluştu.";
+                    return View(new List<Order>());
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                var orders = JsonSerializer.Deserialize<List<Order>>(json, options) ?? new List<Order>();
 
                 // Masa filtresi varsa uygula
                 if (tableId.HasValue)
                 {
                     orders = orders.Where(o => o.TableId == tableId.Value).ToList();
                     ViewBag.SelectedTableId = tableId.Value;
-                }
-
-                // Her bir sipariş için yemek bilgilerini yükle
-                foreach (var order in orders)
-                {
-                    foreach (var item in order.OrderItems)
-                    {
-                        try
-                        {
-                            item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. FoodId: {item.FoodId}");
-                        }
-                    }
                 }
 
                 return View(orders);
@@ -90,23 +102,26 @@ namespace RestERP.Web.Controllers
 
             try
             {
-                var orders = await _orderService.GetAllOrdersAsync();
-                var tableOrders = orders.Where(o => o.TableId == tableId && !o.IsPaid && o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled).ToList();
+                // API'den masaya göre siparişleri getir
+                var client = CreateHttpClient();
+                var response = await client.GetAsync($"api/order/table/{tableId}");
 
-                foreach (var order in tableOrders)
+                if (!response.IsSuccessStatusCode)
                 {
-                    foreach (var item in order.OrderItems)
-                    {
-                        try
-                        {
-                            item.Food = await _foodService.GetFoodByIdAsync(item.FoodId);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogWarning(ex, $"Yemek bilgisi yüklenirken hata oluştu. FoodId: {item.FoodId}");
-                        }
-                    }
+                    _logger.LogError("API'den masa siparişleri alınamadı. TableId: {TableId}, Status: {StatusCode}", tableId, response.StatusCode);
+                    TempData["ErrorMessage"] = "Siparişler yüklenirken bir hata oluştu.";
+                    return View(new List<Order>());
                 }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                var orders = JsonSerializer.Deserialize<List<Order>>(json, options) ?? new List<Order>();
+
+                // Filtrele: ödenmemiş ve aktif siparişler
+                var tableOrders = orders.Where(o => !o.IsPaid && o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled).ToList();
 
                 return View(tableOrders);
             }
@@ -145,7 +160,7 @@ namespace RestERP.Web.Controllers
                 var order = new Order
                 {
                     TableId = model.CustomerInfo.Type == "dine-in" ? model.CustomerInfo.TableNumber : null,
-                    CustomerId = currentUser.Id, // ApplicationUser.Id'yi kullan
+                    CustomerId = currentUser.Id,
                     Status = OrderStatus.New,
                     TotalAmount = model.Items.Sum(i => i.Price * i.Quantity),
                     OrderItems = model.Items.Select(i => new OrderItem
@@ -158,11 +173,29 @@ namespace RestERP.Web.Controllers
                     }).ToList()
                 };
 
-                // Siparişi kaydet
-                var result = await _orderService.CreateOrderAsync(order);
+                // API'ye sipariş gönder
+                var client = CreateHttpClient();
+                var jsonContent = JsonSerializer.Serialize(order);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                
+                var response = await client.PostAsync("api/order", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("API'ye sipariş gönderilemedi. Status: {StatusCode}, Error: {Error}", response.StatusCode, errorContent);
+                    return Json(new { success = false, message = "Sipariş oluşturulurken bir hata oluştu." });
+                }
+
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                var result = JsonSerializer.Deserialize<Order>(responseJson, options);
 
                 // Başarılı sonuç dön
-                return Json(new { success = true, orderId = result.Id, message = "Siparişiniz başarıyla oluşturuldu." });
+                return Json(new { success = true, orderId = result?.Id, message = "Siparişiniz başarıyla oluşturuldu." });
             }
             catch (Exception ex)
             {

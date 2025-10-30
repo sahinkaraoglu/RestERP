@@ -25,6 +25,13 @@ builder.Services.AddAntiforgery(options =>
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpContextAccessor();
 
+// HttpClient yapılandırması - API ile iletişim için
+builder.Services.AddHttpClient("RestERPApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
 // Logging yapılandırması
 builder.Services.AddLogging(logging =>
 {

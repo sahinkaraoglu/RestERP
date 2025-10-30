@@ -1,90 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
-using RestERP.Core.Domain.Entities;
-using RestERP.Application.Services.Abstract;
-using System.Security.Cryptography;
+using System.Text.Json;
+using System.Net.Http.Headers;
+using RestERP.Application.DTOs;
 
 namespace RestERP.Web.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly IUserService _userService;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
         private readonly ILogger<LoginController> _logger;
 
         public LoginController(
-            IUserService userService,
+            IHttpClientFactory httpClientFactory,
             IConfiguration configuration,
             ILogger<LoginController> logger)
         {
-            _userService = userService;
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _logger = logger;
+        }
+
+        private HttpClient CreateHttpClient()
+        {
+            var client = _httpClientFactory.CreateClient("RestERPApi");
+            return client;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
             return View();
-        }
-
-        private string GenerateJwtToken(ApplicationUser user)
-        {
-            try
-            {
-                var key = _configuration["Jwt:Key"];
-                if (string.IsNullOrEmpty(key))
-                {
-                    throw new InvalidOperationException("JWT anahtarı yapılandırılmamış.");
-                }
-
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString() ?? string.Empty),
-                    new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
-                    new Claim("FirstName", user.FirstName ?? string.Empty),
-                    new Claim("LastName", user.LastName ?? string.Empty),
-                    new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
-                    new Claim(ClaimTypes.Role, user.RoleType.ToString())
-                };
-
-                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-                var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-                var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:ExpiryInDays"] ?? "7"));
-
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["Jwt:Issuer"],
-                    audience: _configuration["Jwt:Audience"],
-                    claims: claims,
-                    expires: expires,
-                    signingCredentials: creds
-                );
-
-                return new JwtSecurityTokenHandler().WriteToken(token);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "JWT token oluşturulurken hata oluştu");
-                throw;
-            }
-        }
-
-        private string HashPassword(string password)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
-        }
-
-        private bool VerifyPassword(string password, string hashedPassword)
-        {
-            var hashedInput = HashPassword(password);
-            return hashedInput == hashedPassword;
         }
 
         [HttpPost]
@@ -101,31 +48,40 @@ namespace RestERP.Web.Controllers
                     return View("Index");
                 }
 
-                var user = await _userService.GetUserByUsernameAsync(username);
-                _logger.LogInformation($"User found: {user != null}, IsActive: {user?.IsActive}");
-                
-                if (user == null || !user.IsActive)
+                // API'ye login request gönder
+                var client = CreateHttpClient();
+                var loginRequest = new LoginRequest
                 {
-                    _logger.LogWarning($"User not found or inactive. Username: {username}");
+                    Email = username, // Username yerine email olarak gönder (API email bekliyor)
+                    Password = password
+                };
+
+                var jsonContent = JsonSerializer.Serialize(loginRequest);
+                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                
+                var response = await client.PostAsync("api/auth/login", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("API login failed for user: {Username}. Status: {StatusCode}, Error: {Error}", username, response.StatusCode, errorContent);
                     ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre.");
                     return View("Index");
                 }
 
-                var hashedInput = HashPassword(password);
-                _logger.LogInformation($"Input password hash: {hashedInput}");
-                _logger.LogInformation($"Stored password hash: {user.PasswordHash}");
-                
-                if (!VerifyPassword(password, user.PasswordHash))
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
                 {
-                    _logger.LogWarning($"Password verification failed for user: {username}");
-                    ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre.");
+                    PropertyNameCaseInsensitive = true
+                };
+                var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(responseJson, options);
+
+                if (tokenResponse == null || string.IsNullOrEmpty(tokenResponse.AccessToken))
+                {
+                    _logger.LogError("Token response is null or empty");
+                    ModelState.AddModelError(string.Empty, "Giriş işlemi sırasında bir hata oluştu.");
                     return View("Index");
                 }
-
-                _logger.LogInformation($"Password verification successful for user: {username}");
-
-                // JWT token oluştur
-                var token = GenerateJwtToken(user);
 
                 // Token'ı cookie'ye kaydet
                 var cookieOptions = new CookieOptions
@@ -133,10 +89,10 @@ namespace RestERP.Web.Controllers
                     HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:ExpiryInDays"] ?? "7"))
+                    Expires = tokenResponse.ExpiresAt
                 };
 
-                Response.Cookies.Append("JWT", token, cookieOptions);
+                Response.Cookies.Append("JWT", tokenResponse.AccessToken, cookieOptions);
 
                 _logger.LogInformation($"Login successful for user: {username}");
                 // Başarılı giriş sonrası Home/Index'e yönlendir
@@ -176,42 +132,59 @@ namespace RestERP.Web.Controllers
                     return View();
                 }
 
-                var user = new ApplicationUser
+                // API'ye register request gönder
+                var client = CreateHttpClient();
+                var registerRequest = new RegisterRequest
                 {
                     UserName = username,
                     Email = email,
                     FirstName = firstName,
                     LastName = lastName,
                     PhoneNumber = phoneNumber,
-                    IsActive = true,
-                    PasswordHash = HashPassword(password),
-                    RoleType = RestERP.Domain.Enums.Role.Customer,
-                    CreatedDate = DateTime.Now
+                    Password = password,
+                    ConfirmPassword = confirmPassword
                 };
 
-                var result = await _userService.CreateUserAsync(user);
-                if (result)
+                var jsonContent = JsonSerializer.Serialize(registerRequest);
+                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                
+                var response = await client.PostAsync("api/auth/register", content);
+
+                if (!response.IsSuccessStatusCode)
                 {
-                    // JWT token oluştur
-                    var token = GenerateJwtToken(user);
-
-                    // Token'ı cookie'ye kaydet
-                    var cookieOptions = new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Secure = true,
-                        SameSite = SameSiteMode.Strict,
-                        Expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["Jwt:ExpiryInDays"] ?? "7"))
-                    };
-
-                    Response.Cookies.Append("JWT", token, cookieOptions);
-
-                    TempData["SuccessMessage"] = "Kullanıcı başarıyla oluşturulmuştur.";
-                    return RedirectToAction("Index", "Home");
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("API register failed for user: {Username}. Status: {StatusCode}, Error: {Error}", username, response.StatusCode, errorContent);
+                    ModelState.AddModelError(string.Empty, "Kullanıcı oluşturulurken bir hata oluştu. Email veya kullanıcı adı zaten kullanılıyor olabilir.");
+                    return View();
                 }
 
-                ModelState.AddModelError(string.Empty, "Kullanıcı oluşturulurken bir hata oluştu.");
-                return View();
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                var tokenResponse = JsonSerializer.Deserialize<TokenResponse>(responseJson, options);
+
+                if (tokenResponse == null || string.IsNullOrEmpty(tokenResponse.AccessToken))
+                {
+                    _logger.LogError("Token response is null or empty");
+                    ModelState.AddModelError(string.Empty, "Kayıt işlemi sırasında bir hata oluştu.");
+                    return View();
+                }
+
+                // Token'ı cookie'ye kaydet
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = tokenResponse.ExpiresAt
+                };
+
+                Response.Cookies.Append("JWT", tokenResponse.AccessToken, cookieOptions);
+
+                TempData["SuccessMessage"] = "Kullanıcı başarıyla oluşturulmuştur.";
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
