@@ -1,15 +1,8 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using RestERP.Application.Services;
-using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
-using RestERP.Core.Interfaces;
-using RestERP.Infrastructure.Context;
-using RestERP.Infrastructure.Repositories;
 using RestERP.Web.Middleware;
-using RestERP.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,11 +39,6 @@ builder.Services.AddLogging(logging =>
     logging.AddFilter("System", LogLevel.Warning);
     logging.AddFilter("RestERP", LogLevel.Information);
 });
-
-// Veritabanı bağlantısı
-builder.Services.AddDbContext<RestERPDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // JWT yapılandırması
 builder.Services.AddAuthentication(options =>
@@ -91,27 +79,7 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Customer"));
 });
 
-// Repository ve UnitOfWork kayıtları
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-// Servisleri kaydet
-builder.Services.AddTransient<ITableService, TableService>();
-builder.Services.AddTransient<IFoodService, FoodService>();
-builder.Services.AddTransient<IFoodCategoryService, FoodCategoryService>();
-builder.Services.AddTransient<IOrderService, OrderService>();
-builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IReservationService, ReservationService>();
-builder.Services.AddTransient<FoodCacheService>();
-
 var app = builder.Build();
-
-// Otomatik migration - veritabanını otomatik güncelle
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<RestERPDbContext>();
-    context.Database.Migrate();
-}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

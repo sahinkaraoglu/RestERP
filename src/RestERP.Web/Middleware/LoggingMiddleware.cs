@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using RestERP.Core.Domain.Entities;
-using RestERP.Infrastructure.Context;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -18,7 +16,7 @@ namespace RestERP.Web.Middleware
             _logger = logger;
         }
 
-        public async Task InvokeAsync(HttpContext context, RestERPDbContext dbContext)
+        public async Task InvokeAsync(HttpContext context)
         {
             var stopwatch = Stopwatch.StartNew();
             var originalBodyStream = context.Response.Body;
@@ -31,7 +29,7 @@ namespace RestERP.Web.Middleware
                 await _next(context);
 
                 stopwatch.Stop();
-                await LogRequest(context, dbContext, stopwatch.ElapsedMilliseconds, null);
+                await LogRequest(context, stopwatch.ElapsedMilliseconds, null);
 
                 memoryStream.Position = 0;
                 await memoryStream.CopyToAsync(originalBodyStream);
@@ -39,7 +37,7 @@ namespace RestERP.Web.Middleware
             catch (Exception ex)
             {
                 stopwatch.Stop();
-                await LogRequest(context, dbContext, stopwatch.ElapsedMilliseconds, ex);
+                await LogRequest(context, stopwatch.ElapsedMilliseconds, ex);
                 throw;
             }
             finally
@@ -48,53 +46,34 @@ namespace RestERP.Web.Middleware
             }
         }
 
-        private async Task LogRequest(HttpContext context, RestERPDbContext dbContext, long elapsedMs, Exception exception = null)
+        private Task LogRequest(HttpContext context, long elapsedMs, Exception exception = null)
         {
             try
             {
-                var log = new Log
-                {
-                    Level = exception != null ? "Error" : "Information",
-                    Message = exception?.Message ?? $"Request completed in {elapsedMs}ms",
-                    Exception = exception?.ToString(),
-                    StackTrace = exception?.StackTrace,
-                    Source = context.Request.Path,
-                    UserId = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-                    UserName = context.User?.FindFirst(ClaimTypes.Name)?.Value,
-                    RequestPath = context.Request.Path,
-                    RequestMethod = context.Request.Method,
-                    IpAddress = GetClientIpAddress(context),
-                    Timestamp = DateTime.UtcNow
-                };
-
-                dbContext.Logs.Add(log);
-                await dbContext.SaveChangesAsync();
-
-                // Console'a da log yazdır
+                // Console/structured logger
                 if (exception != null)
                 {
-                    _logger.LogError(exception, "Request failed: {Path} - {Message}", context.Request.Path, exception.Message);
+                    _logger.LogError(exception, "Request failed: {Path} {Method} {ElapsedMs}ms User:{UserId}",
+                        context.Request.Path,
+                        context.Request.Method,
+                        elapsedMs,
+                        context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 }
                 else
                 {
-                    _logger.LogInformation("Request completed: {Path} - {ElapsedMs}ms", context.Request.Path, elapsedMs);
+                    _logger.LogInformation("Request completed: {Path} {Method} {ElapsedMs}ms User:{UserId}",
+                        context.Request.Path,
+                        context.Request.Method,
+                        elapsedMs,
+                        context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 }
             }
             catch (Exception logEx)
             {
-                _logger.LogError(logEx, "Error logging request to database");
-            }
-        }
-
-        private string GetClientIpAddress(HttpContext context)
-        {
-            var forwardedHeader = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-            if (!string.IsNullOrEmpty(forwardedHeader))
-            {
-                return forwardedHeader.Split(',')[0].Trim();
+                _logger.LogError(logEx, "Error while logging request");
             }
 
-            return context.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
+            return Task.CompletedTask;
         }
     }
 } 
