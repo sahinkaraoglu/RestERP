@@ -41,7 +41,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 ViewBag.FoodCategories = categories;
                 ViewBag.Foods = foods;
 
-                return View("~/Areas/Admin/Views/Menu/Index.cshtml");
+                return View("~/Areas/Admin/Views/Food/Index.cshtml");
             }
             catch (Exception ex)
             {
@@ -56,7 +56,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
             var categories = FoodCategorySeedData.GetFoodCategories();
             ViewBag.Categories = categories;
 
-            return View("~/Areas/Admin/Views/Menu/Create.cshtml");
+            return View("~/Areas/Admin/Views/Food/Create.cshtml");
         }
 
         [HttpPost]
@@ -134,7 +134,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 ViewBag.Food = food;
                 ViewBag.Images = _foodCacheService.GetImages();
 
-                return View("~/Areas/Admin/Views/Menu/Edit.cshtml");
+                return View("~/Areas/Admin/Views/Food/Edit.cshtml");
             }
             catch (Exception ex)
             {
@@ -191,7 +191,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     };
 
                     ViewBag.Food = updatedFood;
-                    return View("~/Areas/Admin/Views/Menu/Edit.cshtml");
+                    return View("~/Areas/Admin/Views/Food/Edit.cshtml");
                 }
 
                 var httpClient = _httpClientFactory.CreateClient("RestERPApi");
@@ -290,7 +290,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 };
 
                 ViewBag.Food = updatedFood;
-                return View("~/Areas/Admin/Views/Menu/Edit.cshtml");
+                return View("~/Areas/Admin/Views/Food/Edit.cshtml");
             }
         }
 

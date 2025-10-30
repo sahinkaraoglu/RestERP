@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Admin\Views\Shared\**" />
+    <Content Remove="Areas\Admin\Views\Shared\**" />
+    <EmbeddedResource Remove="Areas\Admin\Views\Shared\**" />
+    <None Remove="Areas\Admin\Views\Shared\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
@@ -22,10 +29,6 @@
     <ProjectReference Include="..\RestERP.Application\RestERP.Application.csproj" />
     <ProjectReference Include="..\RestERP.Core\RestERP.Core.csproj" />
     <ProjectReference Include="..\RestERP.Infrastructure\RestERP.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\Admin\Views\Shared\" />
   </ItemGroup>
 
 </Project>
