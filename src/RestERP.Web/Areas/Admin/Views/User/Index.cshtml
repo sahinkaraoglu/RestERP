@@ -77,7 +77,7 @@
                                                 <span class="badge bg-danger">Pasif</span>  
                                             }  
                                         </td>
-                                        <td>@(person.CreatedDate.HasValue ? person.CreatedDate.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
+                                        <td>-</td>
                                         <td>  
                                             <a href="@Url.Action("Edit", "User", new { id = person.Id })" class="btn btn-sm btn-info">  
                                                 <i class="bi bi-pencil"></i>  
@@ -135,7 +135,7 @@
                                                 <span class="badge bg-danger">Pasif</span>
                                             }
                                         </td>
-                                        <td>@(person.CreatedDate.HasValue ? person.CreatedDate.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td>
+                                        <td>-</td>
                                         <td>
                                             <div class="d-flex gap-1">
                                                 <a href="@Url.Action("Edit", "User", new { id = person.Id })" class="btn btn-sm btn-info" title="Düzenle">

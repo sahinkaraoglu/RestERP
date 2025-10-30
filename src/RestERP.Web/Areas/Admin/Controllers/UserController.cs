@@ -70,7 +70,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     user.PasswordHash = HashPassword(password);
                     user.RoleType = Role.Employee;
                     user.PhoneNumber = user.PhoneNumber;
-                    user.CreatedDate = DateTime.Now;
+                    // CreatedDate removed - Identity manages timestamps
 
                     var httpClient = _httpClientFactory.CreateClient("RestERPApi");
                     var json = JsonSerializer.Serialize(user);
@@ -201,8 +201,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 user.PhoneNumber = model.PhoneNumber;
                 user.IsActive = model.IsActive;
                 user.RoleType = model.RoleType;
-                user.CreatedDate = model.CreatedDate;
-                user.UpdatedDate = model.UpdatedDate;
+                // CreatedDate/UpdatedDate removed - Identity manages timestamps
             
                 var updateJson = JsonSerializer.Serialize(user);
                 var content = new StringContent(updateJson, Encoding.UTF8, "application/json");

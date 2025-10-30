@@ -1,10 +1,11 @@
 using RestERP.Core.Domain.Entities.Base;
 using RestERP.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace RestERP.Core.Domain.Entities
 {
-    public class ApplicationUser : BaseEntity
+    public class ApplicationUser : IdentityUser<int>
     {
         [Required]
         [MaxLength(100)]
@@ -14,24 +15,8 @@ namespace RestERP.Core.Domain.Entities
         [MaxLength(100)]
         public string LastName { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        public string UserName { get; set; }
-
         [MaxLength(500)]
         public string? Address { get; set; }
-
-        [Required]
-        [EmailAddress]
-        [MaxLength(100)]
-        public string Email { get; set; }
-
-        [Phone]
-        [MaxLength(20)]
-        public string? PhoneNumber { get; set; }
-
-        [Required]
-        public string PasswordHash { get; set; }
 
         public bool IsActive { get; set; } = true;
         

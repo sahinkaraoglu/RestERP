@@ -9,39 +9,37 @@ using System.Security.Claims;
 using RestERP.Infrastructure.Context;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace RestERP.Application.Services
 {
     public class UserService : IUserService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
+        public UserService(UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
-            _unitOfWork = unitOfWork;
+            _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetAllUsersAsync()
         {
-            var result = await _unitOfWork.Repository<ApplicationUser>().GetAllAsync();
-            return result.ToList();
+            return await _userManager.Users.Where(u => u.IsActive).ToListAsync();
         }
 
         public async Task<ApplicationUser> GetUserByIdAsync(int id)
         {
-            return await _unitOfWork.Repository<ApplicationUser>().GetByIdAsync(id);
+            return await _userManager.FindByIdAsync(id.ToString());
         }
 
         public async Task<ApplicationUser> GetUserByUsernameAsync(string username)
         {
-            var users = await _unitOfWork.Repository<ApplicationUser>().GetAllAsync();
-            var user = users.FirstOrDefault(u => u.UserName == username);
+            var user = await _userManager.FindByNameAsync(username);
             
             // Debug için konsola yazdır
             Console.WriteLine($"GetUserByUsernameAsync called with username: {username}");
-            Console.WriteLine($"Total users found: {users.Count()}");
             Console.WriteLine($"User found: {user != null}");
             if (user != null)
             {
@@ -53,17 +51,16 @@ namespace RestERP.Application.Services
 
         public async Task<ApplicationUser> GetUserByEmailAsync(string email)
         {
-            var users = await _unitOfWork.Repository<ApplicationUser>().GetAllAsync();
-            return users.FirstOrDefault(u => u.Email == email);
+            return await _userManager.FindByEmailAsync(email);
         }
         
         public async Task<bool> CreateUserAsync(ApplicationUser user)
         {
             try
             {
-                await _unitOfWork.Repository<ApplicationUser>().AddAsync(user);
-                await _unitOfWork.SaveChangesAsync();
-                return true;
+                // Not: Parola ile oluşturmak için UserManager.CreateAsync(user, password) kullanılmalı
+                // Bu metot parola olmadan çalışmaz, AuthService.Register kullanın
+                return false;
             }
             catch
             {
@@ -75,9 +72,8 @@ namespace RestERP.Application.Services
         {
             try
             {
-                await _unitOfWork.Repository<ApplicationUser>().UpdateAsync(user);
-                await _unitOfWork.SaveChangesAsync();
-                return true;
+                var result = await _userManager.UpdateAsync(user);
+                return result.Succeeded;
             }
             catch
             {
@@ -89,12 +85,13 @@ namespace RestERP.Application.Services
         {
             try
             {
-                var user = await _unitOfWork.Repository<ApplicationUser>().GetByIdAsync(id);
+                var user = await _userManager.FindByIdAsync(id.ToString());
                 if (user != null)
                 {
-                    await _unitOfWork.Repository<ApplicationUser>().DeleteAsync(user);
-                    await _unitOfWork.SaveChangesAsync();
-                    return true;
+                    // Soft delete: sadece IsActive'i false yap
+                    user.IsActive = false;
+                    var result = await _userManager.UpdateAsync(user);
+                    return result.Succeeded;
                 }
                 return false;
             }

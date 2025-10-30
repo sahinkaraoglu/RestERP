@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using RestERP.Core.Domain.Entities;
 using RestERP.Infrastructure.Data.SeedData;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace RestERP.Infrastructure.Context
 {
-    public class RestERPDbContext : DbContext
+    public class RestERPDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
     {
         public RestERPDbContext(DbContextOptions<RestERPDbContext> options)
             : base(options)
@@ -19,12 +21,13 @@ namespace RestERP.Infrastructure.Context
         public DbSet<Table> Tables { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Log> Logs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+
             // Soft delete filtreleri
             builder.Entity<Order>().HasQueryFilter(e => !e.IsDeleted);
             builder.Entity<OrderItem>().HasQueryFilter(e => !e.IsDeleted);
@@ -76,12 +79,12 @@ namespace RestERP.Infrastructure.Context
                 .Property(p => p.Price)
                 .HasPrecision(18, 2);
                 
-            // Seed verilerini ekle
+            // Seed verileri
             builder.Entity<FoodCategory>().HasData(FoodCategorySeedData.GetFoodCategories());
             builder.Entity<Food>().HasData(FoodSeedData.GetFood());
             builder.Entity<Table>().HasData(TableSeedData.GetTable());
             builder.Entity<Image>().HasData(ImageSeedData.GetImages());
-            builder.Entity<ApplicationUser>().HasData(UserSeedData.GetUsers());
+            // Identity kullanıcı/rol seed'i ayrı bir başlangıç adımında yönetilmelidir
         }
     }
 }

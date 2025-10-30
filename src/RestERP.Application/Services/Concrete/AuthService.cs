@@ -11,6 +11,7 @@ using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces;
 using RestERP.Infrastructure.Context;
+using Microsoft.AspNetCore.Identity;
 
 namespace RestERP.Application.Services.Concrete
 {
@@ -20,38 +21,42 @@ namespace RestERP.Application.Services.Concrete
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthService> _logger;
         private readonly RestERPDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole<int>> _roleManager;
 
         public AuthService(
             IUnitOfWork unitOfWork,
             IConfiguration configuration,
             ILogger<AuthService> logger,
-            RestERPDbContext context)
+            RestERPDbContext context,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole<int>> roleManager)
         {
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _logger = logger;
             _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         public async Task<TokenResponse?> LoginAsync(LoginRequest request)
         {
             try
             {
-                var user = await _unitOfWork.Repository<ApplicationUser>()
-                    .GetAllAsync();
+                var dbUser = await _userManager.FindByEmailAsync(request.Email);
 
-                var dbUser = user.FirstOrDefault(u => 
-                    u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase) && 
-                    u.IsActive && 
-                    !u.IsDeleted);
-
-                if (dbUser == null)
+                if (dbUser == null || !dbUser.IsActive)
                 {
-                    _logger.LogWarning($"Login başarısız - Kullanıcı bulunamadı: {request.Email}");
+                    _logger.LogWarning($"Login başarısız - Kullanıcı bulunamadı/aktif değil: {request.Email}");
                     return null;
                 }
 
-                if (!VerifyPassword(request.Password, dbUser.PasswordHash))
+                var passwordCheck = await _signInManager.CheckPasswordSignInAsync(dbUser, request.Password, lockoutOnFailure: false);
+                if (!passwordCheck.Succeeded)
                 {
                     _logger.LogWarning($"Login başarısız - Geçersiz şifre: {request.Email}");
                     return null;
@@ -71,22 +76,16 @@ namespace RestERP.Application.Services.Concrete
         {
             try
             {
-                // Email kontrolü
-                var existingUser = await _unitOfWork.Repository<ApplicationUser>()
-                    .GetAllAsync();
-
-                if (existingUser.Any(u => 
-                    u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase) && 
-                    !u.IsDeleted))
+                // Email ve kullanıcı adı kontrolü
+                var existingByEmail = await _userManager.FindByEmailAsync(request.Email);
+                if (existingByEmail != null)
                 {
                     _logger.LogWarning($"Kayıt başarısız - Email zaten kullanılıyor: {request.Email}");
                     return null;
                 }
 
-                // Username kontrolü
-                if (existingUser.Any(u => 
-                    u.UserName.Equals(request.UserName, StringComparison.OrdinalIgnoreCase) && 
-                    !u.IsDeleted))
+                var existingByName = await _userManager.FindByNameAsync(request.UserName);
+                if (existingByName != null)
                 {
                     _logger.LogWarning($"Kayıt başarısız - Kullanıcı adı zaten kullanılıyor: {request.UserName}");
                     return null;
@@ -100,14 +99,25 @@ namespace RestERP.Application.Services.Concrete
                     Email = request.Email,
                     PhoneNumber = request.PhoneNumber,
                     Address = request.Address,
-                    PasswordHash = HashPassword(request.Password),
                     IsActive = true,
-                    RoleType = RestERP.Domain.Enums.Role.Customer,
-                    CreatedDate = DateTime.UtcNow
+                    RoleType = RestERP.Domain.Enums.Role.Customer
                 };
 
-                await _unitOfWork.Repository<ApplicationUser>().AddAsync(user);
-                await _unitOfWork.SaveChangesAsync();
+                var createResult = await _userManager.CreateAsync(user, request.Password);
+                if (!createResult.Succeeded)
+                {
+                    var errors = string.Join("; ", createResult.Errors.Select(e => e.Description));
+                    _logger.LogWarning($"Kayıt başarısız - {errors}");
+                    return null;
+                }
+
+                // Rol ataması (enum string adı ile)
+                var roleName = user.RoleType.ToString();
+                if (!await _roleManager.RoleExistsAsync(roleName))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole<int>(roleName));
+                }
+                await _userManager.AddToRoleAsync(user, roleName);
 
                 _logger.LogInformation($"Yeni kullanıcı kaydedildi: {user.Email}");
 
@@ -131,7 +141,6 @@ namespace RestERP.Application.Services.Concrete
                         rt.Token == refreshToken && 
                         !rt.IsRevoked && 
                         rt.ExpiresAt > DateTime.UtcNow &&
-                        !rt.User.IsDeleted &&
                         rt.User.IsActive);
 
                 if (token == null)
@@ -215,7 +224,7 @@ namespace RestERP.Application.Services.Concrete
 
         private async Task<TokenResponse> GenerateTokensAsync(ApplicationUser user)
         {
-            var accessToken = GenerateJwtToken(user);
+            var accessToken = await GenerateJwtTokenAsync(user);
             var refreshToken = GenerateRefreshToken();
 
             var refreshTokenEntity = new RefreshToken
@@ -247,7 +256,7 @@ namespace RestERP.Application.Services.Concrete
             };
         }
 
-        private string GenerateJwtToken(ApplicationUser user)
+        private async Task<string> GenerateJwtTokenAsync(ApplicationUser user)
         {
             var key = _configuration["Jwt:Key"];
             if (string.IsNullOrEmpty(key))
@@ -258,12 +267,19 @@ namespace RestERP.Application.Services.Concrete
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
                 new Claim("FirstName", user.FirstName),
                 new Claim("LastName", user.LastName),
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                 new Claim(ClaimTypes.Role, user.RoleType.ToString())
             };
+
+            // Identity rollerini de ekle
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -286,19 +302,6 @@ namespace RestERP.Application.Services.Concrete
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(randomNumber);
             return Convert.ToBase64String(randomNumber);
-        }
-
-        private string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Convert.ToBase64String(hashedBytes);
-        }
-
-        private bool VerifyPassword(string password, string hashedPassword)
-        {
-            var hashedInput = HashPassword(password);
-            return hashedInput == hashedPassword;
         }
     }
 }
