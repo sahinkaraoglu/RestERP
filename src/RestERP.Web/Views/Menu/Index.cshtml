@@ -7,12 +7,10 @@
 @using System.Collections.Generic
 @using System.Linq
 @using Microsoft.AspNetCore.Identity
-@using RestERP.Application.Services.Abstract
 @using RestERP.Core.Domain.Entities
-@inject IUserService UserService
 
 @{
-    var currentUser = await UserService.GetUserByUsernameAsync(User.Identity.Name);
+    var currentUser = ViewBag.CurrentUser as RestERP.Core.Domain.Entities.ApplicationUser;
 }
 
 <div class="restaurant-menu">

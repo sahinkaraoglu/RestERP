@@ -6,14 +6,12 @@
 @using System.Collections.Generic
 @using System.Linq
 @using Microsoft.AspNetCore.Identity
-@using RestERP.Application.Services.Abstract
 @using RestERP.Core.Domain.Entities
 @using Microsoft.Extensions.Caching.Memory
-@inject IUserService UserService
 @inject IMemoryCache MemoryCache
 
 @{
-    var currentUser = await UserService.GetUserByUsernameAsync(User.Identity.Name);
+    var currentUser = (object)null; // Kullanıcı bilgisi API üzerinden alınmıyor
     
     // Cache key'leri
     var categoriesCacheKey = "FoodCategories";

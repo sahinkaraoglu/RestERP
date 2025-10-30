@@ -3,7 +3,7 @@ using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Areas.Admin.Models;
-using RestERP.Web.Services;
+ 
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
@@ -16,18 +16,15 @@ namespace RestERP.Web.Areas.Admin.Controllers
     {
         private readonly ILogger<FoodController> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly FoodCacheService _foodCacheService;
         private readonly IWebHostEnvironment _env;
 
         public FoodController(
             ILogger<FoodController> logger,
             IHttpClientFactory httpClientFactory,
-            FoodCacheService foodCacheService,
             IWebHostEnvironment env)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
-            _foodCacheService = foodCacheService;
             _env = env;
         }
 
@@ -35,8 +32,21 @@ namespace RestERP.Web.Areas.Admin.Controllers
         {
             try
             {
-                var categories = _foodCacheService.GetCategories();
-                var foods = _foodCacheService.GetFoods();
+                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
+                var categoriesResponse = await httpClient.GetAsync("api/food/categories");
+                var foodsResponse = await httpClient.GetAsync("api/food");
+
+                if (!categoriesResponse.IsSuccessStatusCode || !foodsResponse.IsSuccessStatusCode)
+                {
+                    TempData["ErrorMessage"] = "Veriler yüklenemedi.";
+                    return View("Error");
+                }
+
+                var categoriesJson = await categoriesResponse.Content.ReadAsStringAsync();
+                var foodsJson = await foodsResponse.Content.ReadAsStringAsync();
+
+                var categories = JsonSerializer.Deserialize<List<FoodCategory>>(categoriesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<FoodCategory>();
+                var foods = JsonSerializer.Deserialize<List<Food>>(foodsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Food>();
 
                 ViewBag.FoodCategories = categories;
                 ViewBag.Foods = foods;
@@ -91,7 +101,6 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    _foodCacheService.ClearCache();
                     return Json(new { success = true, message = "Ürün başarıyla eklendi" });
                 }
                 else
@@ -132,7 +141,14 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
                 ViewBag.FoodCategories = foodcategories;
                 ViewBag.Food = food;
-                ViewBag.Images = _foodCacheService.GetImages();
+                var httpClientForImages = _httpClientFactory.CreateClient("RestERPApi");
+                var imagesResponse = await httpClientForImages.GetAsync("api/food/images");
+                if (imagesResponse.IsSuccessStatusCode)
+                {
+                    var imagesJson = await imagesResponse.Content.ReadAsStringAsync();
+                    var images = JsonSerializer.Deserialize<List<Image>>(imagesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Image>();
+                    ViewBag.Images = images;
+                }
 
                 return View("~/Areas/Admin/Views/Food/Edit.cshtml");
             }
@@ -178,7 +194,14 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 {
                     var foodcategories = FoodCategorySeedData.GetFoodCategories();
                     ViewBag.FoodCategories = foodcategories;
-                    ViewBag.Images = _foodCacheService.GetImages();
+                    var httpClientForImages = _httpClientFactory.CreateClient("RestERPApi");
+                    var imagesResponse = await httpClientForImages.GetAsync("api/food/images");
+                    if (imagesResponse.IsSuccessStatusCode)
+                    {
+                        var imagesJson = await imagesResponse.Content.ReadAsStringAsync();
+                        var images = JsonSerializer.Deserialize<List<Image>>(imagesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Image>();
+                        ViewBag.Images = images;
+                    }
 
                     var updatedFood = new Food
                     {
@@ -261,7 +284,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
                 if (updateResponse.IsSuccessStatusCode)
                 {
-                    _foodCacheService.ClearCache();
+                    // Cache kaldırıldı: doğrudan API'den okunuyor
                     TempData["SuccessMessage"] = "Ürün başarıyla güncellendi.";
                     return RedirectToAction("Index", "Food", new { area = "Admin" });
                 }
@@ -304,7 +327,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 
                 if (response.IsSuccessStatusCode)
                 {
-                    _foodCacheService.ClearCache();
+                    // Cache kaldırıldı: doğrudan API'den okunuyor
                     return Json(new { success = true, message = "Ürün başarıyla silindi." });
                 }
                 else
