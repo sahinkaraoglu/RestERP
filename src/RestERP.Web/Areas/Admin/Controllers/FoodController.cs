@@ -6,6 +6,8 @@ using RestERP.Web.Areas.Admin.Models;
 using RestERP.Web.Services;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace RestERP.Web.Areas.Admin.Controllers
 {
@@ -15,15 +17,18 @@ namespace RestERP.Web.Areas.Admin.Controllers
         private readonly ILogger<FoodController> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly FoodCacheService _foodCacheService;
+        private readonly IWebHostEnvironment _env;
 
         public FoodController(
             ILogger<FoodController> logger,
             IHttpClientFactory httpClientFactory,
-            FoodCacheService foodCacheService)
+            FoodCacheService foodCacheService,
+            IWebHostEnvironment env)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
             _foodCacheService = foodCacheService;
+            _env = env;
         }
 
         public async Task<IActionResult> Index()
@@ -127,6 +132,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
                 ViewBag.FoodCategories = foodcategories;
                 ViewBag.Food = food;
+                ViewBag.Images = _foodCacheService.GetImages();
 
                 return View("~/Areas/Admin/Views/Menu/Edit.cshtml");
             }
@@ -139,7 +145,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int Id, int CategoryId, string Name, string TurkishName, string? Description, decimal Price)
+        public async Task<IActionResult> Edit(int Id, int CategoryId, string Name, string TurkishName, string? Description, decimal Price, IFormFile? ImageFile)
         {
             try
             {
@@ -172,6 +178,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 {
                     var foodcategories = FoodCategorySeedData.GetFoodCategories();
                     ViewBag.FoodCategories = foodcategories;
+                    ViewBag.Images = _foodCacheService.GetImages();
 
                     var updatedFood = new Food
                     {
@@ -210,6 +217,43 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 existingFood.TurkishName = TurkishName;
                 existingFood.Description = Description;
                 existingFood.Price = Price;
+
+                // Görsel yükleme işlemi (opsiyonel)
+                if (ImageFile != null && ImageFile.Length > 0)
+                {
+                    var uploadsRoot = Path.Combine(_env.WebRootPath ?? string.Empty, "img", "Food", "Uploads");
+                    if (!Directory.Exists(uploadsRoot))
+                    {
+                        Directory.CreateDirectory(uploadsRoot);
+                    }
+
+                    var extension = Path.GetExtension(ImageFile.FileName);
+                    var fileName = $"food_{Id}_{DateTime.UtcNow:yyyyMMddHHmmssfff}{extension}";
+                    var physicalPath = Path.Combine(uploadsRoot, fileName);
+
+                    using (var stream = new FileStream(physicalPath, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(stream);
+                    }
+
+                    // Web köküne göre göreli yol
+                    var relativePath = $"/img/Food/Uploads/{fileName}";
+
+                    // Var olan ilk görseli güncelle, yoksa yeni ekle
+                    if (existingFood.Images != null && existingFood.Images.Any())
+                    {
+                        var firstImage = existingFood.Images.First();
+                        firstImage.Path = relativePath;
+                        firstImage.FoodId = existingFood.Id;
+                    }
+                    else
+                    {
+                        existingFood.Images = new List<Image>
+                        {
+                            new Image { Path = relativePath, FoodId = existingFood.Id }
+                        };
+                    }
+                }
 
                 var json = JsonSerializer.Serialize(existingFood);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");

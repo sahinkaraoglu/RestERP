@@ -1,8 +1,11 @@
 ﻿@model dynamic
+@using RestERP.Core.Domain.Entities
 @{
     ViewData["Title"] = "Ürün Güncelleme";
     var foodcategories = ViewBag.FoodCategories;
     var food = ViewBag.Food;
+    var allImages = ViewBag.Images as IEnumerable<Image>;
+    var currentImage = allImages?.FirstOrDefault(i => i.FoodId == food.Id);
 }
 
 <div class="dashboard-container">
@@ -41,7 +44,7 @@
                         }
 
                         <!-- Form başlangıcı -->
-                        <form method="post" asp-area="Admin" asp-controller="Food" asp-action="Edit">
+                        <form method="post" asp-area="Admin" asp-controller="Food" asp-action="Edit" enctype="multipart/form-data">
                             <!-- Gizli alan - ID -->
                             <input type="hidden" name="Id" value="@food.Id" />
                             
@@ -87,6 +90,27 @@
                             <div class="mb-3">
                                 <label class="form-label">Fiyat (₺)</label>
                                 <input type="text" class="form-control" name="Price" value="@food.Price.ToString("F2")" required>
+                            </div>
+
+                            <!-- Görsel -->
+                            <div class="mb-3">
+                                <label class="form-label">Mevcut Görsel</label>
+                                <div>
+                                    @if (currentImage != null && !string.IsNullOrEmpty(currentImage.Path))
+                                    {
+                                        <img src="@currentImage.Path" alt="@food.TurkishName" style="max-width: 200px; border-radius: 8px;" />
+                                    }
+                                    else
+                                    {
+                                        <div class="text-muted">Bu ürüne ait görsel bulunamadı.</div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Yeni Görsel Yükle (isteğe bağlı)</label>
+                                <input type="file" class="form-control" name="ImageFile" accept="image/*">
+                                <div class="form-text">Yeni görsel seçerseniz mevcut görsel güncellenecektir.</div>
                             </div>
                             
                             <!-- Butonlar -->
