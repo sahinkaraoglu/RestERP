@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Application.Services.Abstract;
+using System.Net.Http;
 using RestERP.Domain.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,19 +16,14 @@ namespace RestERP.Web.Controllers
     {
         private readonly ILogger<OrderController> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IUserService _userService;
-        private readonly ITableService _tableService;
+        
 
         public OrderController(
             ILogger<OrderController> logger,
-            IHttpClientFactory httpClientFactory,
-            IUserService userService,
-            ITableService tableService)
+            IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
-            _userService = userService;
-            _tableService = tableService;
         }
 
         private HttpClient CreateHttpClient()
@@ -54,9 +49,21 @@ namespace RestERP.Web.Controllers
 
             try
             {
-                // Tüm masaları getir
-                var tables = await _tableService.GetAllTablesAsync();
-                ViewBag.Tables = tables;
+                // Tüm masaları API'den getir
+                var clientForTables = CreateHttpClient();
+                var tablesResponse = await clientForTables.GetAsync("api/table");
+                if (tablesResponse.IsSuccessStatusCode)
+                {
+                    var tablesJson = await tablesResponse.Content.ReadAsStringAsync();
+                    var tablesOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var tables = JsonSerializer.Deserialize<List<Table>>(tablesJson, tablesOptions) ?? new List<Table>();
+                    ViewBag.Tables = tables;
+                }
+                else
+                {
+                    _logger.LogWarning("Masalar yüklenemedi. Status: {StatusCode}", tablesResponse.StatusCode);
+                    ViewBag.Tables = new List<Table>();
+                }
 
                 // API'den aktif siparişleri getir
                 var client = CreateHttpClient();
@@ -150,7 +157,16 @@ namespace RestERP.Web.Controllers
                     return Unauthorized(new { success = false, message = "Sipariş verebilmek için giriş yapmalısınız." });
                 }
 
-                var currentUser = await _userService.GetUserByUsernameAsync(User.Identity.Name);
+                // Kullanıcı bilgilerini API'den getir (email kullanıcı adı olarak kullanılıyor)
+                var client = CreateHttpClient();
+                var userResponse = await client.GetAsync($"api/user/email/{User.Identity.Name}");
+                ApplicationUser currentUser = null;
+                if (userResponse.IsSuccessStatusCode)
+                {
+                    var userJson = await userResponse.Content.ReadAsStringAsync();
+                    var optionsUser = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    currentUser = JsonSerializer.Deserialize<ApplicationUser>(userJson, optionsUser);
+                }
                 if (currentUser == null)
                 {
                     return BadRequest(new { success = false, message = "Kullanıcı bilgileri bulunamadı." });
@@ -174,7 +190,7 @@ namespace RestERP.Web.Controllers
                 };
 
                 // API'ye sipariş gönder
-                var client = CreateHttpClient();
+                /* reuse existing client */
                 var jsonContent = JsonSerializer.Serialize(order);
                 var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
                 
