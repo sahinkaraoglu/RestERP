@@ -1,4 +1,6 @@
 using System.Text;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +13,22 @@ using RestERP.Infrastructure.Context;
 using RestERP.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Autofac entegrasyonu
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+{
+    // Repository ve UnitOfWork
+    containerBuilder.RegisterGeneric(typeof(Repository<>))
+                   .As(typeof(IRepository<>))
+                   .InstancePerLifetimeScope();
+
+    containerBuilder.RegisterType<UnitOfWork>()
+                   .As<IUnitOfWork>()
+                   .InstancePerLifetimeScope();
+
+    containerBuilder.RegisterModule(new RestERP.API.DependencyInjection.AutofacModule());
+});
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -116,18 +134,6 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Customer"));
 });
 
-// Repository ve UnitOfWork kayıtları
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-// Servisleri kaydet
-builder.Services.AddTransient<ITableService, TableService>();
-builder.Services.AddTransient<IFoodService, FoodService>();
-builder.Services.AddTransient<IFoodCategoryService, FoodCategoryService>();
-builder.Services.AddTransient<IOrderService, OrderService>();
-builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IReservationService, ReservationService>();
-builder.Services.AddTransient<IAuthService, AuthService>();
 
 var app = builder.Build();
 
