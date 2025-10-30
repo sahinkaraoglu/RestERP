@@ -1,5 +1,22 @@
 ## RestERP — Restaurant Management System
 
+Production-ready, layered restaurant ERP built on ASP.NET Core (.NET 9). The solution provides a clean separation of concerns across API, Web (MVC), Application, Infrastructure, and Core domain layers.
+
+### Highlights
+- Clean, layered architecture (Core, Application, Infrastructure, API, Web)
+- EF Core with SQL Server, soft-delete filters, precise money fields
+- ASP.NET Core Identity (roles: Admin, Employee, Customer)
+- JWT authentication (API + Web cookie bridge), Swagger with security scheme
+- Autofac-based DI, generic repository + unit of work
+- Global logging and exception handling middleware
+
+## Architecture
+- `RestERP.Core`: Domain entities, enums, base types
+- `RestERP.Application`: Service abstractions/implementations and business logic
+- `RestERP.Infrastructure`: EF DbContext, migrations, repositories, seed data
+- `Services/RestERP.API`: REST API with Swagger, JWT, role policies
+- `RestERP.Web`: MVC UI (Areas/Admin), HttpClient to API, auth integration
+
 <div align="center">
     <table>
         <tr>
@@ -21,23 +38,6 @@
     </table>
 </div>
 
-Production-ready, layered restaurant ERP built on ASP.NET Core (.NET 9). The solution provides a clean separation of concerns across API, Web (MVC), Application, Infrastructure, and Core domain layers.
-
-### Highlights
-- Clean, layered architecture (Core, Application, Infrastructure, API, Web)
-- EF Core with SQL Server, soft-delete filters, precise money fields
-- ASP.NET Core Identity (roles: Admin, Employee, Customer)
-- JWT authentication (API + Web cookie bridge), Swagger with security scheme
-- Autofac-based DI, generic repository + unit of work
-- Global logging and exception handling middleware
-
-## Architecture
-- `RestERP.Core`: Domain entities, enums, base types
-- `RestERP.Application`: Service abstractions/implementations and business logic
-- `RestERP.Infrastructure`: EF DbContext, migrations, repositories, seed data
-- `Services/RestERP.API`: REST API with Swagger, JWT, role policies
-- `RestERP.Web`: MVC UI (Areas/Admin), HttpClient to API, auth integration
-
 ### Data Access Patterns
 - Generic Repository and Unit of Work are used to standardize data access and transaction boundaries while keeping domain logic clean.
 
@@ -45,30 +45,6 @@ Production-ready, layered restaurant ERP built on ASP.NET Core (.NET 9). The sol
 - .NET 9, ASP.NET Core MVC, Entity Framework Core, SQL Server
 - Autofac, ASP.NET Core Identity, JWT Bearer
 - Swagger/OpenAPI, MemoryCache, Logging middleware
-
-## Setup
-1) Prerequisites
-- .NET 9 SDK, SQL Server 2019+
-- Visual Studio 2022 or `dotnet` CLI
-
-2) Configuration
-Create or adjust the following keys in `appsettings*.json`:
-- `ConnectionStrings:DefaultConnection`
-- `Jwt:Key`, `Jwt:Issuer`, `Jwt:Audience`
-- Web only: `ApiSettings:BaseUrl` (points to the API base URL)
-
-3) Database
-- On API startup, EF Core migrations are applied automatically and default roles/users are ensured.
-
-4) Run
-- API: `src/Services/RestERP.API`
-- Web: `src/RestERP.Web`
-Use Visual Studio multi-start, or via CLI:
-```bash
-dotnet build RestERP.sln
-dotnet run --project src/Services/RestERP.API/RestERP.API.csproj
-dotnet run --project src/RestERP.Web/RestERP.Web.csproj
-```
 
 ## Security
 - JWT Bearer authentication with zero clock skew
