@@ -35,16 +35,16 @@ namespace RestERP.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password, bool rememberMe)
+        public async Task<IActionResult> Login(string email, string password, bool rememberMe)
         {
             try
             {
-                _logger.LogInformation($"Login attempt for username: {username}");
+                _logger.LogInformation($"Login attempt for email: {email}");
                 
-                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
                 {
-                    _logger.LogWarning("Username or password is empty");
-                    ModelState.AddModelError(string.Empty, "Kullanıcı adı ve şifre gereklidir.");
+                    _logger.LogWarning("Email or password is empty");
+                    ModelState.AddModelError(string.Empty, "E-posta ve şifre gereklidir.");
                     return View("Index");
                 }
 
@@ -52,7 +52,7 @@ namespace RestERP.Web.Controllers
                 var client = CreateHttpClient();
                 var loginRequest = new LoginRequest
                 {
-                    Email = username, // Username yerine email olarak gönder (API email bekliyor)
+                    Email = email,
                     Password = password
                 };
 
@@ -64,7 +64,7 @@ namespace RestERP.Web.Controllers
                 if (!response.IsSuccessStatusCode)
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    _logger.LogWarning("API login failed for user: {Username}. Status: {StatusCode}, Error: {Error}", username, response.StatusCode, errorContent);
+                    _logger.LogWarning("API login failed for email: {Email}. Status: {StatusCode}, Error: {Error}", email, response.StatusCode, errorContent);
                     ModelState.AddModelError(string.Empty, "Geçersiz kullanıcı adı veya şifre.");
                     return View("Index");
                 }
@@ -94,7 +94,7 @@ namespace RestERP.Web.Controllers
 
                 Response.Cookies.Append("JWT", tokenResponse.AccessToken, cookieOptions);
 
-                _logger.LogInformation($"Login successful for user: {username}");
+                _logger.LogInformation($"Login successful for email: {email}");
                 // Başarılı giriş sonrası Home/Index'e yönlendir
                 return RedirectToAction("Index", "Home", new { area = "" });
             }
