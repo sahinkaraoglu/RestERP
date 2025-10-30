@@ -100,7 +100,7 @@ namespace RestERP.Infrastructure.Migrations
                             LastName = "User",
                             PasswordHash = "PrP+ZrMeO00Q+nC1ytSccRIpSvauTkdqHEBRVdRaoSE=",
                             PhoneNumber = "05551234567",
-                            RoleType = 2,
+                            RoleType = 1,
                             UserName = "admin"
                         },
                         new
@@ -128,7 +128,7 @@ namespace RestERP.Infrastructure.Migrations
                             LastName = "Customer",
                             PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=",
                             PhoneNumber = "05551111111",
-                            RoleType = 1,
+                            RoleType = 3,
                             UserName = "customer"
                         });
                 });

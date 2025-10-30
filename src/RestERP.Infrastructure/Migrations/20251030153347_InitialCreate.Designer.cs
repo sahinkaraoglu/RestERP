@@ -12,8 +12,8 @@ using RestERP.Infrastructure.Context;
 namespace RestERP.Infrastructure.Migrations
 {
     [DbContext(typeof(RestERPDbContext))]
-    [Migration("20250927181010_Migration2")]
-    partial class Migration2
+    [Migration("20251030153347_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,7 +103,7 @@ namespace RestERP.Infrastructure.Migrations
                             LastName = "User",
                             PasswordHash = "PrP+ZrMeO00Q+nC1ytSccRIpSvauTkdqHEBRVdRaoSE=",
                             PhoneNumber = "05551234567",
-                            RoleType = 2,
+                            RoleType = 1,
                             UserName = "admin"
                         },
                         new
@@ -131,7 +131,7 @@ namespace RestERP.Infrastructure.Migrations
                             LastName = "Customer",
                             PasswordHash = "sQnzu7wkTrgkQZF+0G1hi5AI3Qmzvv0bXgc5THBqi7m=",
                             PhoneNumber = "05551111111",
-                            RoleType = 1,
+                            RoleType = 3,
                             UserName = "customer"
                         });
                 });
@@ -1820,6 +1820,8 @@ namespace RestERP.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CustomerId");
+
                     b.ToTable("Orders");
                 });
 
@@ -1877,6 +1879,53 @@ namespace RestERP.Infrastructure.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<long?>("CreatedById")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("UpdatedById")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("RestERP.Core.Domain.Entities.Reservation", b =>
@@ -2093,6 +2142,13 @@ namespace RestERP.Infrastructure.Migrations
                     b.Navigation("Food");
                 });
 
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.Order", b =>
+                {
+                    b.HasOne("RestERP.Core.Domain.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
+                });
+
             modelBuilder.Entity("RestERP.Core.Domain.Entities.OrderItem", b =>
                 {
                     b.HasOne("RestERP.Core.Domain.Entities.Food", "Food")
@@ -2110,6 +2166,17 @@ namespace RestERP.Infrastructure.Migrations
                     b.Navigation("Food");
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("RestERP.Core.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("RestERP.Core.Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("RestERP.Core.Domain.Entities.Food", b =>

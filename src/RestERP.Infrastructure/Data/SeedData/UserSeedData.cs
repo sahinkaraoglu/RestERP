@@ -20,7 +20,7 @@ namespace RestERP.Infrastructure.Data.SeedData
                     PhoneNumber = "05551234567",
                     PasswordHash = "PrP+ZrMeO00Q+nC1ytSccRIpSvauTkdqHEBRVdRaoSE=", // Şifre: Admin123!
                     IsActive = true,
-                    RoleType = Role.Employee,
+                    RoleType = Role.Admin,
                     CreatedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
                 

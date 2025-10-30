@@ -4,10 +4,15 @@ namespace RestERP.Domain.Enums
 {
        public enum Role
     {
-        [Display(Name = "Müþteri")]
-        Customer = 1,
+        [Display(Name = "Admin")]
+        Admin = 1,
 
         [Display(Name = "Personel")]
         Employee = 2,
+
+        [Display(Name = "MÃ¼ÅŸteri")]
+        Customer = 3,
+
+
     }
 }
