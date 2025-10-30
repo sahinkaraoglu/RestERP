@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using RestERP.Core.Domain.Entities;
-using RestERP.Application.Services.Abstract;
+using System.Net.Http;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
@@ -14,16 +14,13 @@ namespace RestERP.Web.Controllers
     public class ReservationController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ITableService _tableService;
         private readonly ILogger<ReservationController> _logger;
 
         public ReservationController(
-            IHttpClientFactory httpClientFactory, 
-            ITableService tableService,
+            IHttpClientFactory httpClientFactory,
             ILogger<ReservationController> logger)
         {
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
-            _tableService = tableService ?? throw new ArgumentNullException(nameof(tableService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -45,10 +42,22 @@ namespace RestERP.Web.Controllers
         {
             try
             {
-                var tables = await _tableService.GetAllTablesAsync();
-                
-                // API'den rezervasyonları getir
+                // API'den masaları getir
                 var client = CreateHttpClient();
+                var tablesResponse = await client.GetAsync("api/table");
+                List<Table> tables = new List<Table>();
+                if (tablesResponse.IsSuccessStatusCode)
+                {
+                    var tablesJson = await tablesResponse.Content.ReadAsStringAsync();
+                    var tablesOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    tables = JsonSerializer.Deserialize<List<Table>>(tablesJson, tablesOptions) ?? new List<Table>();
+                }
+                else
+                {
+                    _logger.LogWarning("API'den masalar alınamadı. Status: {StatusCode}", tablesResponse.StatusCode);
+                }
+
+                // API'den rezervasyonları getir
                 var response = await client.GetAsync("api/reservation");
 
                 if (response.IsSuccessStatusCode)
@@ -73,7 +82,7 @@ namespace RestERP.Web.Controllers
             {
                 _logger.LogError(ex, "Rezervasyon sayfası yüklenirken hata oluştu");
                 ViewBag.Reservations = new List<Reservation>();
-                return View(await _tableService.GetAllTablesAsync());
+                return View(new List<Table>());
             }
         }
 
