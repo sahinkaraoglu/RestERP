@@ -63,7 +63,7 @@
                 </div>
             </div>
             <div class="col-md-6 text-end">
-                <a asp-area="Admin" asp-controller="Menu" asp-action="Create" class="btn btn-primary rounded-pill">
+                <a asp-area="Admin" asp-controller="Food" asp-action="Create" class="btn btn-primary rounded-pill">
                     <i class="bi bi-plus-circle"></i> Yeni Ürün Ekle
                 </a>
             </div>
@@ -108,7 +108,7 @@
                                                 <p class="menu-desc">@item.Name</p>
                                             </div>
                                             <div class="menu-actions">
-                                                <a asp-area="Admin" asp-controller="Menu" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                                <a asp-area="Admin" asp-controller="Food" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                                 <a href="javascript:void(0)" onclick="deleteMenuItem(@item.Id)" class="btn btn-sm btn-outline-danger">
@@ -148,7 +148,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <a href="/Admin/Menu" class="btn btn-outline-secondary me-2">İptal</a>
+                <a href="/Admin/Food" class="btn btn-outline-secondary me-2">İptal</a>
                 <button type="button" class="btn btn-primary" id="saveCategoryBtn">Kaydet</button>
             </div>
         </div>

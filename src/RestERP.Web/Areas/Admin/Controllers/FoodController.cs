@@ -8,17 +8,17 @@ using RestERP.Web.Services;
 namespace RestERP.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class MenuController : Controller
+    public class FoodController : Controller
     {
-        private readonly ILogger<MenuController> _logger;
+        private readonly ILogger<FoodController> _logger;
         private readonly IFoodService _foodService;
         private readonly ITableService _tableService;
         private readonly IUserService _userService;
         private readonly IOrderService _orderService;
         private readonly FoodCacheService _foodCacheService;
 
-        public MenuController(
-            ILogger<MenuController> logger,
+        public FoodController(
+            ILogger<FoodController> logger,
             IFoodService foodService,
             ITableService tableService,
             IUserService userService,
@@ -43,7 +43,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 ViewBag.FoodCategories = categories;
                 ViewBag.Foods = foods;
 
-                return View();
+                return View("~/Areas/Admin/Views/Menu/Index.cshtml");
             }
             catch (Exception ex)
             {
@@ -108,7 +108,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 if (food == null)
                 {
                     TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
-                    return RedirectToAction("Index", "Menu", new { area = "Admin" });
+                    return RedirectToAction("Index", "Food", new { area = "Admin" });
                 }
 
                 ViewBag.FoodCategories = foodcategories;
@@ -120,7 +120,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
             {
                 _logger.LogError(ex, "Ürün güncelleme sayfası açılırken hata oluştu");
                 TempData["ErrorMessage"] = "Ürün güncelleme sayfası açılırken bir hata oluştu: " + ex.Message;
-                return RedirectToAction("Index", "Menu", new { area = "Admin" });
+                return RedirectToAction("Index", "Food", new { area = "Admin" });
             }
         }
 
@@ -177,7 +177,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 if (existingFood == null)
                 {
                     TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
-                    return RedirectToAction("Index", "Menu", new { area = "Admin" });
+                    return RedirectToAction("Index", "Food", new { area = "Admin" });
                 }
 
                 existingFood.CategoryId = CategoryId;
@@ -190,7 +190,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 _foodCacheService.ClearCache();
 
                 TempData["SuccessMessage"] = "Ürün başarıyla güncellendi.";
-                return RedirectToAction("Index", "Menu", new { area = "Admin" });
+                return RedirectToAction("Index", "Food", new { area = "Admin" });
             }
             catch (Exception ex)
             {
@@ -239,4 +239,6 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
     }
-} 
+}
+
+

@@ -134,6 +134,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Eski Admin/Menu URL'lerini yeni Food controller'a yönlendir (geri uyumluluk)
+app.MapControllerRoute(
+    name: "admin-menu-legacy",
+    pattern: "Admin/Menu/{action=Index}/{id?}",
+    defaults: new { area = "Admin", controller = "Food" });
+
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Panel}/{action=Index}/{id?}");
