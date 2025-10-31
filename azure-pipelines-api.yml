@@ -23,10 +23,10 @@ stages:
         name: 'HomePool'
       steps:
         - task: UseDotNet@2
-          displayName: 'Use .NET 8 SDK'
+          displayName: 'Use .NET 9 SDK'
           inputs:
             packageType: 'sdk'
-            version: '8.0.x'
+            version: '9.0.x'
 
         - script: |
             echo "🔧 Restoring and publishing API project..."
