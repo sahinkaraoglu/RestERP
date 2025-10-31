@@ -1,0 +1,99 @@
+﻿trigger:
+  branches:
+    include:
+      - master
+
+# API projesi için pipeline
+name: WEB-CI-CD
+
+variables:
+  BuildConfiguration: 'Release'
+  ArtifactName: 'web-drop'
+  SitePath: 'C:\inetpub\publishrestweb'     # IIS’teki klasör yolun
+  AppPoolName: 'DefaultAppPool'                  # IIS App Pool adın
+
+stages:
+
+# --- BUILD ---
+- stage: Build
+  displayName: 'Build WEB Project'
+  jobs:
+    - job: BuildApi
+      pool:
+        name: 'HomePool'
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Use .NET 8 SDK'
+          inputs:
+            packageType: 'sdk'
+            version: '8.0.x'
+
+        - script: |
+            echo "🔧 Restoring and publishing API project..."
+            dotnet restore src/RestERP.Web/RestERP.Web.csproj
+            dotnet publish src/RestERP.Web/RestERP.Web.csproj -c $(BuildConfiguration) -o $(Build.ArtifactStagingDirectory)
+          displayName: 'Build & Publish API'
+
+        - publish: $(Build.ArtifactStagingDirectory)
+          artifact: $(ArtifactName)
+
+# --- DEPLOY ---
+- stage: Deploy
+  displayName: 'Deploy to IIS (WEB)'
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+    - deployment: DeployWeb
+      pool:
+        name: HomePool     # self-hosted agent pool adın
+      environment: 'localhost'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: none
+              - download: current
+                artifact: $(ArtifactName)
+              - task: PowerShell@2
+                displayName: 'Deploy WEB to IIS'
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                    $ErrorActionPreference = "Stop"
+                    Import-Module WebAdministration
+
+                    $appPool = "$(AppPoolName)"
+                    $sitePath = "$(SitePath)"
+                    $dropPath = "$(Pipeline.Workspace)\$(ArtifactName)"
+                    $offline = Join-Path $sitePath 'app_offline.htm'
+
+                    Write-Host "✅ Creating app_offline.htm to lock site..."
+                    "Updating WEB..." | Out-File $offline -Encoding utf8
+
+                    Write-Host "⏸ Stopping App Pool: $appPool"
+                    $state = (Get-WebAppPoolState -Name $appPool).Value
+                    if ($state -ne "Stopped") {
+                        Stop-WebAppPool -Name $appPool -ErrorAction SilentlyContinue
+                        Start-Sleep -Seconds 3
+                    } else {
+                        Write-Host "ℹ️ App Pool already stopped."
+                    }
+
+                    Write-Host "🧹 Cleaning site folder: $sitePath"
+                    Get-ChildItem $sitePath -Force | Where-Object { $_.Name -ne 'app_offline.htm' } |
+                        ForEach-Object {
+                            try {
+                                Remove-Item $_.FullName -Recurse -Force -ErrorAction Stop
+                            } catch {
+                                Write-Warning "⚠️ Could not remove $($_.FullName): $($_.Exception.Message)"
+                            }
+                        }
+
+                    Write-Host "📦 Copying files from $dropPath to $sitePath"
+                    robocopy $dropPath $sitePath /MIR | Out-Null
+
+                    Write-Host "🧾 Removing app_offline.htm and starting App Pool..."
+                    if (Test-Path $offline) { Remove-Item $offline -Force }
+                    Start-WebAppPool -Name $appPool
+                    Write-Host "✅ WEB site updated successfully."
+                ignoreLASTEXITCODE: true
