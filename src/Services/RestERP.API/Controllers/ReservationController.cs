@@ -8,7 +8,7 @@ namespace RestERP.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ReservationController : ControllerBase
+    public class ReservationController : BaseApiController
     {
         private readonly IReservationService _reservationService;
         private readonly ILogger<ReservationController> _logger;

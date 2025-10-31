@@ -8,7 +8,7 @@ namespace RestERP.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class FoodCategoryController : ControllerBase
+    public class FoodCategoryController : BaseApiController
     {
         private readonly IFoodCategoryService _foodCategoryService;
         private readonly ILogger<FoodCategoryController> _logger;

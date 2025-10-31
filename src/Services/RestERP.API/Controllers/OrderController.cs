@@ -9,7 +9,7 @@ namespace RestERP.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class OrderController : ControllerBase
+    public class OrderController : BaseApiController
     {
         private readonly IOrderService _orderService;
         private readonly ILogger<OrderController> _logger;
