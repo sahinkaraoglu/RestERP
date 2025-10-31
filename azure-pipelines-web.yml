@@ -96,4 +96,4 @@ stages:
                     if (Test-Path $offline) { Remove-Item $offline -Force }
                     Start-WebAppPool -Name $appPool
                     Write-Host "✅ WEB site updated successfully."
-                ignoreLASTEXITCODE: true
+                  ignoreLASTEXITCODE: true
