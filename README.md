@@ -52,6 +52,42 @@ Production-ready, layered restaurant ERP built on ASP.NET Core (.NET 9). The sol
 - Note: CORS is permissive in development (`AllowAll`). Harden for production.
 - Seed passwords in code are for development. Rotate/remove in production.
 
+## CI/CD
+
+The project uses Azure DevOps Pipelines for continuous integration and deployment.
+
+### Pipeline Configuration
+
+Two separate pipelines are configured for independent deployment:
+
+1. **API Pipeline** (`azure-pipelines-api.yml`)
+   - Builds and deploys the REST API project
+   - Target: IIS Application Pool `RestERPAPI`
+   - Deployment path: `C:\inetpub\publishrestapi`
+
+2. **Web Pipeline** (`azure-pipelines-web.yml`)
+   - Builds and deploys the MVC Web application
+   - Target: IIS Application Pool `DefaultAppPool`
+   - Deployment path: `C:\inetpub\publishrestweb`
+
+### Pipeline Features
+
+- **Trigger**: Automatically runs on pushes to `main` branch
+- **Build Stage**: 
+  - Uses .NET 9 SDK
+  - Restores dependencies and publishes projects in Release configuration
+  - Creates build artifacts for deployment
+- **Deploy Stage**:
+  - Deploys to IIS using self-hosted agent pool (`HomePool`)
+  - Implements zero-downtime deployment with `app_offline.htm`
+  - Stops application pool, cleans deployment folder, copies new files, and restarts the pool
+
+### Setup Requirements
+
+- Self-hosted Azure DevOps agent pool configured with name `HomePool`
+- IIS configured with the specified application pools and site paths
+- Agent must have permissions to manage IIS (WebAdministration module)
+
 ## Notes
 - Automatic migration on startup is convenient for local/dev; for production, prefer controlled migrations.
 - Web uses cookie-stored JWT for API calls; ensure HTTPS and secure cookie flags in production.
