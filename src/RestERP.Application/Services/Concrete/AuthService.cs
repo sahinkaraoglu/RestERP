@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +9,6 @@ using RestERP.Application.DTOs;
 using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces;
-using RestERP.Infrastructure.Context;
 using Microsoft.AspNetCore.Identity;
 
 namespace RestERP.Application.Services.Concrete
@@ -20,7 +18,6 @@ namespace RestERP.Application.Services.Concrete
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthService> _logger;
-        private readonly RestERPDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
@@ -29,7 +26,6 @@ namespace RestERP.Application.Services.Concrete
             IUnitOfWork unitOfWork,
             IConfiguration configuration,
             ILogger<AuthService> logger,
-            RestERPDbContext context,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole<int>> roleManager)
@@ -37,7 +33,6 @@ namespace RestERP.Application.Services.Concrete
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _logger = logger;
-            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
@@ -135,15 +130,14 @@ namespace RestERP.Application.Services.Concrete
         {
             try
             {
-                var token = await _context.RefreshTokens
-                    .Include(rt => rt.User)
-                    .FirstOrDefaultAsync(rt => 
-                        rt.Token == refreshToken && 
-                        !rt.IsRevoked && 
-                        rt.ExpiresAt > DateTime.UtcNow &&
-                        rt.User.IsActive);
+                var token = await _unitOfWork.Repository<RefreshToken>()
+                    .GetFirstOrDefaultAsync(
+                        rt => rt.Token == refreshToken && 
+                              !rt.IsRevoked && 
+                              rt.ExpiresAt > DateTime.UtcNow,
+                        "User");
 
-                if (token == null)
+                if (token == null || token.User == null || !token.User.IsActive)
                 {
                     _logger.LogWarning("Geçersiz veya süresi dolmuş refresh token");
                     return null;
@@ -152,7 +146,8 @@ namespace RestERP.Application.Services.Concrete
                 // Eski refresh token'ı iptal et
                 token.IsRevoked = true;
                 token.RevokedAt = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Repository<RefreshToken>().UpdateAsync(token);
+                await _unitOfWork.SaveChangesAsync();
 
                 // Yeni tokenlar oluştur
                 var tokenResponse = await GenerateTokensAsync(token.User);
@@ -169,8 +164,8 @@ namespace RestERP.Application.Services.Concrete
         {
             try
             {
-                var token = await _context.RefreshTokens
-                    .FirstOrDefaultAsync(rt => 
+                var token = await _unitOfWork.Repository<RefreshToken>()
+                    .GetFirstOrDefaultAsync(rt => 
                         rt.Token == refreshToken && 
                         !rt.IsRevoked &&
                         rt.ExpiresAt > DateTime.UtcNow);
@@ -182,7 +177,8 @@ namespace RestERP.Application.Services.Concrete
 
                 token.IsRevoked = true;
                 token.RevokedAt = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Repository<RefreshToken>().UpdateAsync(token);
+                await _unitOfWork.SaveChangesAsync();
 
                 _logger.LogInformation($"Refresh token iptal edildi: {refreshToken.Substring(0, Math.Min(10, refreshToken.Length))}...");
                 return true;
@@ -235,8 +231,8 @@ namespace RestERP.Application.Services.Concrete
                 CreatedDate = DateTime.UtcNow
             };
 
-            await _context.RefreshTokens.AddAsync(refreshTokenEntity);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Repository<RefreshToken>().AddAsync(refreshTokenEntity);
+            await _unitOfWork.SaveChangesAsync();
 
             return new TokenResponse
             {
