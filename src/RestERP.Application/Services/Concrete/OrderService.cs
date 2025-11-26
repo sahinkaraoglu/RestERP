@@ -4,8 +4,8 @@ using RestERP.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Linq.Expressions;
 using RestERP.Core.Domain.Entities;
 
 namespace RestERP.Application.Services
@@ -43,51 +43,74 @@ namespace RestERP.Application.Services
             if (order == null)
                 return false;
                 
-            await _unitOfWork.Repository<Order>().DeleteAsync(order);
+            _unitOfWork.Repository<Order>().Delete(order);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
 
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
-            var orders = await _unitOfWork.Repository<Order>().GetAllAsync();
+            // Include ile tek sorguda ilişkili verileri çek - N+1 Query problemi çözümü
+            var includes = new List<Expression<Func<Order, object>>>
+            {
+                o => o.OrderItems
+            };
+            
+            var orders = await _unitOfWork.Repository<Order>().GetAsync(
+                predicate: o => true,
+                orderBy: q => q.OrderByDescending(o => o.OrderDate),
+                includes: includes);
+            
+            // OrderItems içindeki Food bilgilerini tek sorguda çek
+            var orderIds = orders.Select(o => o.Id).ToList();
+            var allOrderItems = await _unitOfWork.Repository<OrderItem>().GetAsync(oi => orderIds.Contains(oi.OrderId));
+            var foodIds = allOrderItems.Select(oi => oi.FoodId).Distinct().ToList();
+            var allFoods = await _unitOfWork.Repository<Food>().GetAsync(f => foodIds.Contains(f.Id));
+            var foodDict = allFoods.ToDictionary(f => f.Id);
+            
             foreach (var order in orders)
             {
-                var orderItems = await _unitOfWork.Repository<OrderItem>().GetAsync(oi => oi.OrderId == order.Id);
-                foreach (var item in orderItems)
+                var items = allOrderItems.Where(oi => oi.OrderId == order.Id).ToList();
+                foreach (var item in items)
                 {
-                    item.Food = await _unitOfWork.Repository<Food>().GetByIdAsync(item.FoodId);
+                    if (foodDict.TryGetValue(item.FoodId, out var food))
+                    {
+                        item.Food = food;
+                    }
                 }
-                order.OrderItems = orderItems.ToList();
+                order.OrderItems = items;
             }
+            
             return orders;
         }
 
         public async Task<IEnumerable<Order>> GetActiveOrdersAsync()
         {
+            // Include ile tek sorguda ilişkili verileri çek - N+1 Query problemi çözümü
+            var includes = new List<Expression<Func<Order, object>>>
+            {
+                o => o.OrderItems
+            };
+            
             // Aktif sipariş statüsündeki siparişleri filtreler
-            // New, InProgress, Ready statüsündeki siparişler aktif kabul edilir
-            // Cancelled statüsündeki siparişler hariç tutulur
-            var orders = await _unitOfWork.Repository<Order>().GetAsync(o => 
-                (o.Status == OrderStatus.New || 
-                o.Status == OrderStatus.InProgress || 
-                o.Status == OrderStatus.Ready) &&
-                o.Status != OrderStatus.Cancelled &&
-                !o.IsDeleted);
-
-            // Her sipariş için sipariş kalemlerini yükle
+            var orders = await _unitOfWork.Repository<Order>().GetAsync(
+                predicate: o => (o.Status == OrderStatus.New || 
+                                o.Status == OrderStatus.InProgress || 
+                                o.Status == OrderStatus.Ready) &&
+                                o.Status != OrderStatus.Cancelled,
+                orderBy: q => q.OrderByDescending(o => o.OrderDate),
+                includes: includes);
+            
+            // Aktif sipariş kalemlerini filtrele ve toplam tutarı hesapla
             foreach (var order in orders)
             {
-                var orderItems = await _unitOfWork.Repository<OrderItem>()
-                    .GetAsync(oi => oi.OrderId == order.Id && 
-                                  !oi.IsDeleted && 
-                                  oi.Status != OrderStatus.Cancelled);
-                order.OrderItems = orderItems.ToList();
+                var activeItems = order.OrderItems
+                    .Where(oi => oi.Status != OrderStatus.Cancelled)
+                    .ToList();
+                order.OrderItems = activeItems;
                 
                 // Toplam tutarı sadece aktif sipariş kalemlerinden hesapla
-                order.TotalAmount = orderItems
-                    .Where(oi => oi.Status != OrderStatus.Cancelled && !oi.IsDeleted)
-                    .Sum(oi => oi.TotalPrice);
+                order.TotalAmount = activeItems.Sum(oi => oi.TotalPrice);
             }
 
             return orders.Where(o => o.OrderItems != null && o.OrderItems.Any());
@@ -113,30 +136,46 @@ namespace RestERP.Application.Services
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
                 
-            await _unitOfWork.Repository<Order>().UpdateAsync(order);
+            _unitOfWork.Repository<Order>().Update(order);
             await _unitOfWork.SaveChangesAsync();
             return order;
         }
 
         public async Task<Order> GetOrderWithDetailsAsync(int id)
         {
-            var orders = await _unitOfWork.Repository<Order>().GetAsync(o => o.Id == id);
+            // Include ile tek sorguda ilişkili verileri çek - N+1 Query problemi çözümü
+            var includes = new List<Expression<Func<Order, object>>>
+            {
+                o => o.OrderItems
+            };
+            
+            var orders = await _unitOfWork.Repository<Order>().GetAsync(
+                predicate: o => o.Id == id,
+                orderBy: q => q.OrderBy(o => o.Id),
+                includes: includes);
 
             var order = orders.FirstOrDefault();
             if (order == null)
                 throw new KeyNotFoundException($"Sipariş bulunamadı. Id: {id}");
 
-            // Sipariş kalemlerini ve Food bilgisini yükle
-            var orderItems = await _unitOfWork.Repository<OrderItem>().GetAsync(oi => 
-                oi.OrderId == id && 
-                oi.Status != OrderStatus.Cancelled &&
-                !oi.IsDeleted);
-                
-            foreach (var item in orderItems)
+            // Aktif sipariş kalemlerini filtrele
+            var activeItems = order.OrderItems
+                .Where(oi => oi.Status != OrderStatus.Cancelled)
+                .ToList();
+            
+            // Food bilgilerini tek sorguda çek
+            var foodIds = activeItems.Select(oi => oi.FoodId).Distinct().ToList();
+            var foods = await _unitOfWork.Repository<Food>().GetAsync(f => foodIds.Contains(f.Id));
+            var foodDict = foods.ToDictionary(f => f.Id);
+            
+            foreach (var item in activeItems)
             {
-                item.Food = await _unitOfWork.Repository<Food>().GetByIdAsync(item.FoodId);
+                if (foodDict.TryGetValue(item.FoodId, out var food))
+                {
+                    item.Food = food;
+                }
             }
-            order.OrderItems = orderItems.ToList();
+            order.OrderItems = activeItems;
 
             return order;
         }
@@ -148,40 +187,39 @@ namespace RestERP.Application.Services
                 return false;
 
             order.Status = status;
-            await _unitOfWork.Repository<Order>().UpdateAsync(order);
+            _unitOfWork.Repository<Order>().Update(order);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByDateAsync(DateTime date)
         {
-            var orders = await _unitOfWork.Repository<Order>().GetAsync(o => 
-                o.OrderDate.Date == date.Date && 
-                !o.IsDeleted);
-
-            foreach (var order in orders)
+            // Include ile tek sorguda ilişkili verileri çek - N+1 Query problemi çözümü
+            var includes = new List<Expression<Func<Order, object>>>
             {
-                var orderItems = await _unitOfWork.Repository<OrderItem>()
-                    .GetAsync(oi => oi.OrderId == order.Id && !oi.IsDeleted);
-                order.OrderItems = orderItems.ToList();
-            }
+                o => o.OrderItems
+            };
+            
+            var orders = await _unitOfWork.Repository<Order>().GetAsync(
+                predicate: o => o.OrderDate.Date == date.Date,
+                orderBy: q => q.OrderByDescending(o => o.OrderDate),
+                includes: includes);
 
             return orders;
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
-            var orders = await _unitOfWork.Repository<Order>().GetAsync(o => 
-                o.OrderDate.Date >= startDate.Date && 
-                o.OrderDate.Date <= endDate.Date && 
-                !o.IsDeleted);
-
-            foreach (var order in orders)
+            // Include ile tek sorguda ilişkili verileri çek - N+1 Query problemi çözümü
+            var includes = new List<Expression<Func<Order, object>>>
             {
-                var orderItems = await _unitOfWork.Repository<OrderItem>()
-                    .GetAsync(oi => oi.OrderId == order.Id && !oi.IsDeleted);
-                order.OrderItems = orderItems.ToList();
-            }
+                o => o.OrderItems
+            };
+            
+            var orders = await _unitOfWork.Repository<Order>().GetAsync(
+                predicate: o => o.OrderDate.Date >= startDate.Date && o.OrderDate.Date <= endDate.Date,
+                orderBy: q => q.OrderByDescending(o => o.OrderDate),
+                includes: includes);
 
             return orders;
         }
@@ -193,7 +231,7 @@ namespace RestERP.Application.Services
                 return false;
             
             item.Status = OrderStatus.Cancelled;
-            await _unitOfWork.Repository<OrderItem>().UpdateAsync(item);
+            _unitOfWork.Repository<OrderItem>().Update(item);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }

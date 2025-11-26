@@ -71,7 +71,7 @@ namespace RestERP.Application.Services
         {
             try
             {
-                await _unitOfWork.Repository<Table>().UpdateAsync(table);
+                _unitOfWork.Repository<Table>().Update(table);
                 await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -92,7 +92,7 @@ namespace RestERP.Application.Services
                     throw new KeyNotFoundException($"ID'si {id} olan masa bulunamadı");
                 }
 
-                await _unitOfWork.Repository<Table>().DeleteAsync(table);
+                _unitOfWork.Repository<Table>().Delete(table);
                 await _unitOfWork.SaveChangesAsync();
             }
             catch (Exception ex) when (ex is not KeyNotFoundException)
@@ -114,7 +114,7 @@ namespace RestERP.Application.Services
                 }
 
                 table.IsOccupied = isOccupied;
-                await _unitOfWork.Repository<Table>().UpdateAsync(table);
+                _unitOfWork.Repository<Table>().Update(table);
                 await _unitOfWork.SaveChangesAsync();
                 return true;
             }

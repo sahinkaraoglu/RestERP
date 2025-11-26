@@ -146,7 +146,7 @@ namespace RestERP.Application.Services.Concrete
                 // Eski refresh token'ı iptal et
                 token.IsRevoked = true;
                 token.RevokedAt = DateTime.UtcNow;
-                await _unitOfWork.Repository<RefreshToken>().UpdateAsync(token);
+                _unitOfWork.Repository<RefreshToken>().Update(token);
                 await _unitOfWork.SaveChangesAsync();
 
                 // Yeni tokenlar oluştur
@@ -177,7 +177,7 @@ namespace RestERP.Application.Services.Concrete
 
                 token.IsRevoked = true;
                 token.RevokedAt = DateTime.UtcNow;
-                await _unitOfWork.Repository<RefreshToken>().UpdateAsync(token);
+                _unitOfWork.Repository<RefreshToken>().Update(token);
                 await _unitOfWork.SaveChangesAsync();
 
                 _logger.LogInformation($"Refresh token iptal edildi: {refreshToken.Substring(0, Math.Min(10, refreshToken.Length))}...");

@@ -21,53 +21,57 @@ namespace RestERP.Infrastructure.Repositories
 
         public async Task<T> AddAsync(T entity)
         {
-            entity.CreatedDate = DateTime.UtcNow;
             await _dbContext.Set<T>().AddAsync(entity);
             return entity;
         }
 
-        public async Task DeleteAsync(T entity)
+        public void Delete(T entity)
         {
             entity.IsDeleted = true;
-            entity.UpdatedDate = DateTime.UtcNow;
             _dbContext.Entry(entity).State = EntityState.Modified;
-            await Task.CompletedTask;
         }
 
         public async Task<bool> ExistsAsync(int id)
         {
-            return await _dbContext.Set<T>().AnyAsync(e => e.Id == id && !e.IsDeleted);
+            return await _dbContext.Set<T>().AnyAsync(e => e.Id == id);
         }
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
-            return await _dbContext.Set<T>().Where(e => !e.IsDeleted).ToListAsync();
+            return await _dbContext.Set<T>().ToListAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbContext.Set<T>().Where(predicate).Where(e => !e.IsDeleted).ToListAsync();
+            return await _dbContext.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy)
+        public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy)
         {
-            IQueryable<T> query = _dbContext.Set<T>().Where(predicate).Where(e => !e.IsDeleted);
-            return await orderBy(query).ToListAsync();
+            IQueryable<T> query = _dbContext.Set<T>().Where(predicate);
+            
+            if (orderBy != null)
+                query = orderBy(query);
+                
+            return await query.ToListAsync();
         }
 
-        public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy, string includeString)
+        public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy, string includeString)
         {
-            IQueryable<T> query = _dbContext.Set<T>().Where(predicate).Where(e => !e.IsDeleted);
+            IQueryable<T> query = _dbContext.Set<T>().Where(predicate);
             
             if (!string.IsNullOrWhiteSpace(includeString))
                 query = query.Include(includeString);
+            
+            if (orderBy != null)
+                query = orderBy(query);
                 
-            return await orderBy(query).ToListAsync();
+            return await query.ToListAsync();
         }
 
-        public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy, List<Expression<Func<T, object>>> includes)
+        public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy, List<Expression<Func<T, object>>>? includes)
         {
-            IQueryable<T> query = _dbContext.Set<T>().Where(predicate).Where(e => !e.IsDeleted);
+            IQueryable<T> query = _dbContext.Set<T>().Where(predicate);
             
             if (includes != null)
             {
@@ -76,23 +80,26 @@ namespace RestERP.Infrastructure.Repositories
                     query = query.Include(include);
                 }
             }
+            
+            if (orderBy != null)
+                query = orderBy(query);
                 
-            return await orderBy(query).ToListAsync();
+            return await query.ToListAsync();
         }
 
         public async Task<T?> GetByIdAsync(int id)
         {
-            return await _dbContext.Set<T>().FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+            return await _dbContext.Set<T>().FindAsync(id);
         }
 
         public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbContext.Set<T>().Where(predicate).Where(e => !e.IsDeleted).FirstOrDefaultAsync();
+            return await _dbContext.Set<T>().Where(predicate).FirstOrDefaultAsync();
         }
 
         public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, string includeString)
         {
-            IQueryable<T> query = _dbContext.Set<T>().Where(predicate).Where(e => !e.IsDeleted);
+            IQueryable<T> query = _dbContext.Set<T>().Where(predicate);
             
             if (!string.IsNullOrWhiteSpace(includeString))
                 query = query.Include(includeString);
@@ -102,7 +109,7 @@ namespace RestERP.Infrastructure.Repositories
 
         public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, List<Expression<Func<T, object>>> includes)
         {
-            IQueryable<T> query = _dbContext.Set<T>().Where(predicate).Where(e => !e.IsDeleted);
+            IQueryable<T> query = _dbContext.Set<T>().Where(predicate);
             
             if (includes != null)
             {
@@ -115,16 +122,14 @@ namespace RestERP.Infrastructure.Repositories
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task UpdateAsync(T entity)
+        public void Update(T entity)
         {
-            entity.UpdatedDate = DateTime.UtcNow;
             _dbContext.Entry(entity).State = EntityState.Modified;
-            await Task.CompletedTask;
         }
         
         public async Task<int> CountAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbContext.Set<T>().Where(predicate).Where(e => !e.IsDeleted).CountAsync();
+            return await _dbContext.Set<T>().Where(predicate).CountAsync();
         }
     }
 } 

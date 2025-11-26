@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using RestERP.Core.Interfaces;
 using System;
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using RestERP.Core.Domain.Entities.Base;
@@ -13,13 +13,13 @@ namespace RestERP.Infrastructure.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly RestERPDbContext _context;
-        private Hashtable _repositories;
+        private readonly ConcurrentDictionary<string, object> _repositories;
         private IDbContextTransaction _transaction;
 
         public UnitOfWork(RestERPDbContext context)
         {
             _context = context;
-            _repositories = new Hashtable();
+            _repositories = new ConcurrentDictionary<string, object>();
         }
 
         public async Task<int> SaveChangesAsync()
@@ -45,15 +45,8 @@ namespace RestERP.Infrastructure.Repositories
         {
             var type = typeof(T).Name;
 
-            if (!_repositories.ContainsKey(type))
-            {
-                var repositoryType = typeof(Repository<>);
-                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _context);
-
-                _repositories.Add(type, repositoryInstance);
-            }
-
-            return (IRepository<T>)_repositories[type];
+            return (IRepository<T>)_repositories.GetOrAdd(type, _ =>
+                Activator.CreateInstance(typeof(Repository<>).MakeGenericType(typeof(T)), _context)!);
         }
 
         public async Task BeginTransactionAsync()
@@ -63,6 +56,9 @@ namespace RestERP.Infrastructure.Repositories
 
         public async Task CommitTransactionAsync()
         {
+            if (_transaction == null)
+                throw new InvalidOperationException("Transaction başlatılmamış. Önce BeginTransactionAsync çağrılmalı.");
+                
             try
             {
                 await SaveChangesAsync();
@@ -100,6 +96,8 @@ namespace RestERP.Infrastructure.Repositories
                 _transaction.Dispose();
                 _transaction = null;
             }
+            
+            _context?.Dispose();
         }
     }
 } 

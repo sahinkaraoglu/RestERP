@@ -26,7 +26,7 @@ namespace RestERP.Application.Services
 
         public async Task UpdateReservationAsync(Reservation reservation)
         {
-            await _unitOfWork.Repository<Reservation>().UpdateAsync(reservation);
+            _unitOfWork.Repository<Reservation>().Update(reservation);
             await _unitOfWork.SaveChangesAsync();
         }
 
@@ -35,7 +35,7 @@ namespace RestERP.Application.Services
             var reservation = await _unitOfWork.Repository<Reservation>().GetByIdAsync(id);
             if (reservation != null)
             {
-                await _unitOfWork.Repository<Reservation>().DeleteAsync(reservation);
+                _unitOfWork.Repository<Reservation>().Delete(reservation);
                 await _unitOfWork.SaveChangesAsync();
             }
         }

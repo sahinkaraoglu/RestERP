@@ -29,12 +29,12 @@ namespace RestERP.Application.Services
 
         public async Task DeleteFoodAsync(int id)
         {
-            var Food = await _unitOfWork.Repository<Food>().GetByIdAsync(id);
+            var food = await _unitOfWork.Repository<Food>().GetByIdAsync(id);
             
-            if (Food == null)
+            if (food == null)
                 throw new KeyNotFoundException($"Ürün bulunamadı. Id: {id}");
                 
-            await _unitOfWork.Repository<Food>().DeleteAsync(Food);
+            _unitOfWork.Repository<Food>().Delete(food);
             await _unitOfWork.SaveChangesAsync();
         }
 
@@ -69,17 +69,24 @@ namespace RestERP.Application.Services
             return await _unitOfWork.Repository<Food>().GetAllAsync();
         }
 
-        public async Task UpdateFoodAsync(Food Food)
+        public async Task UpdateFoodAsync(Food food)
         {
-            if (Food == null)
-                throw new ArgumentNullException(nameof(Food));
+            if (food == null)
+                throw new ArgumentNullException(nameof(food));
                 
-            var existingFood = await _unitOfWork.Repository<Food>().GetByIdAsync(Food.Id);
+            var existingFood = await _unitOfWork.Repository<Food>().GetByIdAsync(food.Id);
             
             if (existingFood == null)
-                throw new KeyNotFoundException($"Ürün bulunamadı. Id: {Food.Id}");
+                throw new KeyNotFoundException($"Ürün bulunamadı. Id: {food.Id}");
+            
+            // Entity Tracking sorunu için mevcut entity üzerinde güncelleme yap
+            existingFood.Name = food.Name;
+            existingFood.TurkishName = food.TurkishName;
+            existingFood.Description = food.Description;
+            existingFood.Price = food.Price;
+            existingFood.CategoryId = food.CategoryId;
                 
-            await _unitOfWork.Repository<Food>().UpdateAsync(Food);
+            _unitOfWork.Repository<Food>().Update(existingFood);
             await _unitOfWork.SaveChangesAsync();
         }
 

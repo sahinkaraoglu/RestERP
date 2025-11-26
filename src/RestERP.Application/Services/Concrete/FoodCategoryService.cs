@@ -33,7 +33,7 @@ namespace RestERP.Application.Services
             if (category == null)
                 throw new KeyNotFoundException($"Kategori bulunamadı. Id: {id}");
                 
-            await _unitOfWork.Repository<FoodCategory>().DeleteAsync(category);
+            _unitOfWork.Repository<FoodCategory>().Delete(category);
             await _unitOfWork.SaveChangesAsync();
         }
 
@@ -61,8 +61,13 @@ namespace RestERP.Application.Services
             
             if (existingCategory == null)
                 throw new KeyNotFoundException($"Kategori bulunamadı. Id: {category.Id}");
+            
+            // Entity Tracking sorunu için mevcut entity üzerinde güncelleme yap
+            existingCategory.Name = category.Name;
+            existingCategory.TurkishName = category.TurkishName;
+            existingCategory.Description = category.Description;
                 
-            await _unitOfWork.Repository<FoodCategory>().UpdateAsync(category);
+            _unitOfWork.Repository<FoodCategory>().Update(existingCategory);
             await _unitOfWork.SaveChangesAsync();
         }
     }

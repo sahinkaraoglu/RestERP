@@ -28,11 +28,17 @@ namespace RestERP.Infrastructure.Context
         {
             base.OnModelCreating(builder);
 
-            // Soft delete filtreleri
+            // Soft delete filtreleri - Tüm BaseEntity türevleri için
             builder.Entity<Order>().HasQueryFilter(e => !e.IsDeleted);
             builder.Entity<OrderItem>().HasQueryFilter(e => !e.IsDeleted);
             builder.Entity<Food>().HasQueryFilter(e => !e.IsDeleted);
             builder.Entity<Table>().HasQueryFilter(e => !e.IsDeleted);
+            builder.Entity<FoodCategory>().HasQueryFilter(e => !e.IsDeleted);
+            builder.Entity<Customer>().HasQueryFilter(e => !e.IsDeleted);
+            builder.Entity<Image>().HasQueryFilter(e => !e.IsDeleted);
+            builder.Entity<Reservation>().HasQueryFilter(e => !e.IsDeleted);
+            builder.Entity<RefreshToken>().HasQueryFilter(e => !e.IsDeleted);
+            builder.Entity<Log>().HasQueryFilter(e => !e.IsDeleted);
 
             // Entity konfigürasyonları
             
