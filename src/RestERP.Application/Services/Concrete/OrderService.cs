@@ -13,6 +13,7 @@ namespace RestERP.Application.Services
     public class OrderService : IOrderService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private static int _orderCounter = 0;
 
         public OrderService(IUnitOfWork unitOfWork)
         {
@@ -24,9 +25,9 @@ namespace RestERP.Application.Services
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            // Sipariş numarası oluştur (örnek: ORD-20230814-001)
-            order.OrderNumber = $"ORD-{DateTime.Now:yyyyMMdd}-{new Random().Next(1000):000}";
-            order.OrderDate = DateTime.Now;
+            // Sipariş numarası oluştur (örnek: ORD-20230814-000001)
+            order.OrderNumber = $"ORD-{DateTime.UtcNow:yyyyMMdd}-{Interlocked.Increment(ref _orderCounter):D6}";
+            order.OrderDate = DateTime.UtcNow;
             
             // Order'ı OrderItem'ları ile birlikte tek seferde ekle
             // Entity Framework navigation property sayesinde OrderItem'ları otomatik ekleyecek

@@ -33,22 +33,22 @@ namespace RestERP.Infrastructure.Repositories
 
         public async Task<bool> ExistsAsync(int id)
         {
-            return await _dbContext.Set<T>().AnyAsync(e => e.Id == id);
+            return await _dbContext.Set<T>().AnyAsync(e => e.Id == id && !e.IsDeleted);
         }
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
-            return await _dbContext.Set<T>().ToListAsync();
+            return await _dbContext.Set<T>().Where(e => !e.IsDeleted).ToListAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbContext.Set<T>().Where(predicate).ToListAsync();
+            return await _dbContext.Set<T>().Where(e => !e.IsDeleted).Where(predicate).ToListAsync();
         }
 
         public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy)
         {
-            IQueryable<T> query = _dbContext.Set<T>().Where(predicate);
+            IQueryable<T> query = _dbContext.Set<T>().Where(e => !e.IsDeleted).Where(predicate);
             
             if (orderBy != null)
                 query = orderBy(query);
@@ -58,7 +58,7 @@ namespace RestERP.Infrastructure.Repositories
 
         public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy, string includeString)
         {
-            IQueryable<T> query = _dbContext.Set<T>().Where(predicate);
+            IQueryable<T> query = _dbContext.Set<T>().Where(e => !e.IsDeleted).Where(predicate);
             
             if (!string.IsNullOrWhiteSpace(includeString))
                 query = query.Include(includeString);
@@ -71,7 +71,7 @@ namespace RestERP.Infrastructure.Repositories
 
         public async Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy, List<Expression<Func<T, object>>>? includes)
         {
-            IQueryable<T> query = _dbContext.Set<T>().Where(predicate);
+            IQueryable<T> query = _dbContext.Set<T>().Where(e => !e.IsDeleted).Where(predicate);
             
             if (includes != null)
             {
@@ -89,17 +89,19 @@ namespace RestERP.Infrastructure.Repositories
 
         public async Task<T?> GetByIdAsync(int id)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            return await _dbContext.Set<T>()
+                .Where(e => e.Id == id && !e.IsDeleted)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbContext.Set<T>().Where(predicate).FirstOrDefaultAsync();
+            return await _dbContext.Set<T>().Where(e => !e.IsDeleted).Where(predicate).FirstOrDefaultAsync();
         }
 
         public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, string includeString)
         {
-            IQueryable<T> query = _dbContext.Set<T>().Where(predicate);
+            IQueryable<T> query = _dbContext.Set<T>().Where(e => !e.IsDeleted).Where(predicate);
             
             if (!string.IsNullOrWhiteSpace(includeString))
                 query = query.Include(includeString);
@@ -109,7 +111,7 @@ namespace RestERP.Infrastructure.Repositories
 
         public async Task<T?> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate, List<Expression<Func<T, object>>> includes)
         {
-            IQueryable<T> query = _dbContext.Set<T>().Where(predicate);
+            IQueryable<T> query = _dbContext.Set<T>().Where(e => !e.IsDeleted).Where(predicate);
             
             if (includes != null)
             {
@@ -129,7 +131,7 @@ namespace RestERP.Infrastructure.Repositories
         
         public async Task<int> CountAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbContext.Set<T>().Where(predicate).CountAsync();
+            return await _dbContext.Set<T>().Where(e => !e.IsDeleted).Where(predicate).CountAsync();
         }
     }
 } 

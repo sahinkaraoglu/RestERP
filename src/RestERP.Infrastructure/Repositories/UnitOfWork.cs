@@ -15,6 +15,7 @@ namespace RestERP.Infrastructure.Repositories
         private readonly RestERPDbContext _context;
         private readonly ConcurrentDictionary<string, object> _repositories;
         private IDbContextTransaction _transaction;
+        private bool _disposed = false;
 
         public UnitOfWork(RestERPDbContext context)
         {
@@ -81,23 +82,31 @@ namespace RestERP.Infrastructure.Repositories
 
         public async Task RollbackTransactionAsync()
         {
-            if (_transaction != null)
+            if (_transaction == null)
+                throw new InvalidOperationException("Transaction başlatılmamış. Önce BeginTransactionAsync çağrılmalı.");
+                
+            await _transaction.RollbackAsync();
+            await _transaction.DisposeAsync();
+            _transaction = null;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
             {
-                await _transaction.RollbackAsync();
-                await _transaction.DisposeAsync();
-                _transaction = null;
+                if (disposing)
+                {
+                    _transaction?.Dispose();
+                    _context?.Dispose();
+                }
+                _disposed = true;
             }
         }
 
         public void Dispose()
         {
-            if (_transaction != null)
-            {
-                _transaction.Dispose();
-                _transaction = null;
-            }
-            
-            _context?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 } 
