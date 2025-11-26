@@ -10,7 +10,9 @@ namespace RestERP.Core.Interfaces
     public interface IRepository<T> where T : BaseEntity
     {
         Task<T?> GetByIdAsync(int id);
+        Task<T?> GetByIdAsync(int id, bool includeDeleted);
         Task<IReadOnlyList<T>> GetAllAsync();
+        Task<IReadOnlyList<T>> GetAllAsync(bool includeDeleted);
         Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate);
         Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy);
         Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy, string includeString);
