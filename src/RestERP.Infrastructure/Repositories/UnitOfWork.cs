@@ -95,7 +95,6 @@ namespace RestERP.Infrastructure.Repositories
 
         public void Dispose()
         {
-            _context.Dispose();
             if (_transaction != null)
             {
                 _transaction.Dispose();
