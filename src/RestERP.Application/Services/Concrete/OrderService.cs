@@ -13,7 +13,6 @@ namespace RestERP.Application.Services
     public class OrderService : IOrderService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private static int _orderCounter = 0;
 
         public OrderService(IUnitOfWork unitOfWork)
         {
@@ -25,8 +24,13 @@ namespace RestERP.Application.Services
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            // Sipariş numarası oluştur (örnek: ORD-20230814-000001)
-            order.OrderNumber = $"ORD-{DateTime.UtcNow:yyyyMMdd}-{Interlocked.Increment(ref _orderCounter):D6}";
+            // Sipariş numarası oluştur - Thread-safe ve unique
+            // Veritabanından günlük sipariş sayısını al
+            var today = DateTime.UtcNow.Date;
+            var todayOrders = await _unitOfWork.Repository<Order>()
+                .CountAsync(o => o.OrderDate.Date == today);
+            
+            order.OrderNumber = $"ORD-{DateTime.UtcNow:yyyyMMdd}-{(todayOrders + 1):D6}";
             order.OrderDate = DateTime.UtcNow;
             
             // Order'ı OrderItem'ları ile birlikte tek seferde ekle

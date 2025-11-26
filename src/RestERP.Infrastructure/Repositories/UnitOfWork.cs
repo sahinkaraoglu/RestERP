@@ -83,7 +83,7 @@ namespace RestERP.Infrastructure.Repositories
         public async Task RollbackTransactionAsync()
         {
             if (_transaction == null)
-                throw new InvalidOperationException("Transaction başlatılmamış. Önce BeginTransactionAsync çağrılmalı.");
+                return; // Transaction başlatılmamışsa sessizce dön
                 
             await _transaction.RollbackAsync();
             await _transaction.DisposeAsync();

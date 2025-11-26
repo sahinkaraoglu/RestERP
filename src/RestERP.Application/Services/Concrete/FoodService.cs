@@ -79,14 +79,14 @@ namespace RestERP.Application.Services
             if (existingFood == null)
                 throw new KeyNotFoundException($"Ürün bulunamadı. Id: {food.Id}");
             
-            // Entity Tracking sorunu için mevcut entity üzerinde güncelleme yap
+            // Entity zaten tracked olduğu için property'leri güncellemek yeterli
             existingFood.Name = food.Name;
             existingFood.TurkishName = food.TurkishName;
             existingFood.Description = food.Description;
             existingFood.Price = food.Price;
             existingFood.CategoryId = food.CategoryId;
                 
-            _unitOfWork.Repository<Food>().Update(existingFood);
+            // Update çağrısı gereksiz - Entity zaten tracked, SaveChanges yeterli
             await _unitOfWork.SaveChangesAsync();
         }
 
