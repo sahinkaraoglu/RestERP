@@ -2,6 +2,11 @@ import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 
 function getLanHost(): string {
+  // Android emülatör: bilgisayarın localhost'una 10.0.2.2 ile ulaşılır
+  if (Platform.OS === 'android' && !Constants.isDevice) {
+    return '10.0.2.2';
+  }
+
   const hostUri =
     Constants.expoConfig?.hostUri ??
     Constants.linkingUri?.replace(/^exp:\/\//, '').split('/')[0];

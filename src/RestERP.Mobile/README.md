@@ -5,7 +5,7 @@ React Native (Expo) istemcisi. Web uygulamasındaki müşteri ve yönetim ekranl
 ## Gereksinimler
 
 - Node.js 20+
-- Çalışan `RestERP.API` (`http://localhost:5000`)
+- Çalışan `RestERP.API` (`http://localhost:5050`)
 - Yemek görselleri için `RestERP.Web` (`http://localhost:5158`)
 
 ## Çalıştırma
@@ -18,8 +18,9 @@ npm start
 
 Ardından Expo Go veya emülatör ile açın.
 
-- Android emülatör: API adresi otomatik olarak makine IP / `10.0.2.2:5000`
+- Android emülatör: `10.0.2.2:5050` (API) / `10.0.2.2:5158` (görseller)
 - Fiziksel cihaz: Expo ile aynı ağdaki bilgisayar IP’si kullanılır (`src/config.ts`)
+- API’yi Visual Studio veya `dotnet run` ile başlatın; mobil erişim için `http` profili kullanın
 
 ## Test kullanıcıları
 

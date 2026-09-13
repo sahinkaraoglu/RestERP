@@ -162,11 +162,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "RestERP API v1");
-        c.RoutePrefix = string.Empty; // Swagger UI'ı root'ta göster
+        c.RoutePrefix = "swagger";
     });
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("AllowAll");
 
