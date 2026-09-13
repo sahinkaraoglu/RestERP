@@ -11,6 +11,7 @@ namespace RestERP.Application.Services.Abstract
         Task<ApplicationUser> GetUserByUsernameAsync(string username);
         Task<ApplicationUser> GetUserByEmailAsync(string email);
         Task<bool> CreateUserAsync(ApplicationUser user);
+        Task<(bool Succeeded, IReadOnlyList<string> Errors)> CreateUserWithPasswordAsync(ApplicationUser user, string password);
         Task<bool> UpdateUserAsync(ApplicationUser user);
         Task<(bool Succeeded, IReadOnlyList<string> Errors)> ResetPasswordAsync(int userId, string newPassword);
         Task<bool> DeleteUserAsync(int id);

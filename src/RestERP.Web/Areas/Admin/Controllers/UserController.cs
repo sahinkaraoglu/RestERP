@@ -2,9 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using RestERP.Application.Services.Abstract;
 using RestERP.Domain.Enums;
 using RestERP.Core.Domain.Entities;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 
 namespace RestERP.Web.Areas.Admin.Controllers
 {
@@ -12,32 +9,22 @@ namespace RestERP.Web.Areas.Admin.Controllers
     public class UserController : Controller
     {
         private readonly ILogger<UserController> _logger;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IUserService _userService;
 
         public UserController(
-            ILogger<UserController> logger, 
-            IHttpClientFactory httpClientFactory)
+            ILogger<UserController> logger,
+            IUserService userService)
         {
             _logger = logger;
-            _httpClientFactory = httpClientFactory;
+            _userService = userService;
         }
 
         public async Task<IActionResult> Index()
         {
             try
             {
-                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-                var response = await httpClient.GetAsync("api/user");
-                
-                if (!response.IsSuccessStatusCode)
-                {
-                    TempData["ErrorMessage"] = "Personel listesi alınırken bir hata oluştu.";
-                    return View(new List<ApplicationUser>());
-                }
-
-                var json = await response.Content.ReadAsStringAsync();
-                var users = JsonSerializer.Deserialize<List<ApplicationUser>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                return View(users ?? new List<ApplicationUser>());
+                var users = (await _userService.GetAllUsersAsync()).ToList();
+                return View(users);
             }
             catch (Exception ex)
             {
@@ -67,24 +54,21 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 {
                     user.UserName = user.Email;
                     user.IsActive = true;
-                    user.PasswordHash = HashPassword(password);
                     user.RoleType = Role.Employee;
-                    user.PhoneNumber = user.PhoneNumber;
-                    // CreatedDate removed - Identity manages timestamps
 
-                    var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-                    var json = JsonSerializer.Serialize(user);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await httpClient.PostAsync("api/user", content);
-
-                    if (response.IsSuccessStatusCode)
+                    var (succeeded, errors) = await _userService.CreateUserWithPasswordAsync(user, password);
+                    if (succeeded)
                     {
                         TempData["SuccessMessage"] = "Kullanıcı başarıyla eklendi.";
                         return RedirectToAction(nameof(Index));
                     }
-                    
-                    ModelState.AddModelError("", "Kullanıcı eklenirken bir hata oluştu.");
+
+                    foreach (var error in errors)
+                    {
+                        ModelState.AddModelError("", error);
+                    }
                 }
+
                 return View("~/Areas/Admin/Views/User/Create.cshtml", user);
             }
             catch (Exception ex)
@@ -105,18 +89,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-                var response = await httpClient.GetAsync($"api/user/{id}");
-                
-                if (!response.IsSuccessStatusCode)
-                {
-                    TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                var json = await response.Content.ReadAsStringAsync();
-                var user = JsonSerializer.Deserialize<ApplicationUser>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                
+                var user = await _userService.GetUserByIdAsync(id);
                 if (user == null)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
@@ -144,18 +117,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-                var getResponse = await httpClient.GetAsync($"api/user/{id}");
-                
-                if (!getResponse.IsSuccessStatusCode)
-                {
-                    TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                var json = await getResponse.Content.ReadAsStringAsync();
-                var user = JsonSerializer.Deserialize<ApplicationUser>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                
+                var user = await _userService.GetUserByIdAsync(id);
                 if (user == null)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
@@ -181,15 +143,13 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
                 user.Email = model.Email;
+                user.UserName = model.Email;
                 user.PhoneNumber = model.PhoneNumber;
                 user.IsActive = model.IsActive;
                 user.RoleType = model.RoleType;
-            
-                var updateJson = JsonSerializer.Serialize(user);
-                var content = new StringContent(updateJson, Encoding.UTF8, "application/json");
-                var updateResponse = await httpClient.PutAsync($"api/user/{id}", content);
-                
-                if (!updateResponse.IsSuccessStatusCode)
+
+                var updated = await _userService.UpdateUserAsync(user);
+                if (!updated)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı güncellenirken bir hata oluştu.";
                     return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
@@ -197,18 +157,11 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
                 if (resetPassword)
                 {
-                    var resetPayload = JsonSerializer.Serialize(new
+                    var (resetSucceeded, resetErrors) = await _userService.ResetPasswordAsync(id, newPassword!);
+                    if (!resetSucceeded)
                     {
-                        NewPassword = newPassword,
-                        ConfirmPassword = confirmPassword
-                    });
-                    var resetContent = new StringContent(resetPayload, Encoding.UTF8, "application/json");
-                    var resetResponse = await httpClient.PostAsync($"api/user/{id}/reset-password", resetContent);
-
-                    if (!resetResponse.IsSuccessStatusCode)
-                    {
-                        var resetBody = await resetResponse.Content.ReadAsStringAsync();
-                        TempData["ErrorMessage"] = "Kullanıcı güncellendi ancak şifre sıfırlanamadı. " + FormatResetPasswordError(resetBody);
+                        TempData["ErrorMessage"] = "Kullanıcı güncellendi ancak şifre sıfırlanamadı. " +
+                            string.Join(" ", resetErrors);
                         return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
                     }
 
@@ -237,17 +190,13 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return Json(new { success = false, message = "Geçersiz kullanıcı ID'si." });
                 }
 
-                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-                var response = await httpClient.DeleteAsync($"api/user/{id}");
-                
-                if (response.IsSuccessStatusCode)
+                var deleted = await _userService.DeleteUserAsync(id);
+                if (deleted)
                 {
                     return Json(new { success = true, message = "Kullanıcı başarıyla silindi." });
                 }
-                else
-                {
-                    return Json(new { success = false, message = "Kullanıcı silinirken bir hata oluştu." });
-                }
+
+                return Json(new { success = false, message = "Kullanıcı silinirken bir hata oluştu." });
             }
             catch (Exception ex)
             {
@@ -255,44 +204,5 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 return Json(new { success = false, message = "Kullanıcı silinirken bir hata oluştu: " + ex.Message });
             }
         }
-
-        private static string FormatResetPasswordError(string resetBody)
-        {
-            try
-            {
-                using var doc = JsonDocument.Parse(resetBody);
-                if (doc.RootElement.TryGetProperty("errors", out var errors) && errors.ValueKind == JsonValueKind.Array)
-                {
-                    var messages = errors.EnumerateArray()
-                        .Select(e => e.GetString())
-                        .Where(s => !string.IsNullOrWhiteSpace(s));
-                    var joined = string.Join(" ", messages!);
-                    if (!string.IsNullOrWhiteSpace(joined))
-                    {
-                        return joined;
-                    }
-                }
-
-                if (doc.RootElement.TryGetProperty("message", out var message))
-                {
-                    return message.GetString() ?? resetBody;
-                }
-            }
-            catch (JsonException)
-            {
-            }
-
-            return resetBody;
-        }
-
-        private string HashPassword(string password)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
-        }
     }
-} 
-
+}

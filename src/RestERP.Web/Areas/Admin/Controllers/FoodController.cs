@@ -3,11 +3,6 @@ using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Areas.Admin.Models;
- 
-using System.Text;
-using System.Text.Json;
-using Microsoft.AspNetCore.Http;
-using System.IO;
 
 namespace RestERP.Web.Areas.Admin.Controllers
 {
@@ -15,16 +10,16 @@ namespace RestERP.Web.Areas.Admin.Controllers
     public class FoodController : Controller
     {
         private readonly ILogger<FoodController> _logger;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IFoodService _foodService;
         private readonly IWebHostEnvironment _env;
 
         public FoodController(
             ILogger<FoodController> logger,
-            IHttpClientFactory httpClientFactory,
+            IFoodService foodService,
             IWebHostEnvironment env)
         {
             _logger = logger;
-            _httpClientFactory = httpClientFactory;
+            _foodService = foodService;
             _env = env;
         }
 
@@ -32,21 +27,8 @@ namespace RestERP.Web.Areas.Admin.Controllers
         {
             try
             {
-                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-                var categoriesResponse = await httpClient.GetAsync("api/food/categories");
-                var foodsResponse = await httpClient.GetAsync("api/food");
-
-                if (!categoriesResponse.IsSuccessStatusCode || !foodsResponse.IsSuccessStatusCode)
-                {
-                    TempData["ErrorMessage"] = "Veriler yüklenemedi.";
-                    return View("Error", new RestERP.Web.Models.ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
-                }
-
-                var categoriesJson = await categoriesResponse.Content.ReadAsStringAsync();
-                var foodsJson = await foodsResponse.Content.ReadAsStringAsync();
-
-                var categories = JsonSerializer.Deserialize<List<FoodCategory>>(categoriesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<FoodCategory>();
-                var foods = JsonSerializer.Deserialize<List<Food>>(foodsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Food>();
+                var categories = (await _foodService.GetAllFoodCategoriesAsync()).ToList();
+                var foods = (await _foodService.GetAllFoodsAsync()).ToList();
 
                 ViewBag.FoodCategories = categories;
                 ViewBag.Foods = foods;
@@ -94,19 +76,8 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     Price = model.Price,
                 };
 
-                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-                var json = JsonSerializer.Serialize(food);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync("api/food", content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return Json(new { success = true, message = "Ürün başarıyla eklendi" });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Ürün eklenirken bir hata oluştu" });
-                }
+                await _foodService.CreateFoodAsync(food);
+                return Json(new { success = true, message = "Ürün başarıyla eklendi" });
             }
             catch (Exception ex)
             {
@@ -120,37 +91,21 @@ namespace RestERP.Web.Areas.Admin.Controllers
             try
             {
                 var foodcategories = FoodCategorySeedData.GetFoodCategories();
-                
-                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-                var response = await httpClient.GetAsync($"api/food/{id}");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
-                    return RedirectToAction("Index", "Food", new { area = "Admin" });
-                }
-
-                var json = await response.Content.ReadAsStringAsync();
-                var food = JsonSerializer.Deserialize<Food>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (food == null)
-                {
-                    TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
-                    return RedirectToAction("Index", "Food", new { area = "Admin" });
-                }
+                var food = await _foodService.GetFoodByIdAsync(id);
+                var images = (await _foodService.GetAllFoodImagesAsync())
+                    .Where(i => i.FoodId == id)
+                    .ToList();
 
                 ViewBag.FoodCategories = foodcategories;
                 ViewBag.Food = food;
-                var httpClientForImages = _httpClientFactory.CreateClient("RestERPApi");
-                var imagesResponse = await httpClientForImages.GetAsync("api/food/images");
-                if (imagesResponse.IsSuccessStatusCode)
-                {
-                    var imagesJson = await imagesResponse.Content.ReadAsStringAsync();
-                    var images = JsonSerializer.Deserialize<List<Image>>(imagesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Image>();
-                    ViewBag.Images = images;
-                }
+                ViewBag.Images = images;
 
                 return View("~/Areas/Admin/Views/Food/Edit.cshtml");
+            }
+            catch (KeyNotFoundException)
+            {
+                TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
+                return RedirectToAction("Index", "Food", new { area = "Admin" });
             }
             catch (Exception ex)
             {
@@ -194,16 +149,11 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 {
                     var foodcategories = FoodCategorySeedData.GetFoodCategories();
                     ViewBag.FoodCategories = foodcategories;
-                    var httpClientForImages = _httpClientFactory.CreateClient("RestERPApi");
-                    var imagesResponse = await httpClientForImages.GetAsync("api/food/images");
-                    if (imagesResponse.IsSuccessStatusCode)
-                    {
-                        var imagesJson = await imagesResponse.Content.ReadAsStringAsync();
-                        var images = JsonSerializer.Deserialize<List<Image>>(imagesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Image>();
-                        ViewBag.Images = images;
-                    }
+                    ViewBag.Images = (await _foodService.GetAllFoodImagesAsync())
+                        .Where(i => i.FoodId == Id)
+                        .ToList();
 
-                    var updatedFood = new Food
+                    ViewBag.Food = new Food
                     {
                         Id = Id,
                         CategoryId = CategoryId,
@@ -213,27 +163,10 @@ namespace RestERP.Web.Areas.Admin.Controllers
                         Price = Price
                     };
 
-                    ViewBag.Food = updatedFood;
                     return View("~/Areas/Admin/Views/Food/Edit.cshtml");
                 }
 
-                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-                var getResponse = await httpClient.GetAsync($"api/food/{Id}");
-                
-                if (!getResponse.IsSuccessStatusCode)
-                {
-                    TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
-                    return RedirectToAction("Index", "Food", new { area = "Admin" });
-                }
-
-                var existingJson = await getResponse.Content.ReadAsStringAsync();
-                var existingFood = JsonSerializer.Deserialize<Food>(existingJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (existingFood == null)
-                {
-                    TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
-                    return RedirectToAction("Index", "Food", new { area = "Admin" });
-                }
+                var existingFood = await _foodService.GetFoodByIdAsync(Id);
 
                 existingFood.CategoryId = CategoryId;
                 existingFood.Name = Name;
@@ -241,7 +174,6 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 existingFood.Description = Description;
                 existingFood.Price = Price;
 
-                // Görsel yükleme işlemi (opsiyonel)
                 if (ImageFile != null && ImageFile.Length > 0)
                 {
                     var uploadsRoot = Path.Combine(_env.WebRootPath ?? string.Empty, "img", "Food", "Uploads");
@@ -259,40 +191,19 @@ namespace RestERP.Web.Areas.Admin.Controllers
                         await ImageFile.CopyToAsync(stream);
                     }
 
-                    // Web köküne göre göreli yol
                     var relativePath = $"/img/Food/Uploads/{fileName}";
-
-                    // Var olan ilk görseli güncelle, yoksa yeni ekle
-                    if (existingFood.Images != null && existingFood.Images.Any())
-                    {
-                        var firstImage = existingFood.Images.First();
-                        firstImage.Path = relativePath;
-                        firstImage.FoodId = existingFood.Id;
-                    }
-                    else
-                    {
-                        existingFood.Images = new List<Image>
-                        {
-                            new Image { Path = relativePath, FoodId = existingFood.Id }
-                        };
-                    }
+                    await _foodService.SaveFoodImageAsync(Id, relativePath);
                 }
 
-                var json = JsonSerializer.Serialize(existingFood);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var updateResponse = await httpClient.PutAsync($"api/food/{Id}", content);
+                await _foodService.UpdateFoodAsync(existingFood);
 
-                if (updateResponse.IsSuccessStatusCode)
-                {
-                    // Cache kaldırıldı: doğrudan API'den okunuyor
-                    TempData["SuccessMessage"] = "Ürün başarıyla güncellendi.";
-                    return RedirectToAction("Index", "Food", new { area = "Admin" });
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Ürün güncellenirken bir hata oluştu.";
-                    return RedirectToAction("Index", "Food", new { area = "Admin" });
-                }
+                TempData["SuccessMessage"] = "Ürün başarıyla güncellendi.";
+                return RedirectToAction("Index", "Food", new { area = "Admin" });
+            }
+            catch (KeyNotFoundException)
+            {
+                TempData["ErrorMessage"] = "Güncellenecek ürün bulunamadı.";
+                return RedirectToAction("Index", "Food", new { area = "Admin" });
             }
             catch (Exception ex)
             {
@@ -301,8 +212,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
                 var foodcategories = FoodCategorySeedData.GetFoodCategories();
                 ViewBag.FoodCategories = foodcategories;
-
-                var updatedFood = new Food
+                ViewBag.Food = new Food
                 {
                     Id = Id,
                     CategoryId = CategoryId,
@@ -312,7 +222,6 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     Price = Price
                 };
 
-                ViewBag.Food = updatedFood;
                 return View("~/Areas/Admin/Views/Food/Edit.cshtml");
             }
         }
@@ -322,18 +231,12 @@ namespace RestERP.Web.Areas.Admin.Controllers
         {
             try
             {
-                var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-                var response = await httpClient.DeleteAsync($"api/food/{id}");
-                
-                if (response.IsSuccessStatusCode)
-                {
-                    // Cache kaldırıldı: doğrudan API'den okunuyor
-                    return Json(new { success = true, message = "Ürün başarıyla silindi." });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Silinecek ürün bulunamadı." });
-                }
+                await _foodService.DeleteFoodAsync(id);
+                return Json(new { success = true, message = "Ürün başarıyla silindi." });
+            }
+            catch (KeyNotFoundException)
+            {
+                return Json(new { success = false, message = "Silinecek ürün bulunamadı." });
             }
             catch (Exception ex)
             {
@@ -343,5 +246,3 @@ namespace RestERP.Web.Areas.Admin.Controllers
         }
     }
 }
-
-

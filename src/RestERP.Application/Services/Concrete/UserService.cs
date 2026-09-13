@@ -9,17 +9,21 @@ using System.Security.Claims;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
-
 namespace RestERP.Application.Services
 {
     public class UserService : IUserService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole<int>> _roleManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
+        public UserService(
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole<int>> roleManager,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -55,16 +59,51 @@ namespace RestERP.Application.Services
         
         public async Task<bool> CreateUserAsync(ApplicationUser user)
         {
-            try
+            return (await CreateUserWithPasswordAsync(user, string.Empty)).Succeeded;
+        }
+
+        public async Task<(bool Succeeded, IReadOnlyList<string> Errors)> CreateUserWithPasswordAsync(
+            ApplicationUser user,
+            string password)
+        {
+            if (user == null)
             {
-                // Not: Parola ile oluşturmak için UserManager.CreateAsync(user, password) kullanılmalı
-                // Bu metot parola olmadan çalışmaz, AuthService.Register kullanın
-                return false;
+                return (false, new[] { "Kullanıcı bilgisi boş olamaz." });
             }
-            catch
+
+            if (string.IsNullOrWhiteSpace(password))
             {
-                return false;
+                return (false, new[] { "Şifre zorunludur." });
             }
+
+            var existingByEmail = await _userManager.FindByEmailAsync(user.Email);
+            if (existingByEmail != null)
+            {
+                return (false, new[] { "Bu e-posta adresi zaten kullanılıyor." });
+            }
+
+            user.UserName ??= user.Email;
+            user.IsActive = true;
+
+            var createResult = await _userManager.CreateAsync(user, password);
+            if (!createResult.Succeeded)
+            {
+                return (false, createResult.Errors.Select(e => e.Description).ToList());
+            }
+
+            var roleName = user.RoleType.ToString();
+            if (!await _roleManager.RoleExistsAsync(roleName))
+            {
+                await _roleManager.CreateAsync(new IdentityRole<int>(roleName));
+            }
+
+            var roleResult = await _userManager.AddToRoleAsync(user, roleName);
+            if (!roleResult.Succeeded)
+            {
+                return (false, roleResult.Errors.Select(e => e.Description).ToList());
+            }
+
+            return (true, Array.Empty<string>());
         }
 
         public async Task<bool> UpdateUserAsync(ApplicationUser user)

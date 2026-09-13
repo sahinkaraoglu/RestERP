@@ -95,33 +95,35 @@
 
                         <div class="order-items">
                             <h3>Sipariş Kalemleri</h3>
-                            <table class="items-table">
-                                <thead>
-                                    <tr>
-                                        <th>Ürün</th>
-                                        <th>Miktar</th>
-                                        <th>Birim Fiyat</th>
-                                        <th>Toplam</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in order.OrderItems.Where(x => x.Status != RestERP.Domain.Enums.OrderStatus.Cancelled && !x.IsDeleted))
-                                    {
+                            <div class="table-responsive">
+                                <table class="items-table">
+                                    <thead>
                                         <tr>
-                                            <td>@(item.Food?.TurkishName ?? "Ürün Bulunamadı")</td>
-                                            <td>@item.Quantity</td>
-                                            <td>@item.UnitPrice.ToString("C2")</td>
-                                            <td>@item.TotalPrice.ToString("C2")</td>
+                                            <th>Ürün</th>
+                                            <th>Miktar</th>
+                                            <th>Birim Fiyat</th>
+                                            <th>Toplam</th>
                                         </tr>
-                                    }
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="3" class="total-label">Toplam Tutar:</td>
-                                        <td class="total-amount">@order.TotalAmount.ToString("C2")</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in order.OrderItems.Where(x => x.Status != RestERP.Domain.Enums.OrderStatus.Cancelled && !x.IsDeleted))
+                                        {
+                                            <tr>
+                                                <td class="product-name">@(item.Food?.TurkishName ?? "Ürün Bulunamadı")</td>
+                                                <td>@item.Quantity</td>
+                                                <td>@item.UnitPrice.ToString("C2")</td>
+                                                <td>@item.TotalPrice.ToString("C2")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="total-label">Toplam Tutar:</td>
+                                            <td class="total-amount">@order.TotalAmount.ToString("C2")</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 }
@@ -223,8 +225,8 @@
     }
 
     .orders-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        display: flex;
+        flex-direction: column;
         gap: 20px;
         margin-top: 20px;
     }
@@ -301,6 +303,11 @@
         font-weight: 600;
     }
 
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
     .items-table {
         width: 100%;
         border-collapse: collapse;
@@ -308,7 +315,11 @@
         background-color: #fff;
         border: 1px solid #e5e0d5;
         border-radius: 4px;
-        overflow: hidden;
+        table-layout: fixed;
+    }
+
+    .items-table .product-name {
+        word-break: break-word;
     }
 
     .items-table th,
@@ -446,6 +457,7 @@
         return status switch
         {
             OrderStatus.New => "Yeni",
+            OrderStatus.InProgress => "Hazırlanıyor",
             OrderStatus.Ready => "Hazır",
             OrderStatus.Completed => "Tamamlandı",
             OrderStatus.Cancelled => "İptal Edildi",

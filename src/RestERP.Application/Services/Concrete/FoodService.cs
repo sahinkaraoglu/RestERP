@@ -99,5 +99,26 @@ namespace RestERP.Application.Services
         {
             return await _unitOfWork.Repository<Image>().GetAllAsync();
         }
+
+        public async Task SaveFoodImageAsync(int foodId, string path)
+        {
+            var images = await _unitOfWork.Repository<Image>().GetAsync(i => i.FoodId == foodId);
+            var existing = images.FirstOrDefault();
+
+            if (existing != null)
+            {
+                existing.Path = path;
+            }
+            else
+            {
+                await _unitOfWork.Repository<Image>().AddAsync(new Image
+                {
+                    FoodId = foodId,
+                    Path = path
+                });
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 } 

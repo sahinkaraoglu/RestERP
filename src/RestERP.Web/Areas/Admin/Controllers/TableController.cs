@@ -2,10 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Web.Models;
 using RestERP.Application.Services.Abstract;
-using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Core.Domain.Entities;
-using System.Text;
-using System.Text.Json;
 
 namespace RestERP.Web.Areas.Admin.Controllers;
 
@@ -13,36 +10,26 @@ namespace RestERP.Web.Areas.Admin.Controllers;
 public class TableController : Controller
 {
     private readonly ILogger<TableController> _logger;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ITableService _tableService;
 
-    public TableController(ILogger<TableController> logger, IHttpClientFactory httpClientFactory)
+    public TableController(ILogger<TableController> logger, ITableService tableService)
     {
         _logger = logger;
-        _httpClientFactory = httpClientFactory;
+        _tableService = tableService;
     }
 
     public async Task<IActionResult> Index()
     {
         try
         {
-            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-            var response = await httpClient.GetAsync("api/table");
-            
-            if (!response.IsSuccessStatusCode)
-            {
-                TempData["ErrorMessage"] = "Masa listesi alınırken bir hata oluştu.";
-                return View(new List<Table>());
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-            var tables = JsonSerializer.Deserialize<List<Table>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            return View(tables ?? new List<Table>());
+            var tables = (await _tableService.GetAllTablesAsync()).ToList();
+            return View(tables);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Masa listesi alınırken hata oluştu");
             TempData["ErrorMessage"] = "Masa listesi alınırken bir hata oluştu: " + ex.Message;
-            return View("Error", new RestERP.Web.Models.ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
+            return View("Error", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
         }
     }
 
@@ -61,21 +48,9 @@ public class TableController : Controller
                 return View(table);
             }
 
-            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-            var json = JsonSerializer.Serialize(table);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync("api/table", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                TempData["SuccessMessage"] = "Masa başarıyla oluşturuldu.";
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                ModelState.AddModelError("", "Masa oluşturulurken bir hata oluştu.");
-                return View(table);
-            }
+            await _tableService.CreateTableAsync(table);
+            TempData["SuccessMessage"] = "Masa başarıyla oluşturuldu.";
+            return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
@@ -89,25 +64,13 @@ public class TableController : Controller
     {
         try
         {
-            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-            var response = await httpClient.GetAsync($"api/table/{id}");
-            
-            if (!response.IsSuccessStatusCode)
-            {
-                TempData["ErrorMessage"] = "Masa bulunamadı.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-            var table = JsonSerializer.Deserialize<Table>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            
-            if (table == null)
-            {
-                TempData["ErrorMessage"] = "Masa bulunamadı.";
-                return RedirectToAction(nameof(Index));
-            }
-
+            var table = await _tableService.GetTableByIdAsync(id);
             return View(table);
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["ErrorMessage"] = "Masa bulunamadı.";
+            return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
@@ -133,21 +96,9 @@ public class TableController : Controller
                 return View(table);
             }
 
-            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-            var json = JsonSerializer.Serialize(table);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await httpClient.PutAsync($"api/table/{id}", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                TempData["SuccessMessage"] = "Masa başarıyla güncellendi.";
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                ModelState.AddModelError("", "Masa güncellenirken bir hata oluştu.");
-                return View(table);
-            }
+            await _tableService.UpdateTableAsync(table);
+            TempData["SuccessMessage"] = "Masa başarıyla güncellendi.";
+            return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
@@ -161,25 +112,13 @@ public class TableController : Controller
     {
         try
         {
-            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-            var response = await httpClient.GetAsync($"api/table/{id}");
-            
-            if (!response.IsSuccessStatusCode)
-            {
-                TempData["ErrorMessage"] = "Masa bulunamadı.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-            var table = JsonSerializer.Deserialize<Table>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            
-            if (table == null)
-            {
-                TempData["ErrorMessage"] = "Masa bulunamadı.";
-                return RedirectToAction(nameof(Index));
-            }
-
+            var table = await _tableService.GetTableByIdAsync(id);
             return View(table);
+        }
+        catch (KeyNotFoundException)
+        {
+            TempData["ErrorMessage"] = "Masa bulunamadı.";
+            return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
         {
@@ -195,17 +134,8 @@ public class TableController : Controller
     {
         try
         {
-            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-            var response = await httpClient.DeleteAsync($"api/table/{id}");
-            
-            if (response.IsSuccessStatusCode)
-            {
-                TempData["SuccessMessage"] = "Masa başarıyla silindi.";
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Masa silinirken bir hata oluştu.";
-            }
+            await _tableService.DeleteTableAsync(id);
+            TempData["SuccessMessage"] = "Masa başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
         catch (Exception ex)
@@ -221,20 +151,9 @@ public class TableController : Controller
     {
         try
         {
-            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-            var json = JsonSerializer.Serialize(isOccupied);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await httpClient.PutAsync($"api/table/{id}/status", content);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                var status = isOccupied ? "dolu" : "boş";
-                return Json(new { success = true, message = $"Masa durumu {status} olarak güncellendi." });
-            }
-            else
-            {
-                return Json(new { success = false, message = "Masa durumu güncellenirken bir hata oluştu." });
-            }
+            await _tableService.SetTableOccupiedStatusAsync(id, isOccupied);
+            var status = isOccupied ? "dolu" : "boş";
+            return Json(new { success = true, message = $"Masa durumu {status} olarak güncellendi." });
         }
         catch (Exception ex)
         {

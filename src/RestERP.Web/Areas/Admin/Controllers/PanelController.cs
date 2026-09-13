@@ -4,8 +4,6 @@ using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Models;
 using RestERP.Application.Services.Abstract;
 using RestERP.Domain.Enums;
-using RestERP.Core.Domain.Entities;
-using System.Text.Json;
 
 namespace RestERP.Web.Areas.Admin.Controllers;
 
@@ -13,55 +11,40 @@ namespace RestERP.Web.Areas.Admin.Controllers;
 public class PanelController : Controller
 {
     private readonly ILogger<PanelController> _logger;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IFoodService _foodService;
+    private readonly ITableService _tableService;
+    private readonly IOrderService _orderService;
+    private readonly IUserService _userService;
 
     public PanelController(
-        ILogger<PanelController> logger, 
-        IHttpClientFactory httpClientFactory)
+        ILogger<PanelController> logger,
+        IFoodService foodService,
+        ITableService tableService,
+        IOrderService orderService,
+        IUserService userService)
     {
         _logger = logger;
-        _httpClientFactory = httpClientFactory;
+        _foodService = foodService;
+        _tableService = tableService;
+        _orderService = orderService;
+        _userService = userService;
     }
 
     public async Task<IActionResult> Index()
     {
         try
         {
-            var httpClient = _httpClientFactory.CreateClient("RestERPApi");
-            
-            // Yemek sayısını al
-            var foodsResponse = await httpClient.GetAsync("api/food");
-            var menuItemCount = 0;
-            if (foodsResponse.IsSuccessStatusCode)
-            {
-                var foodsJson = await foodsResponse.Content.ReadAsStringAsync();
-                var foods = JsonSerializer.Deserialize<List<Food>>(foodsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                menuItemCount = foods?.Count ?? 0;
-            }
-            
+            var foods = await _foodService.GetAllFoodsAsync();
+            var menuItemCount = foods.Count();
+
             var foodCategories = FoodCategorySeedData.GetFoodCategories();
             var categoryCount = foodCategories.Count();
-            
-            // Tüm masaları al
-            var tablesResponse = await httpClient.GetAsync("api/table");
-            var totalTables = 0;
-            if (tablesResponse.IsSuccessStatusCode)
-            {
-                var tablesJson = await tablesResponse.Content.ReadAsStringAsync();
-                var tables = JsonSerializer.Deserialize<List<Table>>(tablesJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                totalTables = tables?.Count ?? 0;
-            }
-            
-            // Tüm aktif siparişleri al
-            var activeOrdersResponse = await httpClient.GetAsync("api/order/active");
-            var activeOrders = new List<Order>();
-            if (activeOrdersResponse.IsSuccessStatusCode)
-            {
-                var activeOrdersJson = await activeOrdersResponse.Content.ReadAsStringAsync();
-                activeOrders = JsonSerializer.Deserialize<List<Order>>(activeOrdersJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Order>();
-            }
-            
-            // Aktif siparişi olan benzersiz masa sayısını hesapla
+
+            var tables = await _tableService.GetAllTablesAsync();
+            var totalTables = tables.Count();
+
+            var activeOrders = (await _orderService.GetActiveOrdersAsync()).ToList();
+
             var occupiedTables = activeOrders
                 .Select(o => o.TableId)
                 .Distinct()
@@ -77,15 +60,8 @@ public class PanelController : Controller
             {
                 tableOccupancyPercentage = (int)Math.Round((double)occupiedTables / totalTables * 100);
             }
-            
-            // Kullanıcıları çekerek çalışan sayısını hesaplayalım
-            var usersResponse = await httpClient.GetAsync("api/user");
-            var users = new List<ApplicationUser>();
-            if (usersResponse.IsSuccessStatusCode)
-            {
-                var usersJson = await usersResponse.Content.ReadAsStringAsync();
-                users = JsonSerializer.Deserialize<List<ApplicationUser>>(usersJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<ApplicationUser>();
-            }
+
+            var users = (await _userService.GetAllUsersAsync()).ToList();
 
             var totalEmployees = users.Count(u => u.RoleType == Role.Employee);
             var activeEmployees = users.Count(u => u.RoleType == Role.Employee && u.IsActive);
@@ -97,28 +73,15 @@ public class PanelController : Controller
             var allactive = activeEmployees + activeCustomers;
 
             var today = DateTime.Today;
-            var todayOrdersResponse = await httpClient.GetAsync($"api/order/date/{today:yyyy-MM-dd}");
-            var todayOrders = new List<Order>();
-            if (todayOrdersResponse.IsSuccessStatusCode)
-            {
-                var todayOrdersJson = await todayOrdersResponse.Content.ReadAsStringAsync();
-                todayOrders = JsonSerializer.Deserialize<List<Order>>(todayOrdersJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Order>();
-            }
-            
-            var todayOrderCount = todayOrders.Count();
+            var todayOrders = (await _orderService.GetOrdersByDateAsync(today)).ToList();
+
+            var todayOrderCount = todayOrders.Count;
             var todayTotalRevenue = todayOrders.Sum(o => o.TotalAmount);
 
-            // Aylık istatistikleri hesapla
             var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
-            var monthlyOrdersResponse = await httpClient.GetAsync($"api/order/daterange?startDate={firstDayOfMonth:yyyy-MM-dd}&endDate={today:yyyy-MM-dd}");
-            var monthlyOrders = new List<Order>();
-            if (monthlyOrdersResponse.IsSuccessStatusCode)
-            {
-                var monthlyOrdersJson = await monthlyOrdersResponse.Content.ReadAsStringAsync();
-                monthlyOrders = JsonSerializer.Deserialize<List<Order>>(monthlyOrdersJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<Order>();
-            }
-            
-            var monthlyOrderCount = monthlyOrders.Count();
+            var monthlyOrders = (await _orderService.GetOrdersByDateRangeAsync(firstDayOfMonth, today)).ToList();
+
+            var monthlyOrderCount = monthlyOrders.Count;
             var monthlyRevenue = monthlyOrders.Sum(o => o.TotalAmount);
 
             var model = new 

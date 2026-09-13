@@ -106,15 +106,28 @@ namespace RestERP.Application.Services
                 orderBy: q => q.OrderByDescending(o => o.OrderDate),
                 includes: includes);
             
-            // Aktif sipariş kalemlerini filtrele ve toplam tutarı hesapla
+            var allActiveItems = orders.SelectMany(o => o.OrderItems)
+                .Where(oi => oi.Status != OrderStatus.Cancelled)
+                .ToList();
+            var foodIds = allActiveItems.Select(oi => oi.FoodId).Distinct().ToList();
+            var foods = await _unitOfWork.Repository<Food>().GetAsync(f => foodIds.Contains(f.Id));
+            var foodDict = foods.ToDictionary(f => f.Id);
+
             foreach (var order in orders)
             {
                 var activeItems = order.OrderItems
                     .Where(oi => oi.Status != OrderStatus.Cancelled)
                     .ToList();
+
+                foreach (var item in activeItems)
+                {
+                    if (foodDict.TryGetValue(item.FoodId, out var food))
+                    {
+                        item.Food = food;
+                    }
+                }
+
                 order.OrderItems = activeItems;
-                
-                // Toplam tutarı sadece aktif sipariş kalemlerinden hesapla
                 order.TotalAmount = activeItems.Sum(oi => oi.TotalPrice);
             }
 

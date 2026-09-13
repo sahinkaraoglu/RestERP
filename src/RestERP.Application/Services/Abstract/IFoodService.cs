@@ -15,5 +15,6 @@ namespace RestERP.Application.Services.Abstract
         Task DeleteFoodAsync(int id);
         Task<IEnumerable<FoodCategory>> GetAllFoodCategoriesAsync();
         Task<IEnumerable<Image>> GetAllFoodImagesAsync();
+        Task SaveFoodImageAsync(int foodId, string path);
     }
 } 
