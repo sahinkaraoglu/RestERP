@@ -25,18 +25,18 @@ Production-ready, layered restaurant ERP built on ASP.NET Core (.NET 9). The sol
     <table>
         <tr>
             <td>
-                <img width="1080" height="2400" alt="Screenshot_1789316633" src="https://github.com/user-attachments/assets/7901b0cd-844f-41b0-a78f-6f298c8395ca" alt="Web — Home" width="400"/>
+                <img width="1080" height="2400" alt="Screenshot_1789316097" src="https://github.com/user-attachments/assets/d0602d43-c71f-41b6-8cb0-9342343eca13" width="400"/>
             </td>
             <td>
-                <img width="1080" height="2400" alt="Screenshot_1789316724" src="https://github.com/user-attachments/assets/00ceba68-b452-411d-8f0a-aad7faa628b2" alt="Web — Management" width="400"/>
+                 <img width="1080" height="2400" alt="Screenshot_1789316585" src="https://github.com/user-attachments/assets/386d6d44-50cf-4f0d-8ff2-9518a9cb4da7" width="400"/>
             </td>
         </tr>
         <tr>
             <td>
-                <img width="1080" height="2400" alt="Screenshot_1789316585" src="https://github.com/user-attachments/assets/386d6d44-50cf-4f0d-8ff2-9518a9cb4da7" alt="Web — Menu" width="400"/>
+               <img width="1080" height="2400" alt="Screenshot_1789316724" src="https://github.com/user-attachments/assets/00ceba68-b452-411d-8f0a-aad7faa628b2"  width="400"/>
             </td>
             <td>
-                <img width="1080" height="2400" alt="Screenshot_1789316097" src="https://github.com/user-attachments/assets/d0602d43-c71f-41b6-8cb0-9342343eca13" alt="Web — Login" width="400"/>
+                <img width="1080" height="2400" alt="Screenshot_1789316633" src="https://github.com/user-attachments/assets/7901b0cd-844f-41b0-a78f-6f298c8395ca" width="400"/>
             </td>
         </tr>
     </table>
