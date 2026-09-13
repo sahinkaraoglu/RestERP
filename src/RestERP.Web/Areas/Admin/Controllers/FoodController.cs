@@ -15,12 +15,10 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
         public FoodController(
             ILogger<FoodController> logger,
-            IFoodService foodService,
-            IWebHostEnvironment env)
+            IFoodService foodService)
         {
             _logger = logger;
             _foodService = foodService;
-            _env = env;
         }
 
         public async Task<IActionResult> Index()

@@ -42,7 +42,7 @@
                             @if (User.Identity?.IsAuthenticated == true)
                             {
                                 <span class="user-welcome">Hoş geldin, @User.Identity.Name</span>
-                                <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
+                                <form asp-area="" asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
                                     <button type="submit" class="menu-button logout-btn">Çıkış Yap</button>
                                 </form>
                             }
