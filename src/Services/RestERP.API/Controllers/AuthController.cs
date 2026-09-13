@@ -166,43 +166,6 @@ namespace RestERP.API.Controllers
                 return StatusCode(500, new { message = "Sunucu hatası oluştu" });
             }
         }
-
-        /// <summary>
-        /// JWT token'ın geçerliliğini kontrol eder
-        /// </summary>
-        /// <param name="token">Kontrol edilecek JWT token</param>
-        /// <returns>Token geçerliliği</returns>
-        /// <response code="200">Token geçerli</response>
-        /// <response code="400">Token geçersiz</response>
-        /// <response code="500">Sunucu hatası</response>
-        [HttpPost("validate-token")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> ValidateToken([FromBody] string token)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(token))
-                {
-                    return BadRequest(new { message = "Token boş olamaz" });
-                }
-
-                var isValid = await _authService.ValidateTokenAsync(token);
-                
-                if (!isValid)
-                {
-                    return BadRequest(new { message = "Token geçersiz", isValid = false });
-                }
-
-                return Ok(new { message = "Token geçerli", isValid = true });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Token doğrulama işlemi sırasında hata oluştu");
-                return StatusCode(500, new { message = "Sunucu hatası oluştu" });
-            }
-        }
     }
 }
 
