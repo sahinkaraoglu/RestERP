@@ -42,7 +42,7 @@ public class TableController : Controller
         {
             _logger.LogError(ex, "Masa listesi alınırken hata oluştu");
             TempData["ErrorMessage"] = "Masa listesi alınırken bir hata oluştu: " + ex.Message;
-            return View("Error");
+            return View("Error", new RestERP.Web.Models.ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
         }
     }
 

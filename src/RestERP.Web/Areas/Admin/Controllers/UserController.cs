@@ -43,7 +43,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
             {
                 _logger.LogError(ex, "Personel listesi alınırken hata oluştu");
                 TempData["ErrorMessage"] = "Personel listesi alınırken bir hata oluştu: " + ex.Message;
-                return View("Error");
+                return View("Error", new RestERP.Web.Models.ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
             }
         }
 

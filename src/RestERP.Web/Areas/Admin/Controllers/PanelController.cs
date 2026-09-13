@@ -145,7 +145,7 @@ public class PanelController : Controller
         {
             _logger.LogError(ex, "Panel sayfası yüklenirken hata oluştu");
             TempData["ErrorMessage"] = "Panel sayfası yüklenirken bir hata oluştu: " + ex.Message;
-            return View("Error");
+            return View("Error", new RestERP.Web.Models.ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
         }
     }
 

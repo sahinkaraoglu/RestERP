@@ -532,7 +532,7 @@ public class OrderController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Sipariş iptal sayfası açılırken hata oluştu. OrderId: {id}");
-            return View("Error");
+            return View("Error", new RestERP.Web.Models.ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
         }
     }
 

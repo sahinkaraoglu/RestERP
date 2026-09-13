@@ -39,7 +39,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 if (!categoriesResponse.IsSuccessStatusCode || !foodsResponse.IsSuccessStatusCode)
                 {
                     TempData["ErrorMessage"] = "Veriler yüklenemedi.";
-                    return View("Error");
+                    return View("Error", new RestERP.Web.Models.ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
                 }
 
                 var categoriesJson = await categoriesResponse.Content.ReadAsStringAsync();
@@ -57,7 +57,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
             {
                 _logger.LogError(ex, "Menü sayfası açılırken hata oluştu");
                 TempData["ErrorMessage"] = "Menü sayfası açılırken bir hata oluştu: " + ex.Message;
-                return View("Error");
+                return View("Error", new RestERP.Web.Models.ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
             }
         }
 

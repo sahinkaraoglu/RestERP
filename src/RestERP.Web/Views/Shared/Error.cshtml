@@ -1,15 +1,16 @@
-﻿@model ErrorViewModel
+﻿@model ErrorViewModel?
 @{
-    ViewData["Title"] = "Error";
+    ViewData["Title"] = "Hata";
+    var requestId = Model?.RequestId;
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<h1 class="text-danger">Bir hata oluştu.</h1>
+<h2 class="text-danger">İsteğiniz işlenirken bir sorun meydana geldi.</h2>
 
-@if (Model.ShowRequestId)
+@if (!string.IsNullOrEmpty(requestId))
 {
     <p>
-        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+        <strong>İstek no:</strong> <code>@requestId</code>
     </p>
 }
 

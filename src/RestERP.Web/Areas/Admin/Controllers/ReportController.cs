@@ -38,7 +38,7 @@ public class ReportController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Rapor sayfası yüklenirken hata oluştu");
-            return View("Error");
+            return View("Error", new RestERP.Web.Models.ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
         }
     }
 } 
