@@ -4,6 +4,7 @@ using RestERP.Domain.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using RestERP.Core.Domain.Entities;
 using RestERP.Web.Areas.Admin.Models;
@@ -148,25 +149,17 @@ namespace RestERP.Web.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(new { success = false, message = "Geçersiz sipariş bilgileri." });
+                    var errors = string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                    return BadRequest(new { success = false, message = string.IsNullOrWhiteSpace(errors) ? "Geçersiz sipariş bilgileri." : errors });
                 }
 
-                // Kullanıcı kontrolü
-                if (!User.Identity.IsAuthenticated)
+                if (User.Identity?.IsAuthenticated != true)
                 {
                     return Unauthorized(new { success = false, message = "Sipariş verebilmek için giriş yapmalısınız." });
                 }
 
-                // Kullanıcı bilgilerini API'den getir (email kullanıcı adı olarak kullanılıyor)
                 var client = CreateHttpClient();
-                var userResponse = await client.GetAsync($"api/user/email/{User.Identity.Name}");
-                ApplicationUser currentUser = null;
-                if (userResponse.IsSuccessStatusCode)
-                {
-                    var userJson = await userResponse.Content.ReadAsStringAsync();
-                    var optionsUser = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                    currentUser = JsonSerializer.Deserialize<ApplicationUser>(userJson, optionsUser);
-                }
+                var currentUser = await ResolveCurrentUserAsync(client);
                 if (currentUser == null)
                 {
                     return BadRequest(new { success = false, message = "Kullanıcı bilgileri bulunamadı." });
@@ -200,7 +193,7 @@ namespace RestERP.Web.Controllers
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
                     _logger.LogError("API'ye sipariş gönderilemedi. Status: {StatusCode}, Error: {Error}", response.StatusCode, errorContent);
-                    return Json(new { success = false, message = "Sipariş oluşturulurken bir hata oluştu." });
+                    return Json(new { success = false, message = "Sipariş oluşturulurken bir hata oluştu." + (string.IsNullOrWhiteSpace(errorContent) ? "" : " " + errorContent) });
                 }
 
                 var responseJson = await response.Content.ReadAsStringAsync();
@@ -227,6 +220,57 @@ namespace RestERP.Web.Controllers
                 
                 return Json(new { success = false, message = "Sipariş oluşturulurken bir hata oluştu: " + ex.Message + (ex.InnerException != null ? " | İç hata: " + ex.InnerException.Message : "") });
             }
+        }
+
+        private async Task<ApplicationUser?> ResolveCurrentUserAsync(HttpClient client)
+        {
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            async Task<ApplicationUser?> TryGetAsync(string url)
+            {
+                var response = await client.GetAsync(url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                return JsonSerializer.Deserialize<ApplicationUser>(json, options);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userId, out var id) && id > 0)
+            {
+                var byId = await TryGetAsync($"api/user/{id}");
+                if (byId != null)
+                {
+                    return byId;
+                }
+            }
+
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                var byEmail = await TryGetAsync($"api/user/email/{Uri.EscapeDataString(email)}");
+                if (byEmail != null)
+                {
+                    return byEmail;
+                }
+            }
+
+            var name = User.Identity?.Name;
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                var byUsername = await TryGetAsync($"api/user/username/{Uri.EscapeDataString(name)}");
+                if (byUsername != null)
+                {
+                    return byUsername;
+                }
+
+                return await TryGetAsync($"api/user/email/{Uri.EscapeDataString(name)}");
+            }
+
+            return null;
         }
     }
 }

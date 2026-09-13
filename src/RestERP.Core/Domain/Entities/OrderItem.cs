@@ -20,8 +20,8 @@ namespace RestERP.Core.Domain.Entities
 
         public OrderStatus Status { get; set; } = OrderStatus.New;
 
-        // İlişkiler
-        public Order Order { get; set; } = null!;
-        public Food Food { get; set; } = null!;
+        // İlişkiler — oluşturma isteğinde gelmez, ModelState'i bozmamalı
+        public Order? Order { get; set; }
+        public Food? Food { get; set; }
     }
 } 

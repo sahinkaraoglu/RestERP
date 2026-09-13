@@ -430,7 +430,12 @@
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    let message = `HTTP error! status: ${response.status}`;
+                    try {
+                        const errorBody = await response.json();
+                        message = errorBody.message || message;
+                    } catch { }
+                    throw new Error(message);
                 }
 
                 const result = await response.json();
@@ -459,7 +464,7 @@
                 console.error('Sipariş gönderme hatası:', error);
                 Swal.fire({
                     title: 'Hata!',
-                    text: 'Sipariş gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.',
+                    text: error instanceof Error ? error.message : 'Sipariş gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.',
                     icon: 'error',
                     confirmButtonColor: '#6a563d'
                 });

@@ -71,6 +71,29 @@ namespace RestERP.API.Controllers
         }
 
         /// <summary>
+        /// Kullanıcı adına göre kullanıcı getirir
+        /// </summary>
+        [HttpGet("username/{username}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<ApplicationUser>> GetUserByUsername(string username)
+        {
+            try
+            {
+                var user = await _userService.GetUserByUsernameAsync(username);
+                if (user == null)
+                {
+                    return NotFound($"Kullanıcı adı {username} olan kullanıcı bulunamadı");
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Kullanıcı adı ile kullanıcı getirilirken hata oluştu: {Username}", username);
+                return StatusCode(500, "Sunucu hatası");
+            }
+        }
+
+        /// <summary>
         /// Email'e göre kullanıcı getirir
         /// </summary>
         /// <param name="email">Email adresi</param>

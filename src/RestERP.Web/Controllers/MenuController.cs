@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using RestERP.Infrastructure.Data.SeedData;
@@ -46,26 +47,15 @@ public class MenuController : Controller
             ViewBag.Foods = foods;
             ViewBag.Images = images;
 
-            // Kullanıcı giriş yaptıysa API'den bilgilerini çek
             if (User.Identity?.IsAuthenticated == true)
             {
-                var userEmail = User.Identity.Name;
-                if (!string.IsNullOrEmpty(userEmail))
+                try
                 {
-                    try
-                    {
-                        var userResponse = await client.GetAsync($"api/user/email/{Uri.EscapeDataString(userEmail)}");
-                        if (userResponse.IsSuccessStatusCode)
-                        {
-                            var userJson = await userResponse.Content.ReadAsStringAsync();
-                            var currentUser = JsonSerializer.Deserialize<RestERP.Core.Domain.Entities.ApplicationUser>(userJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                            ViewBag.CurrentUser = currentUser;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "Kullanıcı bilgisi alınırken hata oluştu: {Email}", userEmail);
-                    }
+                    ViewBag.CurrentUser = await ResolveCurrentUserAsync(client);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Kullanıcı bilgisi alınırken hata oluştu");
                 }
             }
 
@@ -78,6 +68,57 @@ public class MenuController : Controller
         }
     }
 
+
+    private async Task<RestERP.Core.Domain.Entities.ApplicationUser?> ResolveCurrentUserAsync(HttpClient client)
+    {
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+        async Task<RestERP.Core.Domain.Entities.ApplicationUser?> TryGetAsync(string url)
+        {
+            var response = await client.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<RestERP.Core.Domain.Entities.ApplicationUser>(json, options);
+        }
+
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (int.TryParse(userId, out var id) && id > 0)
+        {
+            var byId = await TryGetAsync($"api/user/{id}");
+            if (byId != null)
+            {
+                return byId;
+            }
+        }
+
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        if (!string.IsNullOrWhiteSpace(email))
+        {
+            var byEmail = await TryGetAsync($"api/user/email/{Uri.EscapeDataString(email)}");
+            if (byEmail != null)
+            {
+                return byEmail;
+            }
+        }
+
+        var name = User.Identity?.Name;
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            var byUsername = await TryGetAsync($"api/user/username/{Uri.EscapeDataString(name)}");
+            if (byUsername != null)
+            {
+                return byUsername;
+            }
+
+            return await TryGetAsync($"api/user/email/{Uri.EscapeDataString(name)}");
+        }
+
+        return null;
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
