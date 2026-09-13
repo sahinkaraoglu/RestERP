@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9C4EA7AE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{960D715F-D527-4E6B-84C9-055AD016E2DD}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "RestERP.Mobile", "src\RestERP.Mobile\RestERP.Mobile.esproj", "{B7E2C4A1-9F3D-4E8B-A1C2-7D6E5F4A3B21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,8 @@ Global
 		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7E2C4A1-9F3D-4E8B-A1C2-7D6E5F4A3B21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7E2C4A1-9F3D-4E8B-A1C2-7D6E5F4A3B21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +60,7 @@ Global
 		{8F16300C-512B-4851-BE38-83102C0F3CC1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890} = {960D715F-D527-4E6B-84C9-055AD016E2DD}
 		{960D715F-D527-4E6B-84C9-055AD016E2DD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B7E2C4A1-9F3D-4E8B-A1C2-7D6E5F4A3B21} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2C125E94-D65E-4632-9058-A7BE50A0BA09}

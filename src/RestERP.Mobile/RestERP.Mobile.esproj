@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.4110890">
+  <PropertyGroup>
+    <StartupCommand>npx expo start</StartupCommand>
+    <ShouldRunBuildScript>false</ShouldRunBuildScript>
+    <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
+  </PropertyGroup>
+  <ItemGroup>
+    <Script Include="**" Exclude="node_modules\**;.expo\**;dist\**;*.lock" />
+  </ItemGroup>
+</Project>
