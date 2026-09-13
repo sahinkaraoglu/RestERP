@@ -1,0 +1,151 @@
+:root {
+    --resterp-swal-bg: #fffcf7;
+    --resterp-swal-border: #e5e0d5;
+    --resterp-swal-text: #5d4b38;
+    --resterp-swal-text-muted: #8c7762;
+    --resterp-swal-primary: #5d4b38;
+    --resterp-swal-accent: #b09a7b;
+    --resterp-swal-success: #5d7a4c;
+    --resterp-swal-danger: #a85a4a;
+    --resterp-swal-warning: #b09a7b;
+    --resterp-swal-cancel-bg: #f8f4ec;
+    --resterp-swal-shadow: 0 8px 24px rgba(93, 75, 56, 0.14);
+}
+
+.resterp-swal-popup {
+    background: var(--resterp-swal-bg) !important;
+    border: 1px solid var(--resterp-swal-border) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--resterp-swal-shadow) !important;
+    color: var(--resterp-swal-text) !important;
+    font-family: 'Montserrat', sans-serif !important;
+    padding: 1.75rem 1.5rem 1.5rem !important;
+}
+
+.resterp-swal-title {
+    color: var(--resterp-swal-text) !important;
+    font-family: 'Lora', serif !important;
+    font-size: 1.35rem !important;
+    font-weight: 600 !important;
+}
+
+.resterp-swal-text {
+    color: var(--resterp-swal-text-muted) !important;
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+}
+
+.resterp-swal-btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.resterp-swal-btn:hover {
+    transform: translateY(-1px);
+}
+
+.resterp-swal-btn-confirm {
+    background: var(--resterp-swal-success) !important;
+    color: #fff !important;
+}
+
+.resterp-swal-btn-confirm:hover {
+    background: #4f6a41 !important;
+    box-shadow: 0 4px 12px rgba(93, 122, 76, 0.25);
+}
+
+.resterp-swal-btn-confirm.resterp-swal-btn-primary {
+    background: var(--resterp-swal-primary) !important;
+}
+
+.resterp-swal-btn-confirm.resterp-swal-btn-primary:hover {
+    background: #4a3c2d !important;
+    box-shadow: 0 4px 12px rgba(93, 75, 56, 0.2);
+}
+
+.resterp-swal-btn-confirm.resterp-swal-btn-danger {
+    background: var(--resterp-swal-danger) !important;
+}
+
+.resterp-swal-btn-confirm.resterp-swal-btn-danger:hover {
+    background: #944f42 !important;
+    box-shadow: 0 4px 12px rgba(168, 90, 74, 0.25);
+}
+
+.resterp-swal-btn-cancel {
+    background: var(--resterp-swal-cancel-bg) !important;
+    color: var(--resterp-swal-text) !important;
+    border: 1px solid var(--resterp-swal-border) !important;
+}
+
+.resterp-swal-btn-cancel:hover {
+    background: #f0e9df !important;
+}
+
+.resterp-swal-popup .swal2-icon {
+    margin: 0.75rem auto 1rem !important;
+    border-width: 3px !important;
+}
+
+.resterp-swal-popup .swal2-icon.swal2-success {
+    border-color: var(--resterp-swal-success) !important;
+    color: var(--resterp-swal-success) !important;
+}
+
+.resterp-swal-popup .swal2-icon.swal2-success .swal2-success-ring {
+    border-color: rgba(93, 122, 76, 0.25) !important;
+}
+
+.resterp-swal-popup .swal2-icon.swal2-success [class^='swal2-success-line'] {
+    background-color: var(--resterp-swal-success) !important;
+}
+
+.resterp-swal-popup .swal2-icon.swal2-error {
+    border-color: var(--resterp-swal-danger) !important;
+    color: var(--resterp-swal-danger) !important;
+}
+
+.resterp-swal-popup .swal2-icon.swal2-error [class^='swal2-x-mark-line'] {
+    background-color: var(--resterp-swal-danger) !important;
+}
+
+.resterp-swal-popup .swal2-icon.swal2-warning {
+    border-color: var(--resterp-swal-warning) !important;
+    color: var(--resterp-swal-warning) !important;
+}
+
+.resterp-swal-popup .swal2-icon.swal2-warning .swal2-icon-content {
+    color: var(--resterp-swal-warning) !important;
+}
+
+.resterp-swal-popup .swal2-icon.swal2-question {
+    border-color: var(--resterp-swal-accent) !important;
+    color: var(--resterp-swal-accent) !important;
+}
+
+.resterp-swal-popup .swal2-icon.swal2-question .swal2-icon-content {
+    color: var(--resterp-swal-accent) !important;
+}
+
+.resterp-swal-popup .swal2-icon.swal2-info {
+    border-color: var(--resterp-swal-primary) !important;
+    color: var(--resterp-swal-primary) !important;
+}
+
+.resterp-swal-popup .swal2-icon.swal2-info .swal2-icon-content {
+    color: var(--resterp-swal-primary) !important;
+}
+
+.resterp-swal-popup .swal2-actions {
+    gap: 0.65rem;
+    margin-top: 1.25rem !important;
+}
+
+.resterp-swal-popup .swal2-timer-progress-bar {
+    background: var(--resterp-swal-accent) !important;
+}
