@@ -1,14 +1,15 @@
 ## RestERP — Restaurant Management System
 
-Production-ready, layered restaurant ERP built on ASP.NET Core (.NET 9). The solution provides a clean separation of concerns across API, Web (MVC), Application, Infrastructure, and Core domain layers.
+Production-ready, layered restaurant ERP built on ASP.NET Core (.NET 9). The solution provides a clean separation of concerns across API, Web (MVC), Mobile, Application, Infrastructure, and Core domain layers.
 
 ### Highlights
-- Clean, layered architecture (Core, Application, Infrastructure, API, Web)
+- Clean, layered architecture (Core, Application, Infrastructure, API, Web, Mobile)
 - EF Core with SQL Server, soft-delete filters, precise money fields
 - ASP.NET Core Identity (roles: Admin, Employee, Customer)
-- JWT authentication (API + Web cookie bridge), Swagger with security scheme
+- JWT authentication (API + Web cookie bridge + Mobile token storage), Swagger with security scheme
 - Autofac-based DI, generic repository + unit of work
 - Global logging and exception handling middleware
+- Cross-platform mobile client (React Native / Expo) sharing the same REST API
 
 ## Architecture
 - `RestERP.Core`: Domain entities, enums, base types
@@ -16,23 +17,49 @@ Production-ready, layered restaurant ERP built on ASP.NET Core (.NET 9). The sol
 - `RestERP.Infrastructure`: EF DbContext, migrations, repositories, seed data
 - `Services/RestERP.API`: REST API with Swagger, JWT, role policies
 - `RestERP.Web`: MVC UI (Areas/Admin), HttpClient to API, auth integration
+- `RestERP.Mobile`: React Native (Expo) client for customer and admin workflows over the same API
+
+### Web Screenshots
 
 <div align="center">
     <table>
         <tr>
             <td>
-                <img src="https://github.com/user-attachments/assets/14fcac76-30d6-4b66-a919-d73a881c8e60" alt="mainpage" width="400"/>
+                <img src="https://github.com/user-attachments/assets/14fcac76-30d6-4b66-a919-d73a881c8e60" alt="Web — Home" width="400"/>
             </td>
             <td>
-                <img src="https://github.com/user-attachments/assets/4a868afa-651f-49c2-9358-d9650db4b7b2" alt="management" width="400"/>
+                <img src="https://github.com/user-attachments/assets/4a868afa-651f-49c2-9358-d9650db4b7b2" alt="Web — Management" width="400"/>
             </td>
         </tr>
         <tr>
             <td>
-                <img src="https://github.com/user-attachments/assets/74c4cadd-49ca-43e6-8060-00a5ba1af2b2" alt="menu" width="400"/>
+                <img src="https://github.com/user-attachments/assets/74c4cadd-49ca-43e6-8060-00a5ba1af2b2" alt="Web — Menu" width="400"/>
             </td>
             <td>
-                <img src="https://github.com/user-attachments/assets/8db0fe5f-c4d0-41a5-abc3-c5aa52bf1d85" alt="login" width="400"/>
+                <img src="https://github.com/user-attachments/assets/8db0fe5f-c4d0-41a5-abc3-c5aa52bf1d85" alt="Web — Login" width="400"/>
+            </td>
+        </tr>
+    </table>
+</div>
+
+### Mobile Screenshots
+
+<div align="center">
+    <table>
+        <tr>
+            <td>
+                <img src="YOUR_IMAGE_URL_1" alt="Mobile — Home" width="250"/>
+            </td>
+            <td>
+                <img src="YOUR_IMAGE_URL_2" alt="Mobile — Menu" width="250"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <img src="YOUR_IMAGE_URL_3" alt="Mobile — Orders" width="250"/>
+            </td>
+            <td>
+                <img src="YOUR_IMAGE_URL_4" alt="Mobile — Admin Panel" width="250"/>
             </td>
         </tr>
     </table>
@@ -42,15 +69,71 @@ Production-ready, layered restaurant ERP built on ASP.NET Core (.NET 9). The sol
 - Generic Repository and Unit of Work are used to standardize data access and transaction boundaries while keeping domain logic clean.
 
 ## Tech Stack
+
+### Backend & Web
 - .NET 9, ASP.NET Core MVC, Entity Framework Core, SQL Server
 - Autofac, ASP.NET Core Identity, JWT Bearer
 - Swagger/OpenAPI, MemoryCache, Logging middleware
+
+### Mobile
+- React Native 0.86, Expo SDK 57
+- React Navigation (stack + bottom tabs)
+- TypeScript, AsyncStorage / SecureStore for auth tokens
+- Consumes `RestERP.API` at `http://localhost:5050` (food images served via API)
+
+## Getting Started
+
+### Prerequisites
+- .NET 9 SDK
+- SQL Server (local or remote)
+- Node.js 20+ (for mobile)
+
+### Run the API
+```bash
+dotnet run --project src/Services/RestERP.API
+```
+API runs at `http://localhost:5050`.
+
+### Run the Web App
+```bash
+dotnet run --project src/RestERP.Web
+```
+
+### Run the Mobile App
+```bash
+cd src/RestERP.Mobile
+npm install
+npm start
+```
+Open with Expo Go or an emulator.
+
+| Environment | API host |
+|---|---|
+| Android emulator | `10.0.2.2:5050` |
+| iOS simulator / physical device | Same LAN IP as your machine (`src/RestERP.Mobile/src/config.ts`) |
+
+Start the API with the `http` profile so the mobile client can reach it on the local network.
+
+### Test Users (Development)
+
+| Email | Password | Role |
+|---|---|---|
+| admin@resterp.com | Admin123! | Admin |
+| employee@resterp.com | Employee123! | Employee |
+| customer@test.com | Customer123! | Customer |
+
+### Mobile Screens
+
+**Customer:** Home, Menu (cart + checkout), Orders, Reservations, Login / Sign Up
+
+**Admin / Employee:** Dashboard, Menu management, Orders, Tables, Users, Reservations, Reports
 
 ## Security
 - JWT Bearer authentication with zero clock skew
 - Role-based policies: `EmployeeOnly`, `CustomerOnly`
 - Note: CORS is permissive in development (`AllowAll`). Harden for production.
 - Seed passwords in code are for development. Rotate/remove in production.
+- Mobile stores JWT tokens locally; use HTTPS and secure storage in production.
 
 ## CI/CD
 
@@ -73,7 +156,7 @@ Two separate pipelines are configured for independent deployment:
 ### Pipeline Features
 
 - **Trigger**: Automatically runs on pushes to `main` branch
-- **Build Stage**: 
+- **Build Stage**:
   - Uses .NET 9 SDK
   - Restores dependencies and publishes projects in Release configuration
   - Creates build artifacts for deployment
@@ -91,4 +174,4 @@ Two separate pipelines are configured for independent deployment:
 ## Notes
 - Automatic migration on startup is convenient for local/dev; for production, prefer controlled migrations.
 - Web uses cookie-stored JWT for API calls; ensure HTTPS and secure cookie flags in production.
-
+- Mobile resolves the API base URL automatically for emulators and physical devices; update `src/RestERP.Mobile/src/config.ts` if your API port changes.
