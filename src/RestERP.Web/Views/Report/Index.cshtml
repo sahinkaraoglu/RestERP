@@ -6,6 +6,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link rel="stylesheet" href="~/css/report.css" asp-append-version="true" />
+
 <div class="report-container">
     <div class="report-header">
         <div class="container">
@@ -68,95 +70,3 @@
         </div>
     </div>
 </div>
-
-<style>
-    .report-container {
-        background-color: #f9f7f4;
-        min-height: 100vh;
-    }
-    
-    .report-header {
-        background: linear-gradient(135deg, #5d4b38, #b09a7b);
-        color: white;
-        padding: 20px 0 15px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .report-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: 2px;
-    }
-    
-    .report-subtitle {
-        font-size: 0.9rem;
-        opacity: 0.9;
-    }
-    
-    .report-content {
-        padding-bottom: 30px;
-    }
-    
-    .card {
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        border: none;
-        margin-bottom: 20px;
-    }
-    
-    .card-header {
-        background: linear-gradient(135deg, #f1ece5, #e5ded3);
-        border-bottom: none;
-        padding: 15px 20px;
-        border-radius: 10px 10px 0 0 !important;
-    }
-    
-    .card-title {
-        color: #5d4b38;
-        font-weight: 600;
-        margin-bottom: 0;
-    }
-    
-    .card-body {
-        padding: 20px;
-    }
-    
-    .table {
-        margin-bottom: 0;
-    }
-    
-    .table th {
-        border-top: none;
-        color: #5d4b38;
-        font-weight: 600;
-    }
-    
-    .table td {
-        vertical-align: middle;
-    }
-    
-    .badge {
-        padding: 6px 12px;
-        font-weight: 500;
-    }
-    
-    /* Responsive */
-    @@media (max-width: 768px) {
-        .report-header {
-            padding: 15px 0;
-        }
-        
-        .report-title {
-            font-size: 1.5rem;
-        }
-        
-        .card-body {
-            padding: 15px;
-        }
-        
-        .table-responsive {
-            margin: 0 -15px;
-        }
-    }
-</style> 

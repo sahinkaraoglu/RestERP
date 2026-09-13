@@ -1,0 +1,577 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #f9f6f0;
+    color: #333;
+    line-height: 1.6;
+}
+
+.restaurant-menu {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 40px;
+    background-color: #fff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #e5e0d5;
+    position: relative;
+}
+
+.restaurant-menu::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    border: 1px solid #e0d8c8;
+    pointer-events: none;
+}
+
+.menu-header {
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.menu-header h1 {
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: #4a3c2e;
+    margin-bottom: 8px;
+    font-family: 'Lora', serif;
+    letter-spacing: 1px;
+}
+
+.menu-header h2 {
+    font-size: 1.7rem;
+    font-weight: 400;
+    color: #8c7762;
+    margin-top: 4px;
+    font-family: 'Lora', serif;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 12px 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #d2c4af, transparent);
+}
+
+.divider span {
+    padding: 0 12px;
+    color: #b09a7b;
+    font-size: 1rem;
+}
+
+.menu-container {
+    padding: 15px 8px;
+}
+
+.category {
+    margin-bottom: 20px;
+    border-bottom: 1px dashed #e5ded2;
+    padding-bottom: 12px;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #f8f4ec;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 3px solid #d6c6af;
+}
+
+.category-header:hover {
+    background-color: #f1eadd;
+}
+
+.category-header h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+    color: #6a563d;
+    font-family: 'Lora', serif;
+}
+
+.toggle-icon {
+    font-size: 1.3rem;
+    color: #a38b6e;
+    transition: transform 0.3s ease;
+}
+
+.subcategory-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+}
+
+.subcategory-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+    margin-top: 8px;
+}
+
+.subcategory-table tr {
+    transition: background-color 0.3s;
+    border-bottom: 1px solid #f1eadd;
+}
+
+.subcategory-table tr:hover {
+    background-color: #f9f6f0;
+}
+
+.subcategory-name {
+    padding: 10px 12px;
+    font-size: 1rem;
+    color: #5c4c3a;
+    font-weight: 500;
+    width: 60%;
+}
+
+.subcategory-price {
+    text-align: right;
+    padding: 10px 12px;
+    font-weight: 600;
+    color: #8c7762;
+    white-space: nowrap;
+    width: 15%;
+}
+
+.subcategory-image {
+    padding: 10px;
+    text-align: right;
+    width: 25%;
+    vertical-align: middle;
+}
+
+.food-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.food-image {
+    width: 150px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.food-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+.menu-footer {
+    text-align: center;
+    margin-top: 50px;
+    font-style: italic;
+}
+
+.menu-footer p {
+    margin-top: 10px;
+    font-size: 1.3rem;
+    color: #8c7762;
+    font-family: 'Lora', serif;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+    .restaurant-menu {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    .menu-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .menu-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .category-header h3 {
+        font-size: 1.3rem;
+    }
+
+    .food-image {
+        width: 120px;
+        height: 90px;
+    }
+
+    .subcategory-table {
+        border-spacing: 0 8px;
+    }
+
+    .subcategory-name {
+        width: 50%;
+    }
+
+    .subcategory-price {
+        width: 20%;
+    }
+
+    .subcategory-image {
+        width: 30%;
+    }
+}
+
+@media (max-width: 576px) {
+    .subcategory-table tr {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #e5ded2;
+        padding-bottom: 10px;
+    }
+
+    .subcategory-name {
+        width: 70%;
+        order: 1;
+    }
+
+    .subcategory-price {
+        width: 30%;
+        order: 2;
+        text-align: right;
+    }
+
+    .subcategory-image {
+        width: 100%;
+        order: 3;
+        text-align: center;
+        padding-top: 5px;
+    }
+
+    .food-image {
+        width: 180px;
+        height: 140px;
+    }
+}
+
+.category-active .toggle-icon {
+    transform: rotate(45deg);
+}
+
+/* Miktar kontrolleri için stiller */
+.sub-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.food-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.food-title {
+    font-weight: 600;
+    color: #5c4c3a;
+    margin-bottom: 5px;
+}
+
+.food-description {
+    font-size: 0.85rem;
+    color: #8c7762;
+    font-style: italic;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.quantity-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1eadd;
+    border: 1px solid #d6c6af;
+    color: #6a563d;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background-color: #e0d8c8;
+}
+
+.quantity-value {
+    margin: 0 8px;
+    font-weight: 600;
+    color: #6a563d;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Sipariş Ver butonu için stiller */
+.order-button {
+    display: block;
+    width: 100%;
+    margin: 20px auto 0;
+    padding: 12px 32px;
+    background-color: #8c7762;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.order-button:hover {
+    background-color: #6a563d;
+}
+
+.secondary-button {
+    padding: 8px 16px;
+    background-color: #f1eadd;
+    color: #6a563d;
+    border: 1px solid #d6c6af;
+    border-radius: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.secondary-button:hover {
+    background-color: #e0d8c8;
+}
+
+/* Sepet Özeti */
+.cart-summary {
+    margin: 30px auto;
+    background-color: #f8f4ec;
+    border: 1px solid #e5ded2;
+    border-radius: 6px;
+    padding: 15px;
+    max-width: 500px;
+}
+
+.cart-summary h3 {
+    font-size: 1.2rem;
+    color: #6a563d;
+    margin-bottom: 10px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.empty-cart-message {
+    text-align: center;
+    color: #a38b6e;
+    font-style: italic;
+    padding: 10px;
+}
+
+#cartItems {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed #e5ded2;
+}
+
+.cart-item-name {
+    display: flex;
+    align-items: center;
+}
+
+.cart-item-quantity {
+    background-color: #e0d8c8;
+    color: #6a563d;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-right: 8px;
+    font-size: 0.8rem;
+}
+
+.cart-item-price {
+    font-weight: 600;
+    color: #8c7762;
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 2px solid #e0d8c8;
+    font-weight: 700;
+    color: #6a563d;
+    font-size: 1.1rem;
+}
+
+/* Müşteri Bilgileri Paneli */
+.customer-info-panel {
+    margin: 20px auto;
+    max-width: 500px;
+    background-color: #fff;
+    border: 1px solid #e5ded2;
+    border-radius: 6px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.panel-tabs {
+    display: flex;
+    border-bottom: 1px solid #e5ded2;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    color: #a38b6e;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tab-btn.active {
+    color: #6a563d;
+    border-bottom: 3px solid #8c7762;
+    font-weight: 600;
+}
+
+.tab-content {
+    margin-bottom: 20px;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    color: #6a563d;
+    margin-bottom: 5px;
+}
+
+.form-group input, 
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d6c6af;
+    border-radius: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+    outline: none;
+    border-color: #8c7762;
+    box-shadow: 0 0 5px rgba(140, 119, 98, 0.3);
+}
+
+.form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* Auth Buttons */
+.auth-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+.auth-btn {
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    min-width: 120px;
+}
+
+@media (max-width: 768px) {
+    .order-container {
+        flex-direction: column;
+    }
+
+    .panel-tabs {
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        flex: 1;
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+
+    .auth-buttons {
+        flex-direction: row;
+    }
+}
+
+.user-info {
+    background-color: #f8f4ec;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.info-display p {
+    margin: 8px 0;
+    color: #6a563d;
+}
+
+.info-display strong {
+    color: #8c7762;
+}
+
+.auth-message {
+    text-align: center;
+    padding: 20px;
+    background-color: #f8f4ec;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.auth-message p {
+    color: #6a563d;
+    margin-bottom: 15px;
+}

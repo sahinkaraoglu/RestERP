@@ -1,0 +1,192 @@
+.dashboard-container {
+    background-color: #f9f7f4;
+    min-height: 100vh;
+}
+
+.dashboard-header {
+    background: linear-gradient(135deg, #5d4b38, #b09a7b);
+    color: white;
+    padding: 20px 0 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.dashboard-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.dashboard-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.dashboard-content {
+    padding-bottom: 30px;
+}
+
+/* Filtre Butonları */
+.category-filter {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    gap: 10px;
+}
+
+.filter-btn {
+    background-color: #f1ece5;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    font-size: 0.85rem;
+    color: #5d4b38;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+    .filter-btn:hover {
+        background-color: #e5ded3;
+    }
+
+    .filter-btn.active {
+        background-color: #5d4b38;
+        color: white;
+    }
+
+/* Arama Kutusu */
+.search-box {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 15px 10px 40px;
+        border-radius: 20px;
+        border: 1px solid #ddd;
+        background-color: white;
+    }
+
+    .search-box .bi-search {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #aaa;
+    }
+
+/* Menü Kategori Başlığı */
+.category-title {
+    font-size: 1.2rem;
+    color: #5d4b38;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e5ded3;
+}
+
+    .category-title i {
+        margin-right: 5px;
+    }
+
+/* Menü Kartı */
+.menu-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    overflow: hidden;
+    transition: all 0.3s;
+    height: 100%;
+}
+
+    .menu-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+.menu-card-header {
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #f1ece5, #e5ded3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-name {
+    font-weight: 600;
+    color: #5d4b38;
+}
+
+.menu-price {
+    font-weight: 700;
+    color: #b09a7b;
+}
+
+.menu-card-body {
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.menu-details {
+    flex-grow: 1;
+}
+
+.menu-desc {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.menu-actions {
+    display: flex;
+    gap: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-header {
+        padding: 15px 0;
+    }
+
+    .dashboard-title {
+        font-size: 1.5rem;
+    }
+
+    .filter-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* Modal Stilleri */
+.modal-content {
+    border-radius: 10px;
+    border: none;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #f1ece5, #e5ded3);
+    border-bottom: none;
+}
+
+.modal-title {
+    color: #5d4b38;
+    font-weight: 600;
+}
+
+.btn-primary, .btn-primary:hover {
+    background-color: #5d4b38;
+    border-color: #5d4b38;
+}
+
+.btn-outline-primary {
+    color: #5d4b38;
+    border-color: #5d4b38;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #5d4b38;
+        color: white;
+    }

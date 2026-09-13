@@ -1,0 +1,151 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 250px);
+    padding: 40px 20px;
+}
+
+.login-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 450px;
+    padding: 40px;
+    border: 1px solid #f0e9df;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-header h2 {
+    font-family: 'Lora', serif;
+    font-size: 2.2rem;
+    font-weight: 500;
+    color: #5d4b38;
+    margin-bottom: 12px;
+}
+
+.login-subtitle {
+    font-size: 1rem;
+    color: #9b8977;
+    margin-top: 12px;
+}
+
+.login-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.login-form .form-group {
+    margin-bottom: 0;
+}
+
+.login-form .form-group-full {
+    grid-column: span 2;
+}
+
+.login-form label {
+    color: #6a563d;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.login-form .form-control {
+    background-color: #ffffff;
+    border: 1px solid #e6dfd4;
+    border-radius: 6px;
+    padding: 12px 15px;
+    height: auto;
+    font-size: 1rem;
+    color: #5a5348;
+    transition: all 0.3s ease;
+}
+
+.login-form .form-control:focus {
+    background-color: #ffffff;
+    border-color: #d6c8b4;
+    box-shadow: 0 0 0 0.2rem rgba(214, 200, 180, 0.25);
+}
+
+.login-btn {
+    background-color: #6a563d;
+    border: none;
+    color: #fff;
+    font-weight: 500;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 6px;
+    width: 100%;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.login-btn:hover {
+    background-color: #5d4b38;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.signup-btn {
+    background-color: #fff;
+    border: 1px solid #6a563d;
+    color: #6a563d;
+    font-weight: 500;
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.signup-btn:hover {
+    background-color: #f8f8f8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 576px) {
+    .login-card {
+        padding: 30px 20px;
+    }
+
+    .login-header h2 {
+        font-size: 1.8rem;
+    }
+
+    .login-form .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .login-form .form-group {
+        margin-bottom: 20px;
+    }
+}
+
+input[type="tel"] {
+    letter-spacing: 1px;
+}
+
+input[type="tel"]::placeholder {
+    color: #bbb;
+    letter-spacing: normal;
+}
+
+input[type="tel"]:focus::placeholder {
+    color: transparent;
+}

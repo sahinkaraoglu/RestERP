@@ -1,0 +1,149 @@
+.person-container {
+    background-color: #f9f7f4;
+    min-height: 100vh;
+}
+
+.person-header {
+    background: linear-gradient(135deg, #b09a7b, #c7b59d);
+    color: white;
+    padding: 20px 0;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.person-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.person-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.add-person-btn {
+    background: white;
+    color: #b09a7b;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.add-person-btn:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    color: #b09a7b;
+}
+
+.no-reservation-message {
+    text-align: center;
+    padding: 50px 24px;
+    background-color: #f8f4ec;
+    border-radius: 12px;
+    margin: 10px 0 20px;
+    border: 1px solid #e5e0d5;
+    box-shadow: 0 2px 10px rgba(93, 75, 56, 0.06);
+}
+
+.no-reservation-message h3 {
+    color: #5d4b38;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.no-reservation-message p {
+    color: #8c7762;
+    font-size: 1rem;
+    margin-bottom: 24px;
+}
+
+.empty-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    background-color: #5d4b38;
+    color: #fff;
+    transition: all 0.2s ease;
+}
+
+.empty-action-btn:hover {
+    background-color: #b09a7b;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+    border: 1px solid #e5e0d5;
+    box-shadow: 0 2px 10px rgba(93, 75, 56, 0.06);
+    border-radius: 12px;
+    background-color: #fffcf7;
+}
+
+.table th {
+    background-color: #f8f4ec;
+    color: #5d4b38;
+    font-weight: 600;
+    border-bottom: 1px solid #e5e0d5;
+}
+
+.table td {
+    vertical-align: middle;
+    color: #5d4b38;
+    border-bottom: 1px solid #f0e9df;
+}
+
+.table tbody tr:hover {
+    background-color: #faf7f2;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.2rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.5em 1em;
+    margin: 0 2px;
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+    color: #6c757d !important;
+    border-radius: 4px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #495057 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #b09a7b;
+    border-color: #b09a7b;
+    color: #fff !important;
+}
+
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 4px 8px;
+    background-color: #fff;
+    color: #6c757d;
+}
+
+.dataTables_wrapper .dataTables_length select:focus,
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: #b09a7b;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(176, 154, 123, 0.25);
+}
