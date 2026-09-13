@@ -36,19 +36,6 @@
 }
 
 <div class="admin-order-page">
-    <!-- Toast Bildirimi -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="orderToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-                <strong class="me-auto">Bildirim</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-                Sipariş başarıyla oluşturuldu!
-            </div>
-        </div>
-    </div>
-
     <div class="page-header">
         <h1>Sipariş Oluştur</h1>
         <div class="header-divider"></div>
@@ -511,7 +498,7 @@
         const orderNote = document.getElementById('orderNote').value;
         
         if (!tableNumber) {
-            showToast('Lütfen masa numarası giriniz.', 'error');
+            RestERPToast.error('Lütfen masa numarası giriniz.');
             return;
         }
 
@@ -540,7 +527,7 @@
         });
 
         if (!hasItems) {
-            showToast('Lütfen en az bir ürün seçiniz.', 'error');
+            RestERPToast.error('Lütfen en az bir ürün seçiniz.');
             return;
         }
 
@@ -578,48 +565,24 @@
             const result = await response.json();
 
             if (result.success) {
-                showToast('Sipariş başarıyla oluşturuldu!', 'success');
+                RestERPToast.success('Sipariş başarıyla oluşturuldu!');
                 setTimeout(() => {
                     window.location.href = '/Admin/Table/Index';
-                }, 2000);
+                }, 1200);
             } else {
-                showToast('Sipariş oluşturulurken bir hata oluştu: ' + result.message, 'error');
+                RestERPToast.error('Sipariş oluşturulurken bir hata oluştu: ' + result.message);
             }
         } catch (error) {
             console.error('Sipariş oluşturma hatası:', error);
-            showToast('Sipariş oluşturulurken bir hata oluştu. Lütfen tekrar deneyiniz.', 'error');
+            RestERPToast.error('Sipariş oluşturulurken bir hata oluştu. Lütfen tekrar deneyiniz.');
         }
     });
-
-    function showToast(message, type = 'success') {
-        const toast = document.getElementById('orderToast');
-        const toastBody = toast.querySelector('.toast-body');
-        const toastHeader = toast.querySelector('.toast-header');
-        
-        // Mesajı güncelle
-        toastBody.textContent = message;
-        
-        // Toast rengini ayarla
-        if (type === 'success') {
-            toastHeader.style.backgroundColor = '#198754';
-        } else if (type === 'error') {
-            toastHeader.style.backgroundColor = '#dc3545';
-        }
-        
-        // Toast'u göster
-        const bsToast = new bootstrap.Toast(toast, {
-            animation: true,
-            autohide: true,
-            delay: 3000
-        });
-        bsToast.show();
-    }
 
     // Sayfa yüklendiğinde masa numarasını kontrol et
     document.addEventListener('DOMContentLoaded', function() {
         const tableNumber = document.getElementById('tableNumber');
         if (!tableNumber.value) {
-            alert('Masa numarası bulunamadı!');
+            RestERPToast.error('Masa numarası bulunamadı!');
             window.location.href = '/Admin/Table/Index';
         }
     });

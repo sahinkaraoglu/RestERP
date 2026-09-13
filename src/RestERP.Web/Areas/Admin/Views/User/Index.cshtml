@@ -22,22 +22,6 @@
     </div>  
 
     <div class="container person-content">  
-        @if (TempData["SuccessMessage"] != null)  
-        {  
-            <div class="alert alert-success alert-dismissible fade show" role="alert">  
-                @TempData["SuccessMessage"]  
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>  
-            </div>  
-        }  
-
-        @if (TempData["ErrorMessage"] != null)  
-        {  
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">  
-                @TempData["ErrorMessage"]  
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>  
-            </div>  
-        }  
-
         <div class="col-12">  
             <div class="card">  
                 <div class="card-body">  
@@ -285,46 +269,29 @@
         });
     }
 
-    function deletePerson(id) {
-        Swal.fire({
+    async function deletePerson(id) {
+        const confirmed = await RestERPToast.confirm('Bu işlem geri alınamaz!', {
             title: 'Emin misiniz?',
-            text: "Bu işlem geri alınamaz!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Evet, sil!',
-            cancelButtonText: 'İptal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '@Url.Action("Delete", "User")',
-                    type: 'POST',
-                    data: { id: id },
-                    success: function(response) {
-                        Swal.fire(
-                            'Silindi!',
-                            'Kullanıcı başarıyla silindi.',
-                            'success'
-                        ).then(() => {
-                            window.location.reload();
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        Swal.fire(
-                            'Hata!',
-                            'Kullanıcı silinirken bir hata oluştu.',
-                            'error'
-                        );
-                    }
-                });
+            confirmText: 'Evet, sil',
+            cancelText: 'İptal'
+        });
+
+        if (!confirmed) {
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("Delete", "User")',
+            type: 'POST',
+            data: { id: id },
+            success: function() {
+                RestERPToast.success('Kullanıcı başarıyla silindi.');
+                setTimeout(() => window.location.reload(), 900);
+            },
+            error: function() {
+                RestERPToast.error('Kullanıcı silinirken bir hata oluştu.');
             }
         });
     }
 </script>
-
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-}
 

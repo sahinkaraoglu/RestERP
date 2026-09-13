@@ -20,19 +20,6 @@
     </div>
 
     <div class="container dashboard-content">
-        <!-- Bildirim Toast -->
-        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
-            <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i class="bi bi-check-circle-fill me-2"></i>
-                        <span id="toastMessage">Ürün başarıyla eklendi!</span>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
-
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
@@ -219,14 +206,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Toast nesnesini oluştur
-        var successToastEl = document.getElementById('successToast');
-        var successToast = new bootstrap.Toast(successToastEl, {
-            animation: true,
-            autohide: true,
-            delay: 3000
-        });
-        
         // Ürün ekleme formunun gönderilmesi
         const addItemForm = document.getElementById('addItemForm');
         addItemForm.addEventListener('submit', function(e) {
@@ -242,7 +221,7 @@
             const price = formData.get('Price');
             
             if (!name || !turkishName || !categoryId || !price) {
-                alert('Lütfen tüm zorunlu alanları doldurun (Kategori, Türkçe ve İngilizce ürün adı, fiyat)');
+                RestERPToast.warning('Lütfen tüm zorunlu alanları doldurun (Kategori, Türkçe ve İngilizce ürün adı, fiyat)');
                 return;
             }
             
@@ -290,21 +269,17 @@
             })
             .then(data => {
                 if (data.success) {
-                    // Alert yerine Toast bildirimini göster
-                    document.getElementById('toastMessage').textContent = data.message || 'Ürün başarıyla eklendi!';
-                    successToast.show();
-                    
-                    // Kısa bir gecikme sonrası yönlendirme yap
+                    RestERPToast.success(data.message || 'Ürün başarıyla eklendi!');
                     setTimeout(function() {
-                        window.location.href = '/Admin/Menu'; // Başarılı olursa menü listesine dön
-                    }, 1500);
+                        window.location.href = '/Admin/Menu';
+                    }, 1200);
                 } else {
-                    alert(data.message || 'İşlem sırasında bir hata oluştu.');
+                    RestERPToast.error(data.message || 'İşlem sırasında bir hata oluştu.');
                 }
             })
             .catch(error => {
                 console.error("Fetch hatası:", error);
-                alert('Hata: ' + error.message); // Hata durumunda normal alert göster
+                RestERPToast.error('Hata: ' + error.message);
             });
         });
         

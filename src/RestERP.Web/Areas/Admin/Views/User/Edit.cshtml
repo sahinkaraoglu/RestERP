@@ -26,14 +26,6 @@
             <div class="col-md-8 offset-md-2">
                 <div class="card">
                     <div class="card-body">
-                        @if (TempData["ErrorMessage"] != null)
-                        {
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                @TempData["ErrorMessage"]
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        }
-
                         <form asp-action="Edit" asp-controller="User" asp-route-id="@Model.Id" method="post">
                             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                             <input type="hidden" asp-for="Id" />
@@ -319,7 +311,7 @@
             const roleSelect = document.getElementById('RoleType');
             if (!roleSelect.value) {
                 e.preventDefault();
-                alert('Lütfen bir pozisyon seçiniz!');
+                RestERPToast.warning('Lütfen bir pozisyon seçiniz!');
                 roleSelect.focus();
             }
 
@@ -330,14 +322,14 @@
             if (newPassword || confirmPassword) {
                 if (newPassword.length < 6) {
                     e.preventDefault();
-                    alert('Yeni şifre en az 6 karakter uzunluğunda olmalıdır!');
+                    RestERPToast.warning('Yeni şifre en az 6 karakter uzunluğunda olmalıdır!');
                     document.getElementById('newPassword').focus();
                     return;
                 }
 
                 if (newPassword !== confirmPassword) {
                     e.preventDefault();
-                    alert('Yeni şifreler eşleşmiyor!');
+                    RestERPToast.warning('Yeni şifreler eşleşmiyor!');
                     document.getElementById('confirmPassword').focus();
                     return;
                 }

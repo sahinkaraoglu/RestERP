@@ -303,36 +303,26 @@
 
         // Sipariş verme işlemi
         document.getElementById('orderButton').addEventListener('click', async function() {
+            let loadingToastId;
             try {
                 // Kullanıcı giriş kontrolü
                 const isAuthenticated = @User.Identity.IsAuthenticated.ToString().ToLower();
                 
                 if (!isAuthenticated) {
-                    Swal.fire({
+                    const goToLogin = await RestERPToast.confirm('Sipariş verebilmek için önce giriş yapmalısınız.', {
                         title: 'Giriş Gerekli',
-                        text: 'Sipariş verebilmek için önce giriş yapmalısınız.',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Giriş Yap',
-                        cancelButtonText: 'İptal',
-                        confirmButtonColor: '#6a563d',
-                        cancelButtonColor: '#d6c6af'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = '/Login/Index';
-                        }
+                        confirmText: 'Giriş Yap',
+                        cancelText: 'İptal'
                     });
+                    if (goToLogin) {
+                        window.location.href = '/Login/Index';
+                    }
                     return;
                 }
 
                 const cartItems = getCartItems();
                 if (cartItems.length === 0) {
-                    Swal.fire({
-                        title: 'Sepet Boş',
-                        text: 'Lütfen sepete ürün ekleyiniz!',
-                        icon: 'warning',
-                        confirmButtonColor: '#6a563d'
-                    });
+                    RestERPToast.warning('Lütfen sepete ürün ekleyiniz!', { title: 'Sepet Boş' });
                     return;
                 }
 
@@ -343,12 +333,7 @@
                 if (activeTabId === 'dine-in') {
                     const tableNumber = document.getElementById('tableNumber').value;
                     if (!tableNumber || tableNumber < 1) {
-                        Swal.fire({
-                            title: 'Hata',
-                            text: 'Lütfen geçerli bir masa numarası giriniz!',
-                            icon: 'error',
-                            confirmButtonColor: '#6a563d'
-                        });
+                        RestERPToast.error('Lütfen geçerli bir masa numarası giriniz!');
                         isValid = false;
                     } else {
                         customerInfo.type = 'dine-in';
@@ -360,28 +345,13 @@
                     const address = document.getElementById('deliveryAddress').value;
                     
                     if (!name || name.trim() === '') {
-                        Swal.fire({
-                            title: 'Hata',
-                            text: 'Lütfen adınızı giriniz!',
-                            icon: 'error',
-                            confirmButtonColor: '#6a563d'
-                        });
+                        RestERPToast.error('Lütfen adınızı giriniz!');
                         isValid = false;
                     } else if (!phone || phone.trim() === '') {
-                        Swal.fire({
-                            title: 'Hata',
-                            text: 'Lütfen telefon numaranızı giriniz!',
-                            icon: 'error',
-                            confirmButtonColor: '#6a563d'
-                        });
+                        RestERPToast.error('Lütfen telefon numaranızı giriniz!');
                         isValid = false;
                     } else if (!address || address.trim() === '') {
-                        Swal.fire({
-                            title: 'Hata',
-                            text: 'Lütfen adresinizi giriniz!',
-                            icon: 'error',
-                            confirmButtonColor: '#6a563d'
-                        });
+                        RestERPToast.error('Lütfen adresinizi giriniz!');
                         isValid = false;
                     } else {
                         customerInfo.type = 'delivery';
@@ -405,15 +375,9 @@
                     customerInfo: customerInfo
                 };
 
-                // Yükleniyor göster
-                Swal.fire({
+                loadingToastId = RestERPToast.info('Lütfen bekleyiniz...', {
                     title: 'Sipariş Oluşturuluyor',
-                    text: 'Lütfen bekleyiniz...',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    willOpen: () => {
-                        Swal.showLoading();
-                    }
+                    sticky: true
                 });
 
                 // Anti-forgery token'ı al
@@ -440,34 +404,22 @@
 
                 const result = await response.json();
 
+                RestERPToast.dismiss(loadingToastId);
+
                 if (result.success) {
-                    // Başarılı
-                    Swal.fire({
-                        title: 'Başarılı!',
-                        text: result.message || 'Siparişiniz başarıyla oluşturuldu.',
-                        icon: 'success',
-                        confirmButtonColor: '#6a563d'
-                    }).then(() => {
-                        // Order sayfasına yönlendir
+                    RestERPToast.success(result.message || 'Siparişiniz başarıyla oluşturuldu.');
+                    setTimeout(() => {
                         window.location.href = '/Order';
-                    });
+                    }, 1200);
                 } else {
-                    // Hata
-                    Swal.fire({
-                        title: 'Hata!',
-                        text: result.message || 'Sipariş oluşturulurken bir hata oluştu.',
-                        icon: 'error',
-                        confirmButtonColor: '#6a563d'
-                    });
+                    RestERPToast.error(result.message || 'Sipariş oluşturulurken bir hata oluştu.');
                 }
             } catch (error) {
                 console.error('Sipariş gönderme hatası:', error);
-                Swal.fire({
-                    title: 'Hata!',
-                    text: error instanceof Error ? error.message : 'Sipariş gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.',
-                    icon: 'error',
-                    confirmButtonColor: '#6a563d'
-                });
+                if (loadingToastId) {
+                    RestERPToast.dismiss(loadingToastId);
+                }
+                RestERPToast.error(error instanceof Error ? error.message : 'Sipariş gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.');
             }
         });
         
@@ -1059,5 +1011,3 @@
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

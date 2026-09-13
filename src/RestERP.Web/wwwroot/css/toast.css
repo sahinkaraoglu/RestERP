@@ -1,0 +1,155 @@
+.resterp-toast-host {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1080;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(380px, calc(100vw - 32px));
+    pointer-events: none;
+}
+
+.resterp-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #fffcf7;
+    border: 1px solid #e5e0d5;
+    box-shadow: 0 8px 24px rgba(93, 75, 56, 0.14);
+    color: #5d4b38;
+    animation: resterp-toast-in 0.22s ease;
+}
+
+.resterp-toast.is-leaving {
+    animation: resterp-toast-out 0.18s ease forwards;
+}
+
+.resterp-toast-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+.resterp-toast-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.resterp-toast-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+}
+
+.resterp-toast-message {
+    font-size: 0.88rem;
+    color: #8c7762;
+    line-height: 1.4;
+}
+
+.resterp-toast-close {
+    border: 0;
+    background: transparent;
+    color: #b09a7b;
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+}
+
+.resterp-toast-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.resterp-toast-actions button {
+    border: 0;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.resterp-toast--success {
+    border-color: #d7e6d4;
+}
+
+.resterp-toast--success .resterp-toast-icon {
+    background: #5d7a4c;
+}
+
+.resterp-toast--error {
+    border-color: #ecd4d0;
+}
+
+.resterp-toast--error .resterp-toast-icon {
+    background: #a85a4a;
+}
+
+.resterp-toast--warning {
+    border-color: #eadcc4;
+}
+
+.resterp-toast--warning .resterp-toast-icon {
+    background: #b09a7b;
+}
+
+.resterp-toast--info {
+    border-color: #e5e0d5;
+}
+
+.resterp-toast--info .resterp-toast-icon {
+    background: #5d4b38;
+}
+
+.resterp-toast-btn-cancel {
+    background: #f8f4ec;
+    color: #5d4b38;
+    border: 1px solid #e5e0d5 !important;
+}
+
+.resterp-toast-btn-confirm {
+    background: #5d4b38;
+    color: #fff;
+}
+
+@keyframes resterp-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes resterp-toast-out {
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+@media (max-width: 768px) {
+    .resterp-toast-host {
+        top: auto;
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        width: auto;
+    }
+}

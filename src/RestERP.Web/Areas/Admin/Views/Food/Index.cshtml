@@ -24,22 +24,6 @@
     </div>
 
     <div class="container dashboard-content">
-        <!-- Başarı ve Hata Mesajları -->
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle me-2"></i> @TempData["SuccessMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-
-        @if (TempData["ErrorMessage"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle me-2"></i> @TempData["ErrorMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
 
         <!-- Kategori Filtreleme -->
         <div class="row mb-4">
@@ -352,8 +336,6 @@
         }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Kategori filtre butonları
@@ -416,7 +398,7 @@
             if (categoryName && categoryNameEn) {
                 // Burada API'ye kategori ekleme isteği gönderilecek
                 // Başarılı olursa:
-                alert('Kategori başarıyla eklendi: ' + categoryName);
+                RestERPToast.success('Kategori başarıyla eklendi: ' + categoryName);
                 $('#addCategoryModal').modal('hide');
                 window.location.href = '/Admin/Menu'; // Başarılı olursa menü listesine dön
             }
@@ -434,7 +416,7 @@
             if (category && name && nameEn && price) {
                 // Burada API'ye ürün ekleme isteği gönderilecek
                 // Başarılı olursa:
-                alert('Ürün başarıyla eklendi: ' + name);
+                RestERPToast.success('Ürün başarıyla eklendi: ' + name);
                 $('#addItemModal').modal('hide');
             }
         });
@@ -446,7 +428,7 @@
 
             // Burada API'ye ürün silme isteği gönderilecek
             // Başarılı olursa:
-            alert('Ürün başarıyla silindi');
+            RestERPToast.success('Ürün başarıyla silindi');
             $('#deleteConfirmModal').modal('hide');
         });
     });
@@ -458,51 +440,31 @@
     }
 
     // Ürün silme fonksiyonu
-    function deleteMenuItem(id) {
-        Swal.fire({
+    async function deleteMenuItem(id) {
+        const confirmed = await RestERPToast.confirm('Bu ürünü silmek istediğinizden emin misiniz?', {
             title: 'Emin misiniz?',
-            text: "Bu ürünü silmek istediğinizden emin misiniz?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#5d4b38',
-            cancelButtonColor: '#b09a7b',
-            confirmButtonText: 'Evet, sil!',
-            cancelButtonText: 'İptal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // AJAX ile silme işlemi
-                $.ajax({
-                    url: '/Admin/Menu/Delete',
-                    type: 'POST',
-                    data: { id: id },
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.fire({
-                                title: 'Başarılı!',
-                                text: response.message,
-                                icon: 'success',
-                                confirmButtonColor: '#5d4b38'
-                            }).then(() => {
-                                window.location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Hata!',
-                                text: response.message,
-                                icon: 'error',
-                                confirmButtonColor: '#5d4b38'
-                            });
-                        }
-                    },
-                    error: function() {
-                        Swal.fire({
-                            title: 'Hata!',
-                            text: 'Bir hata oluştu. Lütfen tekrar deneyin.',
-                            icon: 'error',
-                            confirmButtonColor: '#5d4b38'
-                        });
-                    }
-                });
+            confirmText: 'Evet, sil',
+            cancelText: 'İptal'
+        });
+
+        if (!confirmed) {
+            return;
+        }
+
+        $.ajax({
+            url: '/Admin/Menu/Delete',
+            type: 'POST',
+            data: { id: id },
+            success: function(response) {
+                if (response.success) {
+                    RestERPToast.success(response.message || 'Ürün başarıyla silindi.');
+                    setTimeout(() => window.location.reload(), 900);
+                } else {
+                    RestERPToast.error(response.message || 'Ürün silinemedi.');
+                }
+            },
+            error: function() {
+                RestERPToast.error('Bir hata oluştu. Lütfen tekrar deneyin.');
             }
         });
     }

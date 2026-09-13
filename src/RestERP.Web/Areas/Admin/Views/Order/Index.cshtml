@@ -196,21 +196,31 @@
 
 @section Scripts {
     <script>
-        function cancelOrderItem(orderId, orderItemId) {
-            if (!confirm('Bu ürünü iptal etmek istediğinize emin misiniz?')) return;
+        async function cancelOrderItem(orderId, orderItemId) {
+            const confirmed = await RestERPToast.confirm('Bu ürünü iptal etmek istediğinize emin misiniz?', {
+                title: 'Emin misiniz?',
+                confirmText: 'Evet, iptal et',
+                cancelText: 'Vazgeç'
+            });
+
+            if (!confirmed) {
+                return;
+            }
+
             $.ajax({
                 url: '@Url.Action("CancelOrderItem", "Order", new { area = "Admin" })',
                 type: 'POST',
                 data: { orderId: orderId, orderItemId: orderItemId },
                 success: function (result) {
                     if (result.success) {
-                        location.reload();
+                        RestERPToast.success(result.message || 'Ürün iptal edildi.');
+                        setTimeout(() => location.reload(), 900);
                     } else {
-                        alert(result.message || 'Ürün iptal edilirken bir hata oluştu.');
+                        RestERPToast.error(result.message || 'Ürün iptal edilirken bir hata oluştu.');
                     }
                 },
                 error: function () {
-                    alert('Bir hata oluştu.');
+                    RestERPToast.error('Bir hata oluştu.');
                 }
             });
         }

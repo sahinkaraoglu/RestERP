@@ -13,14 +13,6 @@
         </a> *@
     </div>
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger">
-            <i class="bi bi-exclamation-triangle-fill"></i>
-            @TempData["ErrorMessage"]
-        </div>
-    }
-
     @if (!Model.Any())
     {
         <div class="no-orders-message">

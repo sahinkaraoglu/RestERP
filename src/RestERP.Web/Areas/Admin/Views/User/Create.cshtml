@@ -294,7 +294,7 @@
             const roleSelect = document.getElementById('RoleType');
             if (!roleSelect.value) {
                 e.preventDefault();
-                alert('Lütfen bir pozisyon seçiniz!');
+                RestERPToast.warning('Lütfen bir pozisyon seçiniz!');
                 roleSelect.focus();
             }
         });
