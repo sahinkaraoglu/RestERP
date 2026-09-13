@@ -3,10 +3,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using RestERP.Application.Services.Abstract;
+using RestERP.Application.Services.Concrete;
 using RestERP.Core.Domain.Entities;
+using RestERP.Core.Interfaces;
 using RestERP.Domain.Enums;
 using RestERP.Infrastructure.Context;
 using RestERP.Infrastructure.Data.SeedData;
+using RestERP.Infrastructure.Repositories;
 using RestERP.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -103,6 +107,10 @@ builder.Services
     .AddEntityFrameworkStores<RestERPDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
