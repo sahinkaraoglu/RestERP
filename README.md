@@ -42,29 +42,6 @@ Production-ready, layered restaurant ERP built on ASP.NET Core (.NET 9). The sol
     </table>
 </div>
 
-### Mobile Screenshots
-
-<div align="center">
-    <table>
-        <tr>
-            <td>
-                <img src="YOUR_IMAGE_URL_1" alt="Mobile — Home" width="250"/>
-            </td>
-            <td>
-                <img src="YOUR_IMAGE_URL_2" alt="Mobile — Menu" width="250"/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <img src="YOUR_IMAGE_URL_3" alt="Mobile — Orders" width="250"/>
-            </td>
-            <td>
-                <img src="YOUR_IMAGE_URL_4" alt="Mobile — Admin Panel" width="250"/>
-            </td>
-        </tr>
-    </table>
-</div>
-
 ### Data Access Patterns
 - Generic Repository and Unit of Work are used to standardize data access and transaction boundaries while keeping domain logic clean.
 
