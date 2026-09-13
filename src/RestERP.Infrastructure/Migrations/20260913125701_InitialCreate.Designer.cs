@@ -12,7 +12,7 @@ using RestERP.Infrastructure.Context;
 namespace RestERP.Infrastructure.Migrations
 {
     [DbContext(typeof(RestERPDbContext))]
-    [Migration("20260913123924_InitialCreate")]
+    [Migration("20260913125701_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using RestERP.Infrastructure.Context;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
