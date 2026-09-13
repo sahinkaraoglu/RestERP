@@ -25,7 +25,7 @@
                     <div class="order-card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5>Masa @tableGroup.Key</h5>
-                            <button class="cancel-btn" onclick="window.location.href='@Url.Action("Cancel", "Order", new { area = "Admin", id = tableGroup.First().Id })'">
+                            <button class="cancel-btn" onclick="confirmCancelOrder(@tableGroup.First().Id, @tableGroup.Key)">
                                 <i class="bi bi-x-circle"></i> İptal Et
                             </button>
                         </div>
@@ -195,7 +195,59 @@
 </style>
 
 @section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        function confirmCancelOrder(orderId, tableNumber) {
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: `Masa ${tableNumber} için tüm siparişi iptal etmek istediğinize emin misiniz?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Evet, iptal et',
+                cancelButtonText: 'Vazgeç'
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+
+                $.ajax({
+                    url: '@Url.Action("Cancel", "Order", new { area = "Admin" })',
+                    type: 'POST',
+                    data: {
+                        id: orderId,
+                        cancelAll: true,
+                        tableNumber: tableNumber
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Başarılı!',
+                                text: 'Sipariş başarıyla iptal edildi.',
+                                icon: 'success',
+                                confirmButtonColor: '#4CAF50'
+                            }).then(() => location.reload());
+                        } else {
+                            Swal.fire({
+                                title: 'Hata!',
+                                text: response.message || 'Sipariş iptal edilirken bir hata oluştu.',
+                                icon: 'error',
+                                confirmButtonColor: '#dc3545'
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Hata!',
+                            text: 'Bir hata oluştu.',
+                            icon: 'error',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
+                });
+            });
+        }
+
         async function cancelOrderItem(orderId, orderItemId) {
             const confirmed = await RestERPToast.confirm('Bu ürünü iptal etmek istediğinize emin misiniz?', {
                 title: 'Emin misiniz?',

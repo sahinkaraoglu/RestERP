@@ -297,25 +297,6 @@ public class OrderController : Controller
         }
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Cancel(int id)
-    {
-        try
-        {
-            var order = await _orderService.GetOrderWithDetailsAsync(id);
-            return View(order);
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound("Sipariş bulunamadı.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Sipariş iptal sayfası açılırken hata oluştu. OrderId: {OrderId}", id);
-            return View("Error", new RestERP.Web.Models.ErrorViewModel { RequestId = HttpContext.TraceIdentifier });
-        }
-    }
-
     [HttpPost]
     public async Task<IActionResult> Cancel(int id, bool cancelAll = false, int? tableNumber = null)
     {
