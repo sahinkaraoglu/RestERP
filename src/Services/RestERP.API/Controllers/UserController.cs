@@ -172,6 +172,35 @@ namespace RestERP.API.Controllers
         }
 
         /// <summary>
+        /// Kullanıcı şifresini mevcut şifre istemeden sıfırlar
+        /// </summary>
+        [HttpPost("{id}/reset-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(int id, [FromBody] ResetPasswordRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var (succeeded, errors) = await _userService.ResetPasswordAsync(id, request.NewPassword);
+                if (!succeeded)
+                {
+                    return BadRequest(new { message = "Şifre sıfırlanamadı", errors });
+                }
+
+                return Ok(new { message = "Şifre başarıyla sıfırlandı" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Kullanıcı şifresi sıfırlanırken hata oluştu: {UserId}", id);
+                return StatusCode(500, "Sunucu hatası");
+            }
+        }
+
+        /// <summary>
         /// Kullanıcı siler
         /// </summary>
         /// <param name="id">Silinecek kullanıcı ID'si</param>

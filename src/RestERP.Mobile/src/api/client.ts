@@ -21,6 +21,9 @@ function parseMessage(text: string): string {
     if (typeof json === 'string') {
       return json;
     }
+    if (Array.isArray(json.errors) && json.errors.length) {
+      return json.errors.join(' ');
+    }
     if (json.message) {
       return json.message;
     }

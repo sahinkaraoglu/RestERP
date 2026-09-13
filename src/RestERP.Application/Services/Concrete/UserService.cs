@@ -81,6 +81,24 @@ namespace RestERP.Application.Services
             }
         }
 
+        public async Task<(bool Succeeded, IReadOnlyList<string> Errors)> ResetPasswordAsync(int userId, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                return (false, new[] { "Kullanıcı bulunamadı." });
+            }
+
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+            if (!result.Succeeded)
+            {
+                return (false, result.Errors.Select(e => e.Description).ToList());
+            }
+
+            return (true, Array.Empty<string>());
+        }
+
         public async Task<bool> DeleteUserAsync(int id)
         {
             try

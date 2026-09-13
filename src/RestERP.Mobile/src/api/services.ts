@@ -73,5 +73,7 @@ export const userApi = {
   byEmail: (email: string) => api.get<ApplicationUser>(`/api/user/email/${encodeURIComponent(email)}`),
   update: (id: number, user: Partial<ApplicationUser>) =>
     api.put(`/api/user/${id}`, { ...user, id }),
+  resetPassword: (id: number, newPassword: string, confirmPassword: string) =>
+    api.post(`/api/user/${id}/reset-password`, { newPassword, confirmPassword }),
   remove: (id: number) => api.del(`/api/user/${id}`),
 };

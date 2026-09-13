@@ -64,6 +64,14 @@ export function UserFormScreen() {
     setSaving(true);
     try {
       if (userId) {
+        if (form.password || form.confirmPassword) {
+          if (form.password.length < 6 || form.password !== form.confirmPassword) {
+            Alert.alert('Şifre', 'Yeni şifre en az 6 karakter olmalı ve şifreler eşleşmelidir.');
+            setSaving(false);
+            return;
+          }
+        }
+
         await userApi.update(userId, {
           firstName: form.firstName,
           lastName: form.lastName,
@@ -73,6 +81,10 @@ export function UserFormScreen() {
           roleType: Number(form.roleType) as Role,
           isActive: form.isActive === 'true',
         });
+
+        if (form.password) {
+          await userApi.resetPassword(userId, form.password, form.confirmPassword);
+        }
       } else {
         if (!form.password || form.password !== form.confirmPassword) {
           Alert.alert('Şifre', 'Yeni kullanıcı için şifreler eşleşmelidir.');
@@ -114,6 +126,9 @@ export function UserFormScreen() {
           <>
             <Field label="Rol (1 Admin, 2 Personel, 3 Müşteri)" value={form.roleType} onChangeText={(v) => set('roleType', v)} keyboardType="number-pad" />
             <Field label="Aktif (true/false)" value={form.isActive} onChangeText={(v) => set('isActive', v)} autoCapitalize="none" />
+            <Field label="Yeni Şifre" value={form.password} onChangeText={(v) => set('password', v)} secureTextEntry />
+            <Field label="Yeni Şifre Tekrar" value={form.confirmPassword} onChangeText={(v) => set('confirmPassword', v)} secureTextEntry />
+            <Text style={styles.hint}>Şifreyi sıfırlamak için doldurun. Mevcut şifre gerekmez. Boş bırakılırsa şifre değişmez.</Text>
           </>
         ) : (
           <>

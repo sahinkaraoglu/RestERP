@@ -134,7 +134,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, ApplicationUser model, string? currentPassword, string? newPassword, string? confirmPassword)
+        public async Task<IActionResult> Edit(int id, ApplicationUser model, string? newPassword, string? confirmPassword)
         {
             try
             {
@@ -162,15 +162,9 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                // Şifre değişikliği kontrolü
-                if (!string.IsNullOrEmpty(newPassword) || !string.IsNullOrEmpty(confirmPassword))
+                var resetPassword = !string.IsNullOrEmpty(newPassword) || !string.IsNullOrEmpty(confirmPassword);
+                if (resetPassword)
                 {
-                    if (string.IsNullOrEmpty(currentPassword))
-                    {
-                        ModelState.AddModelError("", "Mevcut şifrenizi girmelisiniz.");
-                        return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
-                    }
-
                     if (string.IsNullOrEmpty(newPassword) || newPassword.Length < 6)
                     {
                         ModelState.AddModelError("", "Yeni şifre en az 6 karakter uzunluğunda olmalıdır.");
@@ -182,41 +176,48 @@ namespace RestERP.Web.Areas.Admin.Controllers
                         ModelState.AddModelError("", "Yeni şifreler eşleşmiyor.");
                         return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
                     }
-
-                    // Mevcut şifreyi kontrol et
-                    if (!VerifyPassword(currentPassword, user.PasswordHash))
-                    {
-                        ModelState.AddModelError("", "Mevcut şifre yanlış.");
-                        return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
-                    }
-
-                    // Şifreyi güncelle
-                    user.PasswordHash = HashPassword(newPassword);
                 }
 
-                // Diğer bilgileri güncelle
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
                 user.Email = model.Email;
                 user.PhoneNumber = model.PhoneNumber;
                 user.IsActive = model.IsActive;
                 user.RoleType = model.RoleType;
-                // CreatedDate/UpdatedDate removed - Identity manages timestamps
             
                 var updateJson = JsonSerializer.Serialize(user);
                 var content = new StringContent(updateJson, Encoding.UTF8, "application/json");
                 var updateResponse = await httpClient.PutAsync($"api/user/{id}", content);
                 
-                if (updateResponse.IsSuccessStatusCode)
-                {
-                    TempData["SuccessMessage"] = "Kullanıcı başarıyla güncellendi.";
-                    return RedirectToAction(nameof(Index));
-                }
-                else
+                if (!updateResponse.IsSuccessStatusCode)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı güncellenirken bir hata oluştu.";
                     return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
                 }
+
+                if (resetPassword)
+                {
+                    var resetPayload = JsonSerializer.Serialize(new
+                    {
+                        NewPassword = newPassword,
+                        ConfirmPassword = confirmPassword
+                    });
+                    var resetContent = new StringContent(resetPayload, Encoding.UTF8, "application/json");
+                    var resetResponse = await httpClient.PostAsync($"api/user/{id}/reset-password", resetContent);
+
+                    if (!resetResponse.IsSuccessStatusCode)
+                    {
+                        var resetBody = await resetResponse.Content.ReadAsStringAsync();
+                        TempData["ErrorMessage"] = "Kullanıcı güncellendi ancak şifre sıfırlanamadı. " + FormatResetPasswordError(resetBody);
+                        return View("~/Areas/Admin/Views/User/Edit.cshtml", model);
+                    }
+
+                    TempData["SuccessMessage"] = "Kullanıcı güncellendi ve şifre sıfırlandı.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                TempData["SuccessMessage"] = "Kullanıcı başarıyla güncellendi.";
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
@@ -255,6 +256,35 @@ namespace RestERP.Web.Areas.Admin.Controllers
             }
         }
 
+        private static string FormatResetPasswordError(string resetBody)
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(resetBody);
+                if (doc.RootElement.TryGetProperty("errors", out var errors) && errors.ValueKind == JsonValueKind.Array)
+                {
+                    var messages = errors.EnumerateArray()
+                        .Select(e => e.GetString())
+                        .Where(s => !string.IsNullOrWhiteSpace(s));
+                    var joined = string.Join(" ", messages!);
+                    if (!string.IsNullOrWhiteSpace(joined))
+                    {
+                        return joined;
+                    }
+                }
+
+                if (doc.RootElement.TryGetProperty("message", out var message))
+                {
+                    return message.GetString() ?? resetBody;
+                }
+            }
+            catch (JsonException)
+            {
+            }
+
+            return resetBody;
+        }
+
         private string HashPassword(string password)
         {
             using (var sha256 = SHA256.Create())
@@ -262,12 +292,6 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return Convert.ToBase64String(hashedBytes);
             }
-        }
-
-        private bool VerifyPassword(string password, string hashedPassword)
-        {
-            var hashedInput = HashPassword(password);
-            return hashedInput == hashedPassword;
         }
     }
 } 
