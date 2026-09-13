@@ -18,8 +18,8 @@ function getLanHost(): string {
 
 const host = getLanHost();
 
-/** RestERP.API — http://localhost:5000 */
-export const API_BASE_URL = `http://${host}:5000`;
+/** RestERP.API — http://localhost:5050 */
+export const API_BASE_URL = `http://${host}:5050`;
 
 /** RestERP.Web static images — http://localhost:5158 */
 export const WEB_BASE_URL = `http://${host}:5158`;
