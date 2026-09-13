@@ -12,6 +12,7 @@ using RestERP.Core.Interfaces;
 using RestERP.Infrastructure.Context;
 using RestERP.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.FileProviders;
 using RestERP.Core.Domain.Entities;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -169,6 +170,19 @@ if (app.Environment.IsDevelopment())
 if (!app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
+}
+
+var webRootSetting = builder.Configuration["StaticFiles:WebRootPath"];
+if (!string.IsNullOrWhiteSpace(webRootSetting))
+{
+    var webRootPath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, webRootSetting));
+    if (Directory.Exists(webRootPath))
+    {
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(webRootPath),
+        });
+    }
 }
 
 app.UseCors("AllowAll");

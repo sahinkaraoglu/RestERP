@@ -23,11 +23,8 @@ function getLanHost(): string {
 
 const host = getLanHost();
 
-/** RestERP.API — http://localhost:5050 */
+/** RestERP.API — http://localhost:5050 (mobil görseller de API üzerinden sunulur) */
 export const API_BASE_URL = `http://${host}:5050`;
-
-/** RestERP.Web static images — http://localhost:5158 */
-export const WEB_BASE_URL = `http://${host}:5158`;
 
 export function resolveImageUrl(path?: string | null): string | undefined {
   if (!path) {
@@ -36,5 +33,5 @@ export function resolveImageUrl(path?: string | null): string | undefined {
   if (path.startsWith('http://') || path.startsWith('https://')) {
     return path;
   }
-  return `${WEB_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+  return `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
 }
