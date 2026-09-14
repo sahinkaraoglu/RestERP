@@ -89,14 +89,6 @@ Open with Expo Go or an emulator.
 
 Start the API with the `http` profile so the mobile client can reach it on the local network.
 
-### Test Users (Development)
-
-| Email | Password | Role |
-|---|---|---|
-| admin@resterp.com | Admin123! | Admin |
-| employee@resterp.com | Employee123! | Employee |
-| customer@test.com | Customer123! | Customer |
-
 ### Mobile Screens
 
 **Customer:** Home, Menu (cart + checkout), Orders, Reservations, Login / Sign Up
