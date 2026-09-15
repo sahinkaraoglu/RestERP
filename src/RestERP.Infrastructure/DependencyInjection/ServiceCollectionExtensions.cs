@@ -1,0 +1,25 @@
+using Microsoft.Extensions.DependencyInjection;
+using RestERP.Core.Interfaces.Repositories;
+using RestERP.Infrastructure.Repositories;
+
+namespace RestERP.Infrastructure.DependencyInjection
+{
+    public static class ServiceCollectionExtensions
+    {
+        public static IServiceCollection AddRestERPRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<IFoodRepository, FoodRepository>();
+            services.AddScoped<IFoodCategoryRepository, FoodCategoryRepository>();
+            services.AddScoped<IImageRepository, ImageRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+            services.AddScoped<ITableRepository, TableRepository>();
+            services.AddScoped<IReservationRepository, ReservationRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddScoped<ILogRepository, LogRepository>();
+
+            return services;
+        }
+    }
+}

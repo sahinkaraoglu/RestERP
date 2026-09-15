@@ -1,25 +1,15 @@
 using System.Text;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using RestERP.Application.Services;
-using RestERP.Application.Services.Abstract;
-using RestERP.Application.Services.Concrete;
+using RestERP.Application.DependencyInjection;
 using RestERP.Infrastructure.Context;
+using RestERP.Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 using RestERP.Core.Domain.Entities;
 var builder = WebApplication.CreateBuilder(args);
-
-// Autofac entegrasyonu
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
-{
-    containerBuilder.RegisterModule(new RestERP.API.DependencyInjection.AutofacModule());
-});
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -111,6 +101,9 @@ builder.Services
     .AddEntityFrameworkStores<RestERPDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
+
+builder.Services.AddRestERPRepositories();
+builder.Services.AddRestERPApplicationServices();
 
 // JWT yapılandırması
 builder.Services.AddAuthentication(options =>

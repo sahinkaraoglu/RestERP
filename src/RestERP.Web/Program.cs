@@ -3,15 +3,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using RestERP.Application.Services;
-using RestERP.Application.Services.Abstract;
-using RestERP.Application.Services.Concrete;
+using RestERP.Application.DependencyInjection;
 using RestERP.Core.Domain.Entities;
-using RestERP.Core.Interfaces.Repositories;
 using RestERP.Domain.Enums;
 using RestERP.Infrastructure.Context;
 using RestERP.Infrastructure.Data.SeedData;
-using RestERP.Infrastructure.Repositories;
+using RestERP.Infrastructure.DependencyInjection;
 using RestERP.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -110,23 +107,8 @@ builder.Services
     .AddDefaultTokenProviders();
 
 
-builder.Services.AddScoped<IFoodRepository, FoodRepository>();
-builder.Services.AddScoped<IFoodCategoryRepository, FoodCategoryRepository>();
-builder.Services.AddScoped<IImageRepository, ImageRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
-builder.Services.AddScoped<ITableRepository, TableRepository>();
-builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-builder.Services.AddScoped<ILogRepository, LogRepository>();
-
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IFoodService, FoodService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<ITableService, TableService>();
-builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddRestERPRepositories();
+builder.Services.AddRestERPApplicationServices();
 
 var app = builder.Build();
 
