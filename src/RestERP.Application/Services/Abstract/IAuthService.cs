@@ -11,4 +11,3 @@ namespace RestERP.Application.Services.Abstract
         Task<bool> ValidateTokenAsync(string token);
     }
 }
-

@@ -1,6 +1,4 @@
 using RestERP.Core.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace RestERP.Application.Services.Abstract
 {
@@ -12,4 +10,4 @@ namespace RestERP.Application.Services.Abstract
         Task UpdateCategoryAsync(FoodCategory category);
         Task DeleteCategoryAsync(int id);
     }
-} 
+}

@@ -1,6 +1,4 @@
 using RestERP.Core.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace RestERP.Application.Services.Abstract
 {
@@ -13,8 +11,7 @@ namespace RestERP.Application.Services.Abstract
         Task<Food> CreateFoodAsync(Food food);
         Task UpdateFoodAsync(Food food);
         Task DeleteFoodAsync(int id);
-        Task<IEnumerable<FoodCategory>> GetAllFoodCategoriesAsync();
         Task<IEnumerable<Image>> GetAllFoodImagesAsync();
         Task SaveFoodImageAsync(int foodId, string path);
     }
-} 
+}

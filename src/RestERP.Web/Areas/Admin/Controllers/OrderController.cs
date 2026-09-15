@@ -1,6 +1,20 @@
 using System.Security.Claims;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.FoodCategories.Queries.GetFoodCategories;
+using RestERP.Application.Features.Foods.Queries.GetFoodImages;
+using RestERP.Application.Features.Foods.Queries.GetFoods;
+using RestERP.Application.Features.Orders.Commands.CreateOrder;
+using RestERP.Application.Features.Orders.Commands.DeleteOrderItem;
+using RestERP.Application.Features.Orders.Commands.UpdateOrder;
+using RestERP.Application.Features.Orders.Commands.UpdateOrderStatus;
+using RestERP.Application.Features.Orders.Queries.GetActiveOrders;
+using RestERP.Application.Features.Orders.Queries.GetOrders;
+using RestERP.Application.Features.Orders.Queries.GetOrdersByTableId;
+using RestERP.Application.Features.Orders.Queries.GetOrderWithDetails;
+using RestERP.Application.Features.Users.Queries.GetUserByEmail;
+using RestERP.Application.Features.Users.Queries.GetUserById;
+using RestERP.Application.Features.Users.Queries.GetUserByUsername;
 using RestERP.Domain.Enums;
 using RestERP.Core.Domain.Entities;
 using RestERP.Web.Areas.Admin.Models;
@@ -11,20 +25,14 @@ namespace RestERP.Web.Areas.Admin.Controllers;
 public class OrderController : Controller
 {
     private readonly ILogger<OrderController> _logger;
-    private readonly IOrderService _orderService;
-    private readonly IFoodService _foodService;
-    private readonly IUserService _userService;
+    private readonly IMediator _mediator;
 
     public OrderController(
         ILogger<OrderController> logger,
-        IOrderService orderService,
-        IFoodService foodService,
-        IUserService userService)
+        IMediator mediator)
     {
         _logger = logger;
-        _orderService = orderService;
-        _foodService = foodService;
-        _userService = userService;
+        _mediator = mediator;
     }
 
     public async Task<IActionResult> Index()
@@ -39,12 +47,12 @@ public class OrderController : Controller
             if (Request.Query.ContainsKey("orderId") &&
                 int.TryParse(Request.Query["orderId"], out var orderId))
             {
-                var order = await _orderService.GetOrderWithDetailsAsync(orderId);
+                var order = await _mediator.Send(new GetOrderWithDetailsQuery(orderId));
                 ViewData["ShowSingleOrder"] = true;
                 return View(new List<Order> { order });
             }
 
-            var activeOrders = (await _orderService.GetActiveOrdersAsync()).ToList();
+            var activeOrders = (await _mediator.Send(new GetActiveOrdersQuery())).ToList();
             ViewData["ShowSingleOrder"] = false;
             return View(activeOrders);
         }
@@ -65,7 +73,7 @@ public class OrderController : Controller
     {
         try
         {
-            var orders = (await _orderService.GetOrdersByTableIdAsync(tableId)).ToList();
+            var orders = (await _mediator.Send(new GetOrdersByTableIdQuery(tableId))).ToList();
             var activeOrder = orders.FirstOrDefault(o =>
                 o.Status != OrderStatus.Completed &&
                 o.Status != OrderStatus.Cancelled &&
@@ -77,7 +85,7 @@ public class OrderController : Controller
                 return RedirectToAction("Index", "Table");
             }
 
-            var orderWithDetails = await _orderService.GetOrderWithDetailsAsync(activeOrder.Id);
+            var orderWithDetails = await _mediator.Send(new GetOrderWithDetailsQuery(activeOrder.Id));
             ViewData["ShowSingleOrder"] = true;
             return View("Index", new List<Order> { orderWithDetails });
         }
@@ -93,7 +101,7 @@ public class OrderController : Controller
     {
         try
         {
-            var activeOrders = (await _orderService.GetActiveOrdersAsync()).ToList();
+            var activeOrders = (await _mediator.Send(new GetActiveOrdersQuery())).ToList();
             ViewData["ShowSingleOrder"] = false;
             return View("Index", activeOrders);
         }
@@ -138,7 +146,7 @@ public class OrderController : Controller
                 }).ToList()
             };
 
-            var result = await _orderService.CreateOrderAsync(order);
+            var result = await _mediator.Send(new CreateOrderCommand(order));
             return Json(new { success = true, orderId = result.Id });
         }
         catch (Exception ex)
@@ -154,7 +162,7 @@ public class OrderController : Controller
     {
         try
         {
-            var orders = (await _orderService.GetOrdersByTableIdAsync(tableId)).ToList();
+            var orders = (await _mediator.Send(new GetOrdersByTableIdQuery(tableId))).ToList();
             var result = orders.Select(o => new
             {
                 o.Id,
@@ -179,7 +187,7 @@ public class OrderController : Controller
         {
             if (Enum.TryParse(model.Status, out OrderStatus newStatus))
             {
-                var updated = await _orderService.UpdateOrderStatusAsync(orderId, newStatus);
+                var updated = await _mediator.Send(new UpdateOrderStatusCommand(orderId, newStatus));
                 if (updated)
                 {
                     return Ok();
@@ -203,7 +211,7 @@ public class OrderController : Controller
     {
         try
         {
-            var orders = (await _orderService.GetAllOrdersAsync()).ToList();
+            var orders = (await _mediator.Send(new GetOrdersQuery())).ToList();
             var tableOrders = orders
                 .Where(o => o.TableId.HasValue)
                 .GroupBy(o => o.TableId)
@@ -244,7 +252,7 @@ public class OrderController : Controller
     {
         try
         {
-            var orders = (await _orderService.GetOrdersByTableIdAsync(tableId)).ToList();
+            var orders = (await _mediator.Send(new GetOrdersByTableIdQuery(tableId))).ToList();
             var activeOrders = orders
                 .Where(o => o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled && !o.IsPaid)
                 .ToList();
@@ -256,7 +264,7 @@ public class OrderController : Controller
 
             foreach (var summary in activeOrders)
             {
-                var order = await _orderService.GetOrderWithDetailsAsync(summary.Id);
+                var order = await _mediator.Send(new GetOrderWithDetailsQuery(summary.Id));
                 order.IsPaid = true;
                 order.Status = OrderStatus.Completed;
 
@@ -265,7 +273,7 @@ public class OrderController : Controller
                     item.IsPaid = true;
                 }
 
-                await _orderService.UpdateOrderAsync(order);
+                await _mediator.Send(new UpdateOrderCommand(order));
             }
 
             return Ok(new { success = true, message = "Hesap kapatıldı" });
@@ -282,9 +290,9 @@ public class OrderController : Controller
     {
         try
         {
-            ViewBag.Categories = (await _foodService.GetAllFoodCategoriesAsync()).ToList();
-            ViewBag.Foods = (await _foodService.GetAllFoodsAsync()).ToList();
-            ViewBag.Images = (await _foodService.GetAllFoodImagesAsync()).ToList();
+            ViewBag.Categories = (await _mediator.Send(new GetFoodCategoriesQuery())).ToList();
+            ViewBag.Foods = (await _mediator.Send(new GetFoodsQuery())).ToList();
+            ViewBag.Images = (await _mediator.Send(new GetFoodImagesQuery())).ToList();
             ViewBag.TableId = tableId;
 
             return View();
@@ -302,7 +310,7 @@ public class OrderController : Controller
     {
         try
         {
-            var order = await _orderService.GetOrderWithDetailsAsync(id);
+            var order = await _mediator.Send(new GetOrderWithDetailsQuery(id));
 
             foreach (var item in order.OrderItems)
             {
@@ -310,7 +318,7 @@ public class OrderController : Controller
             }
 
             order.Status = OrderStatus.Cancelled;
-            await _orderService.UpdateOrderAsync(order);
+            await _mediator.Send(new UpdateOrderCommand(order));
 
             return Json(new { success = true });
         }
@@ -330,12 +338,12 @@ public class OrderController : Controller
     {
         try
         {
-            var orders = (await _orderService.GetOrdersByTableIdAsync(tableNumber)).ToList();
+            var orders = (await _mediator.Send(new GetOrdersByTableIdQuery(tableNumber))).ToList();
             var activeOrders = orders.Where(o => o.Status != OrderStatus.Cancelled);
 
             foreach (var order in activeOrders)
             {
-                await _orderService.UpdateOrderStatusAsync(order.Id, OrderStatus.Cancelled);
+                await _mediator.Send(new UpdateOrderStatusCommand(order.Id, OrderStatus.Cancelled));
             }
 
             return Json(new { success = true });
@@ -352,7 +360,7 @@ public class OrderController : Controller
     {
         try
         {
-            var deleted = await _orderService.DeleteOrderItemAsync(orderItemId);
+            var deleted = await _mediator.Send(new DeleteOrderItemCommand(orderItemId));
             if (deleted)
             {
                 return Json(new { success = true, message = "Ürün iptal edildi." });
@@ -372,7 +380,7 @@ public class OrderController : Controller
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (int.TryParse(userId, out var id) && id > 0)
         {
-            var byId = await _userService.GetUserByIdAsync(id);
+            var byId = await _mediator.Send(new GetUserByIdQuery(id));
             if (byId != null)
             {
                 return byId;
@@ -382,7 +390,7 @@ public class OrderController : Controller
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
         if (!string.IsNullOrWhiteSpace(email))
         {
-            var byEmail = await _userService.GetUserByEmailAsync(email);
+            var byEmail = await _mediator.Send(new GetUserByEmailQuery(email));
             if (byEmail != null)
             {
                 return byEmail;
@@ -395,8 +403,8 @@ public class OrderController : Controller
             return null;
         }
 
-        return await _userService.GetUserByUsernameAsync(name)
-            ?? await _userService.GetUserByEmailAsync(name);
+        return await _mediator.Send(new GetUserByUsernameQuery(name))
+            ?? await _mediator.Send(new GetUserByEmailQuery(name));
     }
 }
 

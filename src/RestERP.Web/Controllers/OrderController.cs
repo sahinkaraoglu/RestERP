@@ -1,6 +1,13 @@
 using System.Security.Claims;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Orders.Commands.CreateOrder;
+using RestERP.Application.Features.Orders.Queries.GetActiveOrders;
+using RestERP.Application.Features.Orders.Queries.GetOrdersByTableId;
+using RestERP.Application.Features.Tables.Queries.GetTables;
+using RestERP.Application.Features.Users.Queries.GetUserByEmail;
+using RestERP.Application.Features.Users.Queries.GetUserById;
+using RestERP.Application.Features.Users.Queries.GetUserByUsername;
 using RestERP.Core.Domain.Entities;
 using RestERP.Domain.Enums;
 using RestERP.Web.Areas.Admin.Models;
@@ -10,20 +17,14 @@ namespace RestERP.Web.Controllers
     public class OrderController : Controller
     {
         private readonly ILogger<OrderController> _logger;
-        private readonly IOrderService _orderService;
-        private readonly IUserService _userService;
-        private readonly ITableService _tableService;
+        private readonly IMediator _mediator;
 
         public OrderController(
             ILogger<OrderController> logger,
-            IOrderService orderService,
-            IUserService userService,
-            ITableService tableService)
+            IMediator mediator)
         {
             _logger = logger;
-            _orderService = orderService;
-            _userService = userService;
-            _tableService = tableService;
+            _mediator = mediator;
         }
 
         public async Task<IActionResult> Index(int? tableId = null)
@@ -35,9 +36,9 @@ namespace RestERP.Web.Controllers
 
             try
             {
-                ViewBag.Tables = (await _tableService.GetAllTablesAsync()).ToList();
+                ViewBag.Tables = (await _mediator.Send(new GetTablesQuery())).ToList();
 
-                var orders = (await _orderService.GetActiveOrdersAsync()).ToList();
+                var orders = (await _mediator.Send(new GetActiveOrdersQuery())).ToList();
                 if (tableId.HasValue)
                 {
                     orders = orders.Where(o => o.TableId == tableId.Value).ToList();
@@ -64,7 +65,7 @@ namespace RestERP.Web.Controllers
 
             try
             {
-                var orders = await _orderService.GetOrdersByTableIdAsync(tableId);
+                var orders = await _mediator.Send(new GetOrdersByTableIdQuery(tableId));
                 var tableOrders = orders
                     .Where(o => !o.IsPaid && o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled)
                     .ToList();
@@ -123,7 +124,7 @@ namespace RestERP.Web.Controllers
                     }).ToList()
                 };
 
-                var result = await _orderService.CreateOrderAsync(order);
+                var result = await _mediator.Send(new CreateOrderCommand(order));
                 return Json(new { success = true, orderId = result.Id, message = "Siparişiniz başarıyla oluşturuldu." });
             }
             catch (Exception ex)
@@ -138,7 +139,7 @@ namespace RestERP.Web.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (int.TryParse(userId, out var id) && id > 0)
             {
-                var byId = await _userService.GetUserByIdAsync(id);
+                var byId = await _mediator.Send(new GetUserByIdQuery(id));
                 if (byId != null)
                 {
                     return byId;
@@ -148,7 +149,7 @@ namespace RestERP.Web.Controllers
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
             if (!string.IsNullOrWhiteSpace(email))
             {
-                var byEmail = await _userService.GetUserByEmailAsync(email);
+                var byEmail = await _mediator.Send(new GetUserByEmailQuery(email));
                 if (byEmail != null)
                 {
                     return byEmail;
@@ -161,8 +162,8 @@ namespace RestERP.Web.Controllers
                 return null;
             }
 
-            return await _userService.GetUserByUsernameAsync(name)
-                ?? await _userService.GetUserByEmailAsync(name);
+            return await _mediator.Send(new GetUserByUsernameQuery(name))
+                ?? await _mediator.Send(new GetUserByEmailQuery(name));
         }
     }
 }

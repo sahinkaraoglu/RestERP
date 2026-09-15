@@ -1,17 +1,19 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Application.DTOs;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Auth.Commands.Login;
+using RestERP.Application.Features.Auth.Commands.Register;
 
 namespace RestERP.Web.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly IAuthService _authService;
+        private readonly IMediator _mediator;
         private readonly ILogger<LoginController> _logger;
 
-        public LoginController(IAuthService authService, ILogger<LoginController> logger)
+        public LoginController(IMediator mediator, ILogger<LoginController> logger)
         {
-            _authService = authService;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -32,11 +34,11 @@ namespace RestERP.Web.Controllers
                     return View("Index");
                 }
 
-                var tokenResponse = await _authService.LoginAsync(new LoginRequest
+                var tokenResponse = await _mediator.Send(new LoginCommand(new LoginRequest
                 {
                     Email = email,
                     Password = password
-                });
+                }));
 
                 if (tokenResponse == null || string.IsNullOrEmpty(tokenResponse.AccessToken))
                 {
@@ -80,7 +82,7 @@ namespace RestERP.Web.Controllers
                     return View();
                 }
 
-                var tokenResponse = await _authService.RegisterAsync(new RegisterRequest
+                var tokenResponse = await _mediator.Send(new RegisterCommand(new RegisterRequest
                 {
                     UserName = username,
                     Email = email,
@@ -89,7 +91,7 @@ namespace RestERP.Web.Controllers
                     PhoneNumber = phoneNumber,
                     Password = password,
                     ConfirmPassword = confirmPassword
-                });
+                }));
 
                 if (tokenResponse == null || string.IsNullOrEmpty(tokenResponse.AccessToken))
                 {

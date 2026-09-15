@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using RestERP.Domain.Enums;
 using RestERP.Core.Domain.Entities;
+using RestERP.Domain.Enums;
 
 namespace RestERP.Application.Services.Abstract
 {
@@ -21,4 +18,4 @@ namespace RestERP.Application.Services.Abstract
         Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate);
         Task<bool> DeleteOrderItemAsync(int orderItemId);
     }
-} 
+}

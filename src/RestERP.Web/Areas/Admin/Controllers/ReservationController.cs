@@ -1,7 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
 using RestERP.Core.Domain.Entities;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Reservations.Commands.CreateReservation;
+using RestERP.Application.Features.Reservations.Commands.DeleteReservation;
+using RestERP.Application.Features.Reservations.Commands.UpdateReservation;
+using RestERP.Application.Features.Reservations.Queries.GetReservationById;
+using RestERP.Application.Features.Reservations.Queries.GetReservations;
 
 namespace RestERP.Web.Areas.Admin.Controllers
 {
@@ -9,14 +14,14 @@ namespace RestERP.Web.Areas.Admin.Controllers
     [Authorize(Roles = "Admin,Employee")]
     public class ReservationController : Controller
     {
-        private readonly IReservationService _reservationService;
+        private readonly IMediator _mediator;
         private readonly ILogger<ReservationController> _logger;
 
         public ReservationController(
-            IReservationService reservationService,
+            IMediator mediator,
             ILogger<ReservationController> logger)
         {
-            _reservationService = reservationService;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -24,7 +29,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         {
             try
             {
-                var reservations = await _reservationService.GetAllReservationsAsync();
+                var reservations = await _mediator.Send(new GetReservationsQuery());
                 return View(reservations);
             }
             catch (Exception ex)
@@ -37,7 +42,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            var reservation = await _reservationService.GetReservationByIdAsync(id);
+            var reservation = await _mediator.Send(new GetReservationByIdQuery(id));
             if (reservation == null)
             {
                 return NotFound();
@@ -59,7 +64,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
             {
                 try
                 {
-                    await _reservationService.CreateReservationAsync(reservation);
+                    await _mediator.Send(new CreateReservationCommand(reservation));
                     TempData["SuccessMessage"] = "Rezervasyon başarıyla oluşturuldu.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -75,7 +80,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            var reservation = await _reservationService.GetReservationByIdAsync(id);
+            var reservation = await _mediator.Send(new GetReservationByIdQuery(id));
             if (reservation == null)
             {
                 return NotFound();
@@ -97,7 +102,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
             {
                 try
                 {
-                    await _reservationService.UpdateReservationAsync(reservation);
+                    await _mediator.Send(new UpdateReservationCommand(reservation));
                     TempData["SuccessMessage"] = "Rezervasyon başarıyla güncellendi.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -117,7 +122,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         {
             try
             {
-                await _reservationService.DeleteReservationAsync(id);
+                await _mediator.Send(new DeleteReservationCommand(id));
                 TempData["SuccessMessage"] = "Rezervasyon başarıyla silindi.";
             }
             catch (Exception ex)
@@ -132,7 +137,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Export(string format)
         {
-            var reservations = await _reservationService.GetAllReservationsAsync();
+            var reservations = await _mediator.Send(new GetReservationsQuery());
 
             switch (format.ToLower())
             {
@@ -153,7 +158,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Filter(DateTime? startDate, DateTime? endDate, string status)
         {
-            var reservations = await _reservationService.GetAllReservationsAsync();
+            var reservations = await _mediator.Send(new GetReservationsQuery());
 
             if (startDate.HasValue)
             {
@@ -171,7 +176,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetReservationStats()
         {
-            var reservations = await _reservationService.GetAllReservationsAsync();
+            var reservations = await _mediator.Send(new GetReservationsQuery());
 
             var today = DateTime.Today;
             var tomorrow = today.AddDays(1);

@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.FoodCategories.Commands.CreateFoodCategory;
+using RestERP.Application.Features.FoodCategories.Commands.DeleteFoodCategory;
+using RestERP.Application.Features.FoodCategories.Commands.UpdateFoodCategory;
+using RestERP.Application.Features.FoodCategories.Queries.GetFoodCategories;
+using RestERP.Application.Features.FoodCategories.Queries.GetFoodCategoryById;
 using RestERP.Core.Domain.Entities;
 using RestERP.Domain.Exceptions;
 
@@ -10,25 +14,19 @@ namespace RestERP.API.Controllers
     [Route("api/[controller]")]
     public class FoodCategoryController : BaseApiController
     {
-        private readonly IFoodCategoryService _foodCategoryService;
         private readonly ILogger<FoodCategoryController> _logger;
 
-        public FoodCategoryController(IFoodCategoryService foodCategoryService, ILogger<FoodCategoryController> logger)
+        public FoodCategoryController(ILogger<FoodCategoryController> logger)
         {
-            _foodCategoryService = foodCategoryService;
             _logger = logger;
         }
 
-        /// <summary>
-        /// Tüm yemek kategorilerini getirir
-        /// </summary>
-        /// <returns>Kategori listesi</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FoodCategory>>> GetAllFoodCategories()
         {
             try
             {
-                var categories = await _foodCategoryService.GetAllCategoriesAsync();
+                var categories = await Mediator.Send(new GetFoodCategoriesQuery());
                 return Ok(categories);
             }
             catch (Exception ex)
@@ -38,22 +36,18 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// ID'ye göre yemek kategorisi getirir
-        /// </summary>
-        /// <param name="id">Kategori ID'si</param>
-        /// <returns>Kategori bilgisi</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<FoodCategory>> GetFoodCategoryById(int id)
         {
             try
             {
-                var category = await _foodCategoryService.GetCategoryByIdAsync(id);
-                if (category == null)
-                {
-                    return NotFound($"ID {id} olan kategori bulunamadı");
-                }
+                var category = await Mediator.Send(new GetFoodCategoryByIdQuery(id));
                 return Ok(category);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Kategori bulunamadı: {CategoryId}", id);
+                return NotFound(ex.Message);
             }
             catch (NotFoundException ex)
             {
@@ -67,11 +61,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Yeni yemek kategorisi oluşturur
-        /// </summary>
-        /// <param name="category">Kategori bilgileri</param>
-        /// <returns>Oluşturulan kategori</returns>
         [HttpPost]
         [Authorize(Policy = "EmployeeOnly")]
         public async Task<ActionResult<FoodCategory>> CreateFoodCategory([FromBody] FoodCategory category)
@@ -79,11 +68,9 @@ namespace RestERP.API.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                var createdCategory = await _foodCategoryService.CreateCategoryAsync(category);
+                var createdCategory = await Mediator.Send(new CreateFoodCategoryCommand(category));
                 return CreatedAtAction(nameof(GetFoodCategoryById), new { id = createdCategory.Id }, createdCategory);
             }
             catch (Exception ex)
@@ -93,12 +80,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Yemek kategorisi bilgilerini günceller
-        /// </summary>
-        /// <param name="id">Kategori ID'si</param>
-        /// <param name="category">Güncellenecek kategori bilgileri</param>
-        /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}")]
         [Authorize(Policy = "EmployeeOnly")]
         public async Task<IActionResult> UpdateFoodCategory(int id, [FromBody] FoodCategory category)
@@ -106,17 +87,18 @@ namespace RestERP.API.Controllers
             try
             {
                 if (id != category.Id)
-                {
                     return BadRequest("ID uyumsuzluğu");
-                }
 
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                await _foodCategoryService.UpdateCategoryAsync(category);
+                await Mediator.Send(new UpdateFoodCategoryCommand(category));
                 return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Güncellenecek kategori bulunamadı: {CategoryId}", id);
+                return NotFound(ex.Message);
             }
             catch (NotFoundException ex)
             {
@@ -130,19 +112,19 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Yemek kategorisi siler
-        /// </summary>
-        /// <param name="id">Silinecek kategori ID'si</param>
-        /// <returns>Silme sonucu</returns>
         [HttpDelete("{id}")]
         [Authorize(Policy = "EmployeeOnly")]
         public async Task<IActionResult> DeleteFoodCategory(int id)
         {
             try
             {
-                await _foodCategoryService.DeleteCategoryAsync(id);
+                await Mediator.Send(new DeleteFoodCategoryCommand(id));
                 return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Silinecek kategori bulunamadı: {CategoryId}", id);
+                return NotFound(ex.Message);
             }
             catch (NotFoundException ex)
             {

@@ -1,8 +1,14 @@
 using System.Diagnostics;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Models;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Foods.Queries.GetFoods;
+using RestERP.Application.Features.Orders.Queries.GetActiveOrders;
+using RestERP.Application.Features.Orders.Queries.GetOrdersByDate;
+using RestERP.Application.Features.Orders.Queries.GetOrdersByDateRange;
+using RestERP.Application.Features.Tables.Queries.GetTables;
+using RestERP.Application.Features.Users.Queries.GetUsers;
 using RestERP.Domain.Enums;
 
 namespace RestERP.Web.Areas.Admin.Controllers;
@@ -11,39 +17,30 @@ namespace RestERP.Web.Areas.Admin.Controllers;
 public class PanelController : Controller
 {
     private readonly ILogger<PanelController> _logger;
-    private readonly IFoodService _foodService;
-    private readonly ITableService _tableService;
-    private readonly IOrderService _orderService;
-    private readonly IUserService _userService;
+    private readonly IMediator _mediator;
 
     public PanelController(
         ILogger<PanelController> logger,
-        IFoodService foodService,
-        ITableService tableService,
-        IOrderService orderService,
-        IUserService userService)
+        IMediator mediator)
     {
         _logger = logger;
-        _foodService = foodService;
-        _tableService = tableService;
-        _orderService = orderService;
-        _userService = userService;
+        _mediator = mediator;
     }
 
     public async Task<IActionResult> Index()
     {
         try
         {
-            var foods = await _foodService.GetAllFoodsAsync();
+            var foods = await _mediator.Send(new GetFoodsQuery());
             var menuItemCount = foods.Count();
 
             var foodCategories = FoodCategorySeedData.GetFoodCategories();
             var categoryCount = foodCategories.Count();
 
-            var tables = await _tableService.GetAllTablesAsync();
+            var tables = await _mediator.Send(new GetTablesQuery());
             var totalTables = tables.Count();
 
-            var activeOrders = (await _orderService.GetActiveOrdersAsync()).ToList();
+            var activeOrders = (await _mediator.Send(new GetActiveOrdersQuery())).ToList();
 
             var occupiedTables = activeOrders
                 .Select(o => o.TableId)
@@ -61,7 +58,7 @@ public class PanelController : Controller
                 tableOccupancyPercentage = (int)Math.Round((double)occupiedTables / totalTables * 100);
             }
 
-            var users = (await _userService.GetAllUsersAsync()).ToList();
+            var users = (await _mediator.Send(new GetUsersQuery())).ToList();
 
             var totalEmployees = users.Count(u => u.RoleType == Role.Employee);
             var activeEmployees = users.Count(u => u.RoleType == Role.Employee && u.IsActive);
@@ -73,13 +70,13 @@ public class PanelController : Controller
             var allactive = activeEmployees + activeCustomers;
 
             var today = DateTime.Today;
-            var todayOrders = (await _orderService.GetOrdersByDateAsync(today)).ToList();
+            var todayOrders = (await _mediator.Send(new GetOrdersByDateQuery(today))).ToList();
 
             var todayOrderCount = todayOrders.Count;
             var todayTotalRevenue = todayOrders.Sum(o => o.TotalAmount);
 
             var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
-            var monthlyOrders = (await _orderService.GetOrdersByDateRangeAsync(firstDayOfMonth, today)).ToList();
+            var monthlyOrders = (await _mediator.Send(new GetOrdersByDateRangeQuery(firstDayOfMonth, today))).ToList();
 
             var monthlyOrderCount = monthlyOrders.Count;
             var monthlyRevenue = monthlyOrders.Sum(o => o.TotalAmount);

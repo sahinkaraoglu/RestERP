@@ -1,7 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Application.DTOs;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Users.Commands.CreateUser;
+using RestERP.Application.Features.Users.Commands.DeleteUser;
+using RestERP.Application.Features.Users.Commands.ResetPassword;
+using RestERP.Application.Features.Users.Commands.UpdateUser;
+using RestERP.Application.Features.Users.Queries.GetUserByEmail;
+using RestERP.Application.Features.Users.Queries.GetUserById;
+using RestERP.Application.Features.Users.Queries.GetUserByUsername;
+using RestERP.Application.Features.Users.Queries.GetUsers;
 using RestERP.Core.Domain.Entities;
 using RestERP.Domain.Exceptions;
 
@@ -11,26 +18,20 @@ namespace RestERP.API.Controllers
     [Route("api/[controller]")]
     public class UserController : BaseApiController
     {
-        private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
 
-        public UserController(IUserService userService, ILogger<UserController> logger)
+        public UserController(ILogger<UserController> logger)
         {
-            _userService = userService;
             _logger = logger;
         }
 
-        /// <summary>
-        /// Tüm kullanıcıları getirir
-        /// </summary>
-        /// <returns>Kullanıcı listesi</returns>
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetAllUsers()
         {
             try
             {
-                var users = await _userService.GetAllUsersAsync();
+                var users = await Mediator.Send(new GetUsersQuery());
                 return Ok(users);
             }
             catch (Exception ex)
@@ -40,22 +41,16 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// ID'ye göre kullanıcı getirir
-        /// </summary>
-        /// <param name="id">Kullanıcı ID'si</param>
-        /// <returns>Kullanıcı bilgisi</returns>
         [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<ActionResult<ApplicationUser>> GetUserById(int id)
         {
             try
             {
-                var user = await _userService.GetUserByIdAsync(id);
+                var user = await Mediator.Send(new GetUserByIdQuery(id));
                 if (user == null)
-                {
                     return NotFound($"ID {id} olan kullanıcı bulunamadı");
-                }
+
                 return Ok(user);
             }
             catch (NotFoundException ex)
@@ -70,20 +65,16 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Kullanıcı adına göre kullanıcı getirir
-        /// </summary>
         [HttpGet("username/{username}")]
         [AllowAnonymous]
         public async Task<ActionResult<ApplicationUser>> GetUserByUsername(string username)
         {
             try
             {
-                var user = await _userService.GetUserByUsernameAsync(username);
+                var user = await Mediator.Send(new GetUserByUsernameQuery(username));
                 if (user == null)
-                {
                     return NotFound($"Kullanıcı adı {username} olan kullanıcı bulunamadı");
-                }
+
                 return Ok(user);
             }
             catch (Exception ex)
@@ -93,22 +84,16 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Email'e göre kullanıcı getirir
-        /// </summary>
-        /// <param name="email">Email adresi</param>
-        /// <returns>Kullanıcı bilgisi</returns>
         [HttpGet("email/{email}")]
         [AllowAnonymous]
         public async Task<ActionResult<ApplicationUser>> GetUserByEmail(string email)
         {
             try
             {
-                var user = await _userService.GetUserByEmailAsync(email);
+                var user = await Mediator.Send(new GetUserByEmailQuery(email));
                 if (user == null)
-                {
                     return NotFound($"Email {email} olan kullanıcı bulunamadı");
-                }
+
                 return Ok(user);
             }
             catch (NotFoundException ex)
@@ -123,11 +108,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Yeni kullanıcı oluşturur
-        /// </summary>
-        /// <param name="user">Kullanıcı bilgileri</param>
-        /// <returns>Oluşturulan kullanıcı</returns>
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult<ApplicationUser>> CreateUser([FromBody] ApplicationUser user)
@@ -135,15 +115,12 @@ namespace RestERP.API.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                var createdUser = await _userService.CreateUserAsync(user);
-                if (createdUser)
-                {
+                var createdUser = await Mediator.Send(new CreateUserCommand(user, string.Empty));
+                if (createdUser.Succeeded)
                     return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
-                }
+
                 return BadRequest("Kullanıcı oluşturulamadı");
             }
             catch (Exception ex)
@@ -153,12 +130,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Kullanıcı bilgilerini günceller
-        /// </summary>
-        /// <param name="id">Kullanıcı ID'si</param>
-        /// <param name="user">Güncellenecek kullanıcı bilgileri</param>
-        /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdateUser(int id, [FromBody] ApplicationUser user)
@@ -166,20 +137,15 @@ namespace RestERP.API.Controllers
             try
             {
                 if (id != user.Id)
-                {
                     return BadRequest("ID uyumsuzluğu");
-                }
 
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                var result = await _userService.UpdateUserAsync(user);
+                var result = await Mediator.Send(new UpdateUserCommand(user));
                 if (!result)
-                {
                     return NotFound($"ID {id} olan kullanıcı bulunamadı");
-                }
+
                 return NoContent();
             }
             catch (NotFoundException ex)
@@ -194,9 +160,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Kullanıcı şifresini mevcut şifre istemeden sıfırlar
-        /// </summary>
         [HttpPost("{id}/reset-password")]
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(int id, [FromBody] ResetPasswordRequest request)
@@ -204,15 +167,11 @@ namespace RestERP.API.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                var (succeeded, errors) = await _userService.ResetPasswordAsync(id, request.NewPassword);
-                if (!succeeded)
-                {
-                    return BadRequest(new { message = "Şifre sıfırlanamadı", errors });
-                }
+                var result = await Mediator.Send(new ResetPasswordCommand(id, request.NewPassword));
+                if (!result.Succeeded)
+                    return BadRequest(new { message = "Şifre sıfırlanamadı", errors = result.Errors });
 
                 return Ok(new { message = "Şifre başarıyla sıfırlandı" });
             }
@@ -223,22 +182,16 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Kullanıcı siler
-        /// </summary>
-        /// <param name="id">Silinecek kullanıcı ID'si</param>
-        /// <returns>Silme sonucu</returns>
         [HttpDelete("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> DeleteUser(int id)
         {
             try
             {
-                var result = await _userService.DeleteUserAsync(id);
+                var result = await Mediator.Send(new DeleteUserCommand(id));
                 if (!result)
-                {
                     return NotFound($"ID {id} olan kullanıcı bulunamadı");
-                }
+
                 return NoContent();
             }
             catch (NotFoundException ex)
@@ -253,22 +206,14 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Kullanıcı girişi yapar
-        /// </summary>
-        /// <param name="loginRequest">Giriş bilgileri</param>
-        /// <returns>JWT token</returns>
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login([FromBody] LoginRequest loginRequest)
         {
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                // Bu metod IUserService'de mevcut değil, şimdilik NotImplementedException fırlatıyoruz
                 return StatusCode(501, "Login metodu henüz implement edilmedi");
             }
             catch (Exception ex)

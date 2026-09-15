@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Reservations.Commands.CreateReservation;
+using RestERP.Application.Features.Reservations.Commands.DeleteReservation;
+using RestERP.Application.Features.Reservations.Commands.UpdateReservation;
+using RestERP.Application.Features.Reservations.Queries.GetReservationById;
+using RestERP.Application.Features.Reservations.Queries.GetReservations;
 using RestERP.Core.Domain.Entities;
 using RestERP.Domain.Exceptions;
 
@@ -10,26 +14,20 @@ namespace RestERP.API.Controllers
     [Route("api/[controller]")]
     public class ReservationController : BaseApiController
     {
-        private readonly IReservationService _reservationService;
         private readonly ILogger<ReservationController> _logger;
 
-        public ReservationController(IReservationService reservationService, ILogger<ReservationController> logger)
+        public ReservationController(ILogger<ReservationController> logger)
         {
-            _reservationService = reservationService;
             _logger = logger;
         }
 
-        /// <summary>
-        /// Tüm rezervasyonları getirir
-        /// </summary>
-        /// <returns>Rezervasyon listesi</returns>
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetAllReservations()
         {
             try
             {
-                var reservations = await _reservationService.GetAllReservationsAsync();
+                var reservations = await Mediator.Send(new GetReservationsQuery());
                 return Ok(reservations);
             }
             catch (Exception ex)
@@ -39,21 +37,15 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// ID'ye göre rezervasyon getirir
-        /// </summary>
-        /// <param name="id">Rezervasyon ID'si</param>
-        /// <returns>Rezervasyon bilgisi</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Reservation>> GetReservationById(int id)
         {
             try
             {
-                var reservation = await _reservationService.GetReservationByIdAsync(id);
+                var reservation = await Mediator.Send(new GetReservationByIdQuery(id));
                 if (reservation == null)
-                {
                     return NotFound($"ID {id} olan rezervasyon bulunamadı");
-                }
+
                 return Ok(reservation);
             }
             catch (NotFoundException ex)
@@ -68,22 +60,15 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Yeni rezervasyon oluşturur
-        /// </summary>
-        /// <param name="reservation">Rezervasyon bilgileri</param>
-        /// <returns>Oluşturulan rezervasyon</returns>
         [HttpPost]
         public async Task<ActionResult<Reservation>> CreateReservation([FromBody] Reservation reservation)
         {
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                var createdReservation = await _reservationService.CreateReservationAsync(reservation);
+                var createdReservation = await Mediator.Send(new CreateReservationCommand(reservation));
                 return CreatedAtAction(nameof(GetReservationById), new { id = createdReservation.Id }, createdReservation);
             }
             catch (Exception ex)
@@ -93,12 +78,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Rezervasyon bilgilerini günceller
-        /// </summary>
-        /// <param name="id">Rezervasyon ID'si</param>
-        /// <param name="reservation">Güncellenecek rezervasyon bilgileri</param>
-        /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdateReservation(int id, [FromBody] Reservation reservation)
@@ -106,16 +85,12 @@ namespace RestERP.API.Controllers
             try
             {
                 if (id != reservation.Id)
-                {
                     return BadRequest("ID uyumsuzluğu");
-                }
 
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                await _reservationService.UpdateReservationAsync(reservation);
+                await Mediator.Send(new UpdateReservationCommand(reservation));
                 return NoContent();
             }
             catch (NotFoundException ex)
@@ -130,18 +105,13 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Rezervasyon siler
-        /// </summary>
-        /// <param name="id">Silinecek rezervasyon ID'si</param>
-        /// <returns>Silme sonucu</returns>
         [HttpDelete("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> DeleteReservation(int id)
         {
             try
             {
-                await _reservationService.DeleteReservationAsync(id);
+                await Mediator.Send(new DeleteReservationCommand(id));
                 return NoContent();
             }
             catch (NotFoundException ex)

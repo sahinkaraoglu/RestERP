@@ -1,5 +1,13 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.FoodCategories.Queries.GetFoodCategories;
+using RestERP.Application.Features.Foods.Commands.CreateFood;
+using RestERP.Application.Features.Foods.Commands.DeleteFood;
+using RestERP.Application.Features.Foods.Commands.SaveFoodImage;
+using RestERP.Application.Features.Foods.Commands.UpdateFood;
+using RestERP.Application.Features.Foods.Queries.GetFoodById;
+using RestERP.Application.Features.Foods.Queries.GetFoodImages;
+using RestERP.Application.Features.Foods.Queries.GetFoods;
 using RestERP.Core.Domain.Entities;
 using RestERP.Infrastructure.Data.SeedData;
 using RestERP.Web.Areas.Admin.Models;
@@ -10,23 +18,23 @@ namespace RestERP.Web.Areas.Admin.Controllers
     public class FoodController : Controller
     {
         private readonly ILogger<FoodController> _logger;
-        private readonly IFoodService _foodService;
+        private readonly IMediator _mediator;
         private readonly IWebHostEnvironment _env;
 
         public FoodController(
             ILogger<FoodController> logger,
-            IFoodService foodService)
+            IMediator mediator)
         {
             _logger = logger;
-            _foodService = foodService;
+            _mediator = mediator;
         }
 
         public async Task<IActionResult> Index()
         {
             try
             {
-                var categories = (await _foodService.GetAllFoodCategoriesAsync()).ToList();
-                var foods = (await _foodService.GetAllFoodsAsync()).ToList();
+                var categories = (await _mediator.Send(new GetFoodCategoriesQuery())).ToList();
+                var foods = (await _mediator.Send(new GetFoodsQuery())).ToList();
 
                 ViewBag.FoodCategories = categories;
                 ViewBag.Foods = foods;
@@ -74,7 +82,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     Price = model.Price,
                 };
 
-                await _foodService.CreateFoodAsync(food);
+                await _mediator.Send(new CreateFoodCommand(food));
                 return Json(new { success = true, message = "Ürün başarıyla eklendi" });
             }
             catch (Exception ex)
@@ -89,8 +97,8 @@ namespace RestERP.Web.Areas.Admin.Controllers
             try
             {
                 var foodcategories = FoodCategorySeedData.GetFoodCategories();
-                var food = await _foodService.GetFoodByIdAsync(id);
-                var images = (await _foodService.GetAllFoodImagesAsync())
+                var food = await _mediator.Send(new GetFoodByIdQuery(id));
+                var images = (await _mediator.Send(new GetFoodImagesQuery()))
                     .Where(i => i.FoodId == id)
                     .ToList();
 
@@ -147,7 +155,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 {
                     var foodcategories = FoodCategorySeedData.GetFoodCategories();
                     ViewBag.FoodCategories = foodcategories;
-                    ViewBag.Images = (await _foodService.GetAllFoodImagesAsync())
+                    ViewBag.Images = (await _mediator.Send(new GetFoodImagesQuery()))
                         .Where(i => i.FoodId == Id)
                         .ToList();
 
@@ -164,7 +172,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return View("~/Areas/Admin/Views/Food/Edit.cshtml");
                 }
 
-                var existingFood = await _foodService.GetFoodByIdAsync(Id);
+                var existingFood = await _mediator.Send(new GetFoodByIdQuery(Id));
 
                 existingFood.CategoryId = CategoryId;
                 existingFood.Name = Name;
@@ -190,10 +198,10 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     }
 
                     var relativePath = $"/img/Food/Uploads/{fileName}";
-                    await _foodService.SaveFoodImageAsync(Id, relativePath);
+                    await _mediator.Send(new SaveFoodImageCommand(Id, relativePath));
                 }
 
-                await _foodService.UpdateFoodAsync(existingFood);
+                await _mediator.Send(new UpdateFoodCommand(existingFood));
 
                 TempData["SuccessMessage"] = "Ürün başarıyla güncellendi.";
                 return RedirectToAction("Index", "Food", new { area = "Admin" });
@@ -229,7 +237,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
         {
             try
             {
-                await _foodService.DeleteFoodAsync(id);
+                await _mediator.Send(new DeleteFoodCommand(id));
                 return Json(new { success = true, message = "Ürün başarıyla silindi." });
             }
             catch (KeyNotFoundException)

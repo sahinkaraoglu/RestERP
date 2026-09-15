@@ -1,6 +1,4 @@
 using RestERP.Core.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace RestERP.Application.Services.Abstract
 {
@@ -13,4 +11,4 @@ namespace RestERP.Application.Services.Abstract
         Task DeleteTableAsync(int id);
         Task<bool> SetTableOccupiedStatusAsync(int id, bool isOccupied);
     }
-} 
+}

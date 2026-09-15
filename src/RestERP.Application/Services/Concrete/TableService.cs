@@ -2,11 +2,8 @@ using Microsoft.Extensions.Logging;
 using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace RestERP.Application.Services
+namespace RestERP.Application.Services.Concrete
 {
     public class TableService : ITableService
     {
@@ -15,16 +12,15 @@ namespace RestERP.Application.Services
 
         public TableService(ITableRepository tableRepository, ILogger<TableService> logger)
         {
-            _tableRepository = tableRepository ?? throw new ArgumentNullException(nameof(tableRepository));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _tableRepository = tableRepository;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<Table>> GetAllTablesAsync()
         {
             try
             {
-                var tables = await _tableRepository.GetAllAsync();
-                return tables;
+                return await _tableRepository.GetAllAsync();
             }
             catch (Exception ex)
             {
@@ -43,6 +39,7 @@ namespace RestERP.Application.Services
                     _logger.LogWarning("Masa bulunamadı: {Id}", id);
                     throw new KeyNotFoundException($"ID'si {id} olan masa bulunamadı");
                 }
+
                 return table;
             }
             catch (Exception ex) when (ex is not KeyNotFoundException)

@@ -1,6 +1,17 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Orders.Commands.CreateOrder;
+using RestERP.Application.Features.Orders.Commands.DeleteOrder;
+using RestERP.Application.Features.Orders.Commands.DeleteOrderItem;
+using RestERP.Application.Features.Orders.Commands.UpdateOrder;
+using RestERP.Application.Features.Orders.Commands.UpdateOrderStatus;
+using RestERP.Application.Features.Orders.Queries.GetActiveOrders;
+using RestERP.Application.Features.Orders.Queries.GetOrderById;
+using RestERP.Application.Features.Orders.Queries.GetOrders;
+using RestERP.Application.Features.Orders.Queries.GetOrdersByDate;
+using RestERP.Application.Features.Orders.Queries.GetOrdersByDateRange;
+using RestERP.Application.Features.Orders.Queries.GetOrdersByTableId;
+using RestERP.Application.Features.Orders.Queries.GetOrderWithDetails;
 using RestERP.Core.Domain.Entities;
 using RestERP.Domain.Enums;
 using RestERP.Domain.Exceptions;
@@ -11,26 +22,20 @@ namespace RestERP.API.Controllers
     [Route("api/[controller]")]
     public class OrderController : BaseApiController
     {
-        private readonly IOrderService _orderService;
         private readonly ILogger<OrderController> _logger;
 
-        public OrderController(IOrderService orderService, ILogger<OrderController> logger)
+        public OrderController(ILogger<OrderController> logger)
         {
-            _orderService = orderService;
             _logger = logger;
         }
 
-        /// <summary>
-        /// Tüm siparişleri getirir
-        /// </summary>
-        /// <returns>Sipariş listesi</returns>
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Order>>> GetAllOrders()
         {
             try
             {
-                var orders = await _orderService.GetAllOrdersAsync();
+                var orders = await Mediator.Send(new GetOrdersQuery());
                 return Ok(orders);
             }
             catch (Exception ex)
@@ -40,22 +45,18 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// ID'ye göre sipariş getirir
-        /// </summary>
-        /// <param name="id">Sipariş ID'si</param>
-        /// <returns>Sipariş bilgisi</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrderById(int id)
         {
             try
             {
-                var order = await _orderService.GetOrderByIdAsync(id);
-                if (order == null)
-                {
-                    return NotFound($"ID {id} olan sipariş bulunamadı");
-                }
+                var order = await Mediator.Send(new GetOrderByIdQuery(id));
                 return Ok(order);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Sipariş bulunamadı: {OrderId}", id);
+                return NotFound(ex.Message);
             }
             catch (NotFoundException ex)
             {
@@ -69,22 +70,18 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Detaylarıyla birlikte sipariş getirir
-        /// </summary>
-        /// <param name="orderId">Sipariş ID'si</param>
-        /// <returns>Detaylı sipariş bilgisi</returns>
         [HttpGet("{orderId}/details")]
         public async Task<ActionResult<Order>> GetOrderWithDetails(int orderId)
         {
             try
             {
-                var order = await _orderService.GetOrderWithDetailsAsync(orderId);
-                if (order == null)
-                {
-                    return NotFound($"ID {orderId} olan sipariş bulunamadı");
-                }
+                var order = await Mediator.Send(new GetOrderWithDetailsQuery(orderId));
                 return Ok(order);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Sipariş detayları bulunamadı: {OrderId}", orderId);
+                return NotFound(ex.Message);
             }
             catch (NotFoundException ex)
             {
@@ -98,17 +95,12 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Masaya göre siparişleri getirir
-        /// </summary>
-        /// <param name="tableId">Masa ID'si</param>
-        /// <returns>Masaya ait sipariş listesi</returns>
         [HttpGet("table/{tableId}")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByTable(int tableId)
         {
             try
             {
-                var orders = await _orderService.GetOrdersByTableIdAsync(tableId);
+                var orders = await Mediator.Send(new GetOrdersByTableIdQuery(tableId));
                 return Ok(orders);
             }
             catch (Exception ex)
@@ -118,17 +110,13 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Aktif siparişleri getirir
-        /// </summary>
-        /// <returns>Aktif sipariş listesi</returns>
         [HttpGet("active")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Order>>> GetActiveOrders()
         {
             try
             {
-                var orders = await _orderService.GetActiveOrdersAsync();
+                var orders = await Mediator.Send(new GetActiveOrdersQuery());
                 return Ok(orders);
             }
             catch (Exception ex)
@@ -138,18 +126,13 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Tarihe göre siparişleri getirir
-        /// </summary>
-        /// <param name="date">Tarih</param>
-        /// <returns>Tarihe ait sipariş listesi</returns>
         [HttpGet("date/{date}")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByDate(DateTime date)
         {
             try
             {
-                var orders = await _orderService.GetOrdersByDateAsync(date);
+                var orders = await Mediator.Send(new GetOrdersByDateQuery(date));
                 return Ok(orders);
             }
             catch (Exception ex)
@@ -159,19 +142,13 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Tarih aralığına göre siparişleri getirir
-        /// </summary>
-        /// <param name="startDate">Başlangıç tarihi</param>
-        /// <param name="endDate">Bitiş tarihi</param>
-        /// <returns>Tarih aralığına ait sipariş listesi</returns>
         [HttpGet("daterange")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrdersByDateRange([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             try
             {
-                var orders = await _orderService.GetOrdersByDateRangeAsync(startDate, endDate);
+                var orders = await Mediator.Send(new GetOrdersByDateRangeQuery(startDate, endDate));
                 return Ok(orders);
             }
             catch (Exception ex)
@@ -181,22 +158,15 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Yeni sipariş oluşturur
-        /// </summary>
-        /// <param name="order">Sipariş bilgileri</param>
-        /// <returns>Oluşturulan sipariş</returns>
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder([FromBody] Order order)
         {
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                var createdOrder = await _orderService.CreateOrderAsync(order);
+                var createdOrder = await Mediator.Send(new CreateOrderCommand(order));
                 return CreatedAtAction(nameof(GetOrderById), new { id = createdOrder.Id }, createdOrder);
             }
             catch (Exception ex)
@@ -206,12 +176,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Sipariş bilgilerini günceller
-        /// </summary>
-        /// <param name="id">Sipariş ID'si</param>
-        /// <param name="order">Güncellenecek sipariş bilgileri</param>
-        /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] Order order)
@@ -219,16 +183,12 @@ namespace RestERP.API.Controllers
             try
             {
                 if (id != order.Id)
-                {
                     return BadRequest("ID uyumsuzluğu");
-                }
 
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                await _orderService.UpdateOrderAsync(order);
+                await Mediator.Send(new UpdateOrderCommand(order));
                 return NoContent();
             }
             catch (NotFoundException ex)
@@ -243,23 +203,16 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Sipariş durumunu günceller
-        /// </summary>
-        /// <param name="orderId">Sipariş ID'si</param>
-        /// <param name="status">Yeni durum</param>
-        /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{orderId}/status")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] OrderStatus status)
         {
             try
             {
-                var result = await _orderService.UpdateOrderStatusAsync(orderId, status);
+                var result = await Mediator.Send(new UpdateOrderStatusCommand(orderId, status));
                 if (!result)
-                {
                     return NotFound($"ID {orderId} olan sipariş bulunamadı");
-                }
+
                 return NoContent();
             }
             catch (Exception ex)
@@ -269,22 +222,16 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Sipariş siler
-        /// </summary>
-        /// <param name="id">Silinecek sipariş ID'si</param>
-        /// <returns>Silme sonucu</returns>
         [HttpDelete("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> DeleteOrder(int id)
         {
             try
             {
-                var result = await _orderService.DeleteOrderAsync(id);
+                var result = await Mediator.Send(new DeleteOrderCommand(id));
                 if (!result)
-                {
                     return NotFound($"ID {id} olan sipariş bulunamadı");
-                }
+
                 return NoContent();
             }
             catch (Exception ex)
@@ -294,22 +241,16 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Sipariş öğesini siler
-        /// </summary>
-        /// <param name="orderItemId">Silinecek sipariş öğesi ID'si</param>
-        /// <returns>Silme sonucu</returns>
         [HttpDelete("item/{orderItemId}")]
         [AllowAnonymous]
         public async Task<IActionResult> DeleteOrderItem(int orderItemId)
         {
             try
             {
-                var result = await _orderService.DeleteOrderItemAsync(orderItemId);
+                var result = await Mediator.Send(new DeleteOrderItemCommand(orderItemId));
                 if (!result)
-                {
                     return NotFound($"ID {orderItemId} olan sipariş öğesi bulunamadı");
-                }
+
                 return NoContent();
             }
             catch (Exception ex)

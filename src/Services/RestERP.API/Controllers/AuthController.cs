@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Application.DTOs;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Auth.Commands.Login;
+using RestERP.Application.Features.Auth.Commands.RefreshToken;
+using RestERP.Application.Features.Auth.Commands.Register;
+using RestERP.Application.Features.Auth.Commands.RevokeRefreshToken;
 
 namespace RestERP.API.Controllers
 {
@@ -9,23 +12,13 @@ namespace RestERP.API.Controllers
     [Route("api/[controller]")]
     public class AuthController : BaseApiController
     {
-        private readonly IAuthService _authService;
         private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthService authService, ILogger<AuthController> logger)
+        public AuthController(ILogger<AuthController> logger)
         {
-            _authService = authService;
             _logger = logger;
         }
 
-        /// <summary>
-        /// Kullanıcı girişi yapar ve JWT token döner
-        /// </summary>
-        /// <param name="request">Giriş bilgileri (Email ve Password)</param>
-        /// <returns>JWT Access Token ve Refresh Token</returns>
-        /// <response code="200">Giriş başarılı</response>
-        /// <response code="400">Geçersiz istek veya hatalı giriş bilgileri</response>
-        /// <response code="500">Sunucu hatası</response>
         [HttpPost("login")]
         [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -35,16 +28,11 @@ namespace RestERP.API.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                var result = await _authService.LoginAsync(request);
-                
+                var result = await Mediator.Send(new LoginCommand(request));
                 if (result == null)
-                {
                     return BadRequest(new { message = "Geçersiz email veya şifre" });
-                }
 
                 return Ok(result);
             }
@@ -55,14 +43,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Yeni kullanıcı kaydı oluşturur ve JWT token döner
-        /// </summary>
-        /// <param name="request">Kayıt bilgileri</param>
-        /// <returns>JWT Access Token ve Refresh Token</returns>
-        /// <response code="201">Kayıt başarılı</response>
-        /// <response code="400">Geçersiz istek veya email/kullanıcı adı zaten kullanılıyor</response>
-        /// <response code="500">Sunucu hatası</response>
         [HttpPost("register")]
         [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -72,16 +52,11 @@ namespace RestERP.API.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                var result = await _authService.RegisterAsync(request);
-                
+                var result = await Mediator.Send(new RegisterCommand(request));
                 if (result == null)
-                {
                     return BadRequest(new { message = "Email veya kullanıcı adı zaten kullanılıyor" });
-                }
 
                 return CreatedAtAction(nameof(Login), new { }, result);
             }
@@ -92,14 +67,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Refresh token kullanarak yeni access token ve refresh token alır
-        /// </summary>
-        /// <param name="request">Refresh token</param>
-        /// <returns>Yeni JWT Access Token ve Refresh Token</returns>
-        /// <response code="200">Token yenileme başarılı</response>
-        /// <response code="400">Geçersiz refresh token</response>
-        /// <response code="500">Sunucu hatası</response>
         [HttpPost("refresh-token")]
         [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -109,16 +76,11 @@ namespace RestERP.API.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                var result = await _authService.RefreshTokenAsync(request.RefreshToken);
-                
+                var result = await Mediator.Send(new RefreshTokenCommand(request.RefreshToken));
                 if (result == null)
-                {
                     return BadRequest(new { message = "Geçersiz veya süresi dolmuş refresh token" });
-                }
 
                 return Ok(result);
             }
@@ -129,14 +91,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Refresh token'ı iptal eder (logout işlemi için)
-        /// </summary>
-        /// <param name="request">İptal edilecek refresh token</param>
-        /// <returns>İptal sonucu</returns>
-        /// <response code="200">Token başarıyla iptal edildi</response>
-        /// <response code="400">Geçersiz refresh token</response>
-        /// <response code="500">Sunucu hatası</response>
         [HttpPost("revoke-token")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -147,16 +101,11 @@ namespace RestERP.API.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                var result = await _authService.RevokeRefreshTokenAsync(request.RefreshToken);
-                
+                var result = await Mediator.Send(new RevokeRefreshTokenCommand(request.RefreshToken));
                 if (!result)
-                {
                     return BadRequest(new { message = "Geçersiz refresh token" });
-                }
 
                 return Ok(new { message = "Token başarıyla iptal edildi" });
             }
@@ -168,4 +117,3 @@ namespace RestERP.API.Controllers
         }
     }
 }
-

@@ -1,41 +1,36 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using RestERP.Application.DTOs;
+using RestERP.Application.Features.Auth;
 using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces.Repositories;
-using Microsoft.AspNetCore.Identity;
 
 namespace RestERP.Application.Services.Concrete
 {
     public class AuthService : IAuthService
     {
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<AuthService> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole<int>> _roleManager;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
+        private readonly AuthTokenService _authTokenService;
+        private readonly ILogger<AuthService> _logger;
 
         public AuthService(
-            IRefreshTokenRepository refreshTokenRepository,
-            IConfiguration configuration,
-            ILogger<AuthService> logger,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole<int>> roleManager)
+            RoleManager<IdentityRole<int>> roleManager,
+            IRefreshTokenRepository refreshTokenRepository,
+            AuthTokenService authTokenService,
+            ILogger<AuthService> logger)
         {
-            _refreshTokenRepository = refreshTokenRepository;
-            _configuration = configuration;
-            _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _refreshTokenRepository = refreshTokenRepository;
+            _authTokenService = authTokenService;
+            _logger = logger;
         }
 
         public async Task<TokenResponse?> LoginAsync(LoginRequest request)
@@ -43,26 +38,24 @@ namespace RestERP.Application.Services.Concrete
             try
             {
                 var dbUser = await _userManager.FindByEmailAsync(request.Email);
-
                 if (dbUser == null || !dbUser.IsActive)
                 {
-                    _logger.LogWarning($"Login başarısız - Kullanıcı bulunamadı/aktif değil: {request.Email}");
+                    _logger.LogWarning("Login başarısız - Kullanıcı bulunamadı/aktif değil: {Email}", request.Email);
                     return null;
                 }
 
                 var passwordCheck = await _signInManager.CheckPasswordSignInAsync(dbUser, request.Password, lockoutOnFailure: false);
                 if (!passwordCheck.Succeeded)
                 {
-                    _logger.LogWarning($"Login başarısız - Geçersiz şifre: {request.Email}");
+                    _logger.LogWarning("Login başarısız - Geçersiz şifre: {Email}", request.Email);
                     return null;
                 }
 
-                var tokenResponse = await GenerateTokensAsync(dbUser);
-                return tokenResponse;
+                return await _authTokenService.GenerateTokensAsync(dbUser);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Login işlemi sırasında hata oluştu: {request.Email}");
+                _logger.LogError(ex, "Login işlemi sırasında hata oluştu: {Email}", request.Email);
                 throw;
             }
         }
@@ -71,18 +64,17 @@ namespace RestERP.Application.Services.Concrete
         {
             try
             {
-                // Email ve kullanıcı adı kontrolü
                 var existingByEmail = await _userManager.FindByEmailAsync(request.Email);
                 if (existingByEmail != null)
                 {
-                    _logger.LogWarning($"Kayıt başarısız - Email zaten kullanılıyor: {request.Email}");
+                    _logger.LogWarning("Kayıt başarısız - Email zaten kullanılıyor: {Email}", request.Email);
                     return null;
                 }
 
                 var existingByName = await _userManager.FindByNameAsync(request.UserName);
                 if (existingByName != null)
                 {
-                    _logger.LogWarning($"Kayıt başarısız - Kullanıcı adı zaten kullanılıyor: {request.UserName}");
+                    _logger.LogWarning("Kayıt başarısız - Kullanıcı adı zaten kullanılıyor: {UserName}", request.UserName);
                     return null;
                 }
 
@@ -102,11 +94,10 @@ namespace RestERP.Application.Services.Concrete
                 if (!createResult.Succeeded)
                 {
                     var errors = string.Join("; ", createResult.Errors.Select(e => e.Description));
-                    _logger.LogWarning($"Kayıt başarısız - {errors}");
+                    _logger.LogWarning("Kayıt başarısız - {Errors}", errors);
                     return null;
                 }
 
-                // Rol ataması (enum string adı ile)
                 var roleName = user.RoleType.ToString();
                 if (!await _roleManager.RoleExistsAsync(roleName))
                 {
@@ -114,14 +105,12 @@ namespace RestERP.Application.Services.Concrete
                 }
                 await _userManager.AddToRoleAsync(user, roleName);
 
-                _logger.LogInformation($"Yeni kullanıcı kaydedildi: {user.Email}");
-
-                var tokenResponse = await GenerateTokensAsync(user);
-                return tokenResponse;
+                _logger.LogInformation("Yeni kullanıcı kaydedildi: {Email}", user.Email);
+                return await _authTokenService.GenerateTokensAsync(user);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Kayıt işlemi sırasında hata oluştu: {request.Email}");
+                _logger.LogError(ex, "Kayıt işlemi sırasında hata oluştu: {Email}", request.Email);
                 throw;
             }
         }
@@ -130,12 +119,11 @@ namespace RestERP.Application.Services.Concrete
         {
             try
             {
-                var token = await _refreshTokenRepository
-                    .GetFirstOrDefaultAsync(
-                        rt => rt.Token == refreshToken && 
-                              !rt.IsRevoked && 
-                              rt.ExpiresAt > DateTime.UtcNow,
-                        "User");
+                var token = await _refreshTokenRepository.GetFirstOrDefaultAsync(
+                    rt => rt.Token == refreshToken &&
+                          !rt.IsRevoked &&
+                          rt.ExpiresAt > DateTime.UtcNow,
+                    "User");
 
                 if (token == null || token.User == null || !token.User.IsActive)
                 {
@@ -143,15 +131,12 @@ namespace RestERP.Application.Services.Concrete
                     return null;
                 }
 
-                // Eski refresh token'ı iptal et
                 token.IsRevoked = true;
                 token.RevokedAt = DateTime.UtcNow;
                 _refreshTokenRepository.Update(token);
                 await _refreshTokenRepository.SaveChangesAsync();
 
-                // Yeni tokenlar oluştur
-                var tokenResponse = await GenerateTokensAsync(token.User);
-                return tokenResponse;
+                return await _authTokenService.GenerateTokensAsync(token.User);
             }
             catch (Exception ex)
             {
@@ -164,23 +149,21 @@ namespace RestERP.Application.Services.Concrete
         {
             try
             {
-                var token = await _refreshTokenRepository
-                    .GetFirstOrDefaultAsync(rt => 
-                        rt.Token == refreshToken && 
-                        !rt.IsRevoked &&
-                        rt.ExpiresAt > DateTime.UtcNow);
+                var token = await _refreshTokenRepository.GetFirstOrDefaultAsync(rt =>
+                    rt.Token == refreshToken &&
+                    !rt.IsRevoked &&
+                    rt.ExpiresAt > DateTime.UtcNow);
 
                 if (token == null)
-                {
                     return false;
-                }
 
                 token.IsRevoked = true;
                 token.RevokedAt = DateTime.UtcNow;
                 _refreshTokenRepository.Update(token);
                 await _refreshTokenRepository.SaveChangesAsync();
 
-                _logger.LogInformation($"Refresh token iptal edildi: {refreshToken.Substring(0, Math.Min(10, refreshToken.Length))}...");
+                _logger.LogInformation("Refresh token iptal edildi: {TokenPrefix}...",
+                    refreshToken.Substring(0, Math.Min(10, refreshToken.Length)));
                 return true;
             }
             catch (Exception ex)
@@ -190,115 +173,9 @@ namespace RestERP.Application.Services.Concrete
             }
         }
 
-        public async Task<bool> ValidateTokenAsync(string token)
+        public Task<bool> ValidateTokenAsync(string token)
         {
-            try
-            {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? string.Empty);
-
-                var validationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidIssuer = _configuration["Jwt:Issuer"],
-                    ValidateAudience = true,
-                    ValidAudience = _configuration["Jwt:Audience"],
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
-                };
-
-                tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private async Task<TokenResponse> GenerateTokensAsync(ApplicationUser user)
-        {
-            var accessToken = await GenerateJwtTokenAsync(user);
-            var refreshToken = GenerateRefreshToken();
-
-            var refreshTokenEntity = new RefreshToken
-            {
-                UserId = user.Id,
-                Token = refreshToken,
-                ExpiresAt = DateTime.UtcNow.AddDays(30), // Refresh token 30 gün geçerli
-                CreatedDate = DateTime.UtcNow
-            };
-
-            await _refreshTokenRepository.AddAsync(refreshTokenEntity);
-            await _refreshTokenRepository.SaveChangesAsync();
-
-            return new TokenResponse
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                ExpiresAt = DateTime.UtcNow.AddDays(Convert.ToDouble(_configuration["Jwt:ExpiryInDays"] ?? "7")),
-                RefreshTokenExpiresAt = refreshTokenEntity.ExpiresAt,
-                User = new UserDto
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    Role = user.RoleType.ToString()
-                }
-            };
-        }
-
-        private async Task<string> GenerateJwtTokenAsync(ApplicationUser user)
-        {
-            var key = _configuration["Jwt:Key"];
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new InvalidOperationException("JWT anahtarı yapılandırılmamış.");
-            }
-
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
-                new Claim("FirstName", user.FirstName),
-                new Claim("LastName", user.LastName),
-                new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
-                new Claim(ClaimTypes.Role, user.RoleType.ToString())
-            };
-
-            // Identity rollerini de ekle
-            var roles = await _userManager.GetRolesAsync(user);
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
-
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-            var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.UtcNow.AddDays(Convert.ToDouble(_configuration["Jwt:ExpiryInDays"] ?? "7"));
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: expires,
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        private string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[64];
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
+            return Task.FromResult(_authTokenService.ValidateToken(token));
         }
     }
 }
-

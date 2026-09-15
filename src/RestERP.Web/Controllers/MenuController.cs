@@ -1,7 +1,13 @@
 using System.Diagnostics;
 using System.Security.Claims;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.FoodCategories.Queries.GetFoodCategories;
+using RestERP.Application.Features.Foods.Queries.GetFoodImages;
+using RestERP.Application.Features.Foods.Queries.GetFoods;
+using RestERP.Application.Features.Users.Queries.GetUserByEmail;
+using RestERP.Application.Features.Users.Queries.GetUserById;
+using RestERP.Application.Features.Users.Queries.GetUserByUsername;
 using RestERP.Web.Models;
 
 namespace RestERP.Web.Controllers;
@@ -9,26 +15,23 @@ namespace RestERP.Web.Controllers;
 public class MenuController : Controller
 {
     private readonly ILogger<MenuController> _logger;
-    private readonly IFoodService _foodService;
-    private readonly IUserService _userService;
+    private readonly IMediator _mediator;
 
     public MenuController(
         ILogger<MenuController> logger,
-        IFoodService foodService,
-        IUserService userService)
+        IMediator mediator)
     {
         _logger = logger;
-        _foodService = foodService;
-        _userService = userService;
+        _mediator = mediator;
     }
 
     public async Task<IActionResult> Index()
     {
         try
         {
-            var categories = (await _foodService.GetAllFoodCategoriesAsync()).ToList();
-            var foods = (await _foodService.GetAllFoodsAsync()).ToList();
-            var images = (await _foodService.GetAllFoodImagesAsync()).ToList();
+            var categories = (await _mediator.Send(new GetFoodCategoriesQuery())).ToList();
+            var foods = (await _mediator.Send(new GetFoodsQuery())).ToList();
+            var images = (await _mediator.Send(new GetFoodImagesQuery())).ToList();
 
             ViewBag.Categories = categories;
             ViewBag.Foods = foods;
@@ -53,7 +56,7 @@ public class MenuController : Controller
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (int.TryParse(userId, out var id) && id > 0)
         {
-            var byId = await _userService.GetUserByIdAsync(id);
+            var byId = await _mediator.Send(new GetUserByIdQuery(id));
             if (byId != null)
             {
                 return byId;
@@ -63,7 +66,7 @@ public class MenuController : Controller
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
         if (!string.IsNullOrWhiteSpace(email))
         {
-            var byEmail = await _userService.GetUserByEmailAsync(email);
+            var byEmail = await _mediator.Send(new GetUserByEmailQuery(email));
             if (byEmail != null)
             {
                 return byEmail;
@@ -76,8 +79,8 @@ public class MenuController : Controller
             return null;
         }
 
-        return await _userService.GetUserByUsernameAsync(name)
-            ?? await _userService.GetUserByEmailAsync(name);
+        return await _mediator.Send(new GetUserByUsernameQuery(name))
+            ?? await _mediator.Send(new GetUserByEmailQuery(name));
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

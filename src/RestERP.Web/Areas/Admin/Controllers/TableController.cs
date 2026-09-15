@@ -1,7 +1,13 @@
 using System.Diagnostics;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RestERP.Web.Models;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Tables.Commands.CreateTable;
+using RestERP.Application.Features.Tables.Commands.DeleteTable;
+using RestERP.Application.Features.Tables.Commands.SetTableOccupiedStatus;
+using RestERP.Application.Features.Tables.Commands.UpdateTable;
+using RestERP.Application.Features.Tables.Queries.GetTableById;
+using RestERP.Application.Features.Tables.Queries.GetTables;
 using RestERP.Core.Domain.Entities;
 
 namespace RestERP.Web.Areas.Admin.Controllers;
@@ -10,19 +16,19 @@ namespace RestERP.Web.Areas.Admin.Controllers;
 public class TableController : Controller
 {
     private readonly ILogger<TableController> _logger;
-    private readonly ITableService _tableService;
+    private readonly IMediator _mediator;
 
-    public TableController(ILogger<TableController> logger, ITableService tableService)
+    public TableController(ILogger<TableController> logger, IMediator mediator)
     {
         _logger = logger;
-        _tableService = tableService;
+        _mediator = mediator;
     }
 
     public async Task<IActionResult> Index()
     {
         try
         {
-            var tables = (await _tableService.GetAllTablesAsync()).ToList();
+            var tables = (await _mediator.Send(new GetTablesQuery())).ToList();
             return View(tables);
         }
         catch (Exception ex)
@@ -48,7 +54,7 @@ public class TableController : Controller
                 return View(table);
             }
 
-            await _tableService.CreateTableAsync(table);
+            await _mediator.Send(new CreateTableCommand(table));
             TempData["SuccessMessage"] = "Masa başarıyla oluşturuldu.";
             return RedirectToAction(nameof(Index));
         }
@@ -64,7 +70,7 @@ public class TableController : Controller
     {
         try
         {
-            var table = await _tableService.GetTableByIdAsync(id);
+            var table = await _mediator.Send(new GetTableByIdQuery(id));
             return View(table);
         }
         catch (KeyNotFoundException)
@@ -96,7 +102,7 @@ public class TableController : Controller
                 return View(table);
             }
 
-            await _tableService.UpdateTableAsync(table);
+            await _mediator.Send(new UpdateTableCommand(table));
             TempData["SuccessMessage"] = "Masa başarıyla güncellendi.";
             return RedirectToAction(nameof(Index));
         }
@@ -112,7 +118,7 @@ public class TableController : Controller
     {
         try
         {
-            var table = await _tableService.GetTableByIdAsync(id);
+            var table = await _mediator.Send(new GetTableByIdQuery(id));
             return View(table);
         }
         catch (KeyNotFoundException)
@@ -134,7 +140,7 @@ public class TableController : Controller
     {
         try
         {
-            await _tableService.DeleteTableAsync(id);
+            await _mediator.Send(new DeleteTableCommand(id));
             TempData["SuccessMessage"] = "Masa başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
@@ -151,7 +157,7 @@ public class TableController : Controller
     {
         try
         {
-            await _tableService.SetTableOccupiedStatusAsync(id, isOccupied);
+            await _mediator.Send(new SetTableOccupiedStatusCommand(id, isOccupied));
             var status = isOccupied ? "dolu" : "boş";
             return Json(new { success = true, message = $"Masa durumu {status} olarak güncellendi." });
         }

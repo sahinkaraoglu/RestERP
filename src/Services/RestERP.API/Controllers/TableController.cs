@@ -1,6 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Tables.Commands.CreateTable;
+using RestERP.Application.Features.Tables.Commands.DeleteTable;
+using RestERP.Application.Features.Tables.Commands.SetTableOccupiedStatus;
+using RestERP.Application.Features.Tables.Commands.UpdateTable;
+using RestERP.Application.Features.Tables.Queries.GetTableById;
+using RestERP.Application.Features.Tables.Queries.GetTables;
 using RestERP.Core.Domain.Entities;
 using RestERP.Domain.Exceptions;
 
@@ -10,25 +15,19 @@ namespace RestERP.API.Controllers
     [Route("api/[controller]")]
     public class TableController : BaseApiController
     {
-        private readonly ITableService _tableService;
         private readonly ILogger<TableController> _logger;
 
-        public TableController(ITableService tableService, ILogger<TableController> logger)
+        public TableController(ILogger<TableController> logger)
         {
-            _tableService = tableService;
             _logger = logger;
         }
 
-        /// <summary>
-        /// Tüm masaları getirir
-        /// </summary>
-        /// <returns>Masa listesi</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Table>>> GetAllTables()
         {
             try
             {
-                var tables = await _tableService.GetAllTablesAsync();
+                var tables = await Mediator.Send(new GetTablesQuery());
                 return Ok(tables);
             }
             catch (Exception ex)
@@ -38,22 +37,18 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// ID'ye göre masa getirir
-        /// </summary>
-        /// <param name="id">Masa ID'si</param>
-        /// <returns>Masa bilgisi</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Table>> GetTableById(int id)
         {
             try
             {
-                var table = await _tableService.GetTableByIdAsync(id);
-                if (table == null)
-                {
-                    return NotFound($"ID {id} olan masa bulunamadı");
-                }
+                var table = await Mediator.Send(new GetTableByIdQuery(id));
                 return Ok(table);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Masa bulunamadı: {TableId}", id);
+                return NotFound(ex.Message);
             }
             catch (NotFoundException ex)
             {
@@ -67,11 +62,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Yeni masa oluşturur
-        /// </summary>
-        /// <param name="table">Masa bilgileri</param>
-        /// <returns>Oluşturulan masa</returns>
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult<Table>> CreateTable([FromBody] Table table)
@@ -79,11 +69,9 @@ namespace RestERP.API.Controllers
             try
             {
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                var createdTable = await _tableService.CreateTableAsync(table);
+                var createdTable = await Mediator.Send(new CreateTableCommand(table));
                 return CreatedAtAction(nameof(GetTableById), new { id = createdTable.Id }, createdTable);
             }
             catch (Exception ex)
@@ -93,12 +81,6 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Masa bilgilerini günceller
-        /// </summary>
-        /// <param name="id">Masa ID'si</param>
-        /// <param name="table">Güncellenecek masa bilgileri</param>
-        /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> UpdateTable(int id, [FromBody] Table table)
@@ -106,17 +88,18 @@ namespace RestERP.API.Controllers
             try
             {
                 if (id != table.Id)
-                {
                     return BadRequest("ID uyumsuzluğu");
-                }
 
                 if (!ModelState.IsValid)
-                {
                     return BadRequest(ModelState);
-                }
 
-                await _tableService.UpdateTableAsync(table);
+                await Mediator.Send(new UpdateTableCommand(table));
                 return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Güncellenecek masa bulunamadı: {TableId}", id);
+                return NotFound(ex.Message);
             }
             catch (NotFoundException ex)
             {
@@ -130,19 +113,19 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Masa siler
-        /// </summary>
-        /// <param name="id">Silinecek masa ID'si</param>
-        /// <returns>Silme sonucu</returns>
         [HttpDelete("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> DeleteTable(int id)
         {
             try
             {
-                await _tableService.DeleteTableAsync(id);
+                await Mediator.Send(new DeleteTableCommand(id));
                 return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Silinecek masa bulunamadı: {TableId}", id);
+                return NotFound(ex.Message);
             }
             catch (NotFoundException ex)
             {
@@ -156,24 +139,18 @@ namespace RestERP.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Masa doluluk durumunu günceller
-        /// </summary>
-        /// <param name="id">Masa ID'si</param>
-        /// <param name="isOccupied">Dolu mu?</param>
-        /// <returns>Güncellenme sonucu</returns>
         [HttpPut("{id}/status")]
         [AllowAnonymous]
         public async Task<IActionResult> SetTableOccupiedStatus(int id, [FromBody] bool isOccupied)
         {
             try
             {
-                var result = await _tableService.SetTableOccupiedStatusAsync(id, isOccupied);
-                if (!result)
-                {
-                    return NotFound($"ID {id} olan masa bulunamadı");
-                }
+                await Mediator.Send(new SetTableOccupiedStatusCommand(id, isOccupied));
                 return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"ID {id} olan masa bulunamadı");
             }
             catch (Exception ex)
             {

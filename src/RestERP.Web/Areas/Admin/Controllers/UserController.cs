@@ -1,5 +1,11 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Users.Commands.CreateUser;
+using RestERP.Application.Features.Users.Commands.DeleteUser;
+using RestERP.Application.Features.Users.Commands.ResetPassword;
+using RestERP.Application.Features.Users.Commands.UpdateUser;
+using RestERP.Application.Features.Users.Queries.GetUserById;
+using RestERP.Application.Features.Users.Queries.GetUsers;
 using RestERP.Domain.Enums;
 using RestERP.Core.Domain.Entities;
 
@@ -9,21 +15,21 @@ namespace RestERP.Web.Areas.Admin.Controllers
     public class UserController : Controller
     {
         private readonly ILogger<UserController> _logger;
-        private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
         public UserController(
             ILogger<UserController> logger,
-            IUserService userService)
+            IMediator mediator)
         {
             _logger = logger;
-            _userService = userService;
+            _mediator = mediator;
         }
 
         public async Task<IActionResult> Index()
         {
             try
             {
-                var users = (await _userService.GetAllUsersAsync()).ToList();
+                var users = (await _mediator.Send(new GetUsersQuery())).ToList();
                 return View(users);
             }
             catch (Exception ex)
@@ -56,7 +62,9 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     user.IsActive = true;
                     user.RoleType = Role.Employee;
 
-                    var (succeeded, errors) = await _userService.CreateUserWithPasswordAsync(user, password);
+                    var result = await _mediator.Send(new CreateUserCommand(user, password));
+                    var succeeded = result.Succeeded;
+                    var errors = result.Errors;
                     if (succeeded)
                     {
                         TempData["SuccessMessage"] = "Kullanıcı başarıyla eklendi.";
@@ -89,7 +97,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var user = await _userService.GetUserByIdAsync(id);
+                var user = await _mediator.Send(new GetUserByIdQuery(id));
                 if (user == null)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
@@ -117,7 +125,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                var user = await _userService.GetUserByIdAsync(id);
+                var user = await _mediator.Send(new GetUserByIdQuery(id));
                 if (user == null)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
@@ -148,7 +156,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                 user.IsActive = model.IsActive;
                 user.RoleType = model.RoleType;
 
-                var updated = await _userService.UpdateUserAsync(user);
+                var updated = await _mediator.Send(new UpdateUserCommand(user));
                 if (!updated)
                 {
                     TempData["ErrorMessage"] = "Kullanıcı güncellenirken bir hata oluştu.";
@@ -157,7 +165,9 @@ namespace RestERP.Web.Areas.Admin.Controllers
 
                 if (resetPassword)
                 {
-                    var (resetSucceeded, resetErrors) = await _userService.ResetPasswordAsync(id, newPassword!);
+                    var resetResult = await _mediator.Send(new ResetPasswordCommand(id, newPassword!));
+                    var resetSucceeded = resetResult.Succeeded;
+                    var resetErrors = resetResult.Errors;
                     if (!resetSucceeded)
                     {
                         TempData["ErrorMessage"] = "Kullanıcı güncellendi ancak şifre sıfırlanamadı. " +
@@ -190,7 +200,7 @@ namespace RestERP.Web.Areas.Admin.Controllers
                     return Json(new { success = false, message = "Geçersiz kullanıcı ID'si." });
                 }
 
-                var deleted = await _userService.DeleteUserAsync(id);
+                var deleted = await _mediator.Send(new DeleteUserCommand(id));
                 if (deleted)
                 {
                     return Json(new { success = true, message = "Kullanıcı başarıyla silindi." });

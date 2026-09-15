@@ -1,46 +1,36 @@
 using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace RestERP.Application.Services
+namespace RestERP.Application.Services.Concrete
 {
     public class FoodService : IFoodService
     {
         private readonly IFoodRepository _foodRepository;
-        private readonly IFoodCategoryRepository _foodCategoryRepository;
         private readonly IImageRepository _imageRepository;
 
-        public FoodService(
-            IFoodRepository foodRepository,
-            IFoodCategoryRepository foodCategoryRepository,
-            IImageRepository imageRepository)
+        public FoodService(IFoodRepository foodRepository, IImageRepository imageRepository)
         {
             _foodRepository = foodRepository;
-            _foodCategoryRepository = foodCategoryRepository;
             _imageRepository = imageRepository;
         }
 
-        public async Task<Food> CreateFoodAsync(Food Food)
+        public async Task<Food> CreateFoodAsync(Food food)
         {
-            if (Food == null)
-                throw new ArgumentNullException(nameof(Food));
+            if (food == null)
+                throw new ArgumentNullException(nameof(food));
 
-            await _foodRepository.AddAsync(Food);
+            await _foodRepository.AddAsync(food);
             await _foodRepository.SaveChangesAsync();
-            return Food;
+            return food;
         }
 
         public async Task DeleteFoodAsync(int id)
         {
             var food = await _foodRepository.GetByIdAsync(id);
-            
             if (food == null)
                 throw new KeyNotFoundException($"Ürün bulunamadı. Id: {id}");
-                
+
             _foodRepository.Delete(food);
             await _foodRepository.SaveChangesAsync();
         }
@@ -52,12 +42,11 @@ namespace RestERP.Application.Services
 
         public async Task<Food> GetFoodByIdAsync(int id)
         {
-            var Food = await _foodRepository.GetByIdAsync(id);
-            
-            if (Food == null)
+            var food = await _foodRepository.GetByIdAsync(id);
+            if (food == null)
                 throw new KeyNotFoundException($"Ürün bulunamadı. Id: {id}");
-                
-            return Food;
+
+            return food;
         }
 
         public async Task<IEnumerable<Food>> GetFoodsByCategoryAsync(int categoryId)
@@ -67,12 +56,6 @@ namespace RestERP.Application.Services
 
         public async Task<IEnumerable<Food>> GetFoodsBySubCategoryAsync(int subCategoryId)
         {
-            // Alt kategoriye göre ürün filtreleme işlemini gerçekleştir
-            // Burada SubCategory-Food ilişkisi farklı olabileceğinden dolayı
-            // doğrudan filtreleme yerine ilişkili tabloları kullanmamız gerekebilir
-            
-            // Şu anlık doğrudan CategoryId ile filtreliyoruz
-            // İleride alt kategori ilişkisi eklendiğinde güncellenecek
             return await _foodRepository.GetAllAsync();
         }
 
@@ -80,26 +63,18 @@ namespace RestERP.Application.Services
         {
             if (food == null)
                 throw new ArgumentNullException(nameof(food));
-                
+
             var existingFood = await _foodRepository.GetByIdAsync(food.Id);
-            
             if (existingFood == null)
                 throw new KeyNotFoundException($"Ürün bulunamadı. Id: {food.Id}");
-            
-            // Entity zaten tracked olduğu için property'leri güncellemek yeterli
+
             existingFood.Name = food.Name;
             existingFood.TurkishName = food.TurkishName;
             existingFood.Description = food.Description;
             existingFood.Price = food.Price;
             existingFood.CategoryId = food.CategoryId;
-                
-            // Update çağrısı gereksiz - Entity zaten tracked, SaveChanges yeterli
-            await _foodRepository.SaveChangesAsync();
-        }
 
-        public async Task<IEnumerable<FoodCategory>> GetAllFoodCategoriesAsync()
-        {
-            return await _foodCategoryRepository.GetAllAsync();
+            await _foodRepository.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Image>> GetAllFoodImagesAsync()

@@ -1,24 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using MediatR;
 using RestERP.Core.Domain.Entities;
-using RestERP.Application.Services.Abstract;
+using RestERP.Application.Features.Reservations.Commands.CreateReservation;
+using RestERP.Application.Features.Reservations.Commands.DeleteReservation;
+using RestERP.Application.Features.Reservations.Queries.GetReservationById;
+using RestERP.Application.Features.Reservations.Queries.GetReservations;
+using RestERP.Application.Features.Tables.Queries.GetTables;
 
 namespace RestERP.Web.Controllers
 {
     [AllowAnonymous]
     public class ReservationController : Controller
     {
-        private readonly IReservationService _reservationService;
-        private readonly ITableService _tableService;
+        private readonly IMediator _mediator;
         private readonly ILogger<ReservationController> _logger;
 
         public ReservationController(
-            IReservationService reservationService,
-            ITableService tableService,
+            IMediator mediator,
             ILogger<ReservationController> logger)
         {
-            _reservationService = reservationService;
-            _tableService = tableService;
+            _mediator = mediator;
             _logger = logger;
         }
 
@@ -26,8 +28,8 @@ namespace RestERP.Web.Controllers
         {
             try
             {
-                var tables = (await _tableService.GetAllTablesAsync()).ToList();
-                var reservations = await _reservationService.GetAllReservationsAsync();
+                var tables = (await _mediator.Send(new GetTablesQuery())).ToList();
+                var reservations = await _mediator.Send(new GetReservationsQuery());
                 ViewBag.Reservations = reservations;
                 return View(tables);
             }
@@ -66,7 +68,7 @@ namespace RestERP.Web.Controllers
                     Notes = notes?.Trim()
                 };
 
-                await _reservationService.CreateReservationAsync(rezervasyon);
+                await _mediator.Send(new CreateReservationCommand(rezervasyon));
                 TempData["SuccessMessage"] = "Rezervasyon talebiniz başarıyla kaydedildi.";
             }
             catch (InvalidOperationException ex)
@@ -92,7 +94,7 @@ namespace RestERP.Web.Controllers
         {
             try
             {
-                var reservations = await _reservationService.GetAllReservationsAsync();
+                var reservations = await _mediator.Send(new GetReservationsQuery());
 
                 if (!reservations.Any())
                 {
@@ -115,14 +117,14 @@ namespace RestERP.Web.Controllers
         {
             try
             {
-                var reservation = await _reservationService.GetReservationByIdAsync(id);
+                var reservation = await _mediator.Send(new GetReservationByIdQuery(id));
                 if (reservation == null)
                 {
                     TempData["ErrorMessage"] = "Silinecek rezervasyon bulunamadı.";
                 }
                 else
                 {
-                    await _reservationService.DeleteReservationAsync(id);
+                    await _mediator.Send(new DeleteReservationCommand(id));
                     TempData["SuccessMessage"] = "Rezervasyon başarıyla silindi.";
                 }
             }

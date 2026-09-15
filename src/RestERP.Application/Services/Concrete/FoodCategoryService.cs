@@ -1,11 +1,8 @@
 using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
 using RestERP.Core.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace RestERP.Application.Services
+namespace RestERP.Application.Services.Concrete
 {
     public class FoodCategoryService : IFoodCategoryService
     {
@@ -29,10 +26,9 @@ namespace RestERP.Application.Services
         public async Task DeleteCategoryAsync(int id)
         {
             var category = await _foodCategoryRepository.GetByIdAsync(id);
-            
             if (category == null)
                 throw new KeyNotFoundException($"Kategori bulunamadı. Id: {id}");
-                
+
             _foodCategoryRepository.Delete(category);
             await _foodCategoryRepository.SaveChangesAsync();
         }
@@ -45,10 +41,9 @@ namespace RestERP.Application.Services
         public async Task<FoodCategory> GetCategoryByIdAsync(int id)
         {
             var category = await _foodCategoryRepository.GetByIdAsync(id);
-            
             if (category == null)
                 throw new KeyNotFoundException($"Kategori bulunamadı. Id: {id}");
-                
+
             return category;
         }
 
@@ -56,17 +51,15 @@ namespace RestERP.Application.Services
         {
             if (category == null)
                 throw new ArgumentNullException(nameof(category));
-                
+
             var existingCategory = await _foodCategoryRepository.GetByIdAsync(category.Id);
-            
             if (existingCategory == null)
                 throw new KeyNotFoundException($"Kategori bulunamadı. Id: {category.Id}");
-            
-            // Entity Tracking sorunu için mevcut entity üzerinde güncelleme yap
+
             existingCategory.Name = category.Name;
             existingCategory.TurkishName = category.TurkishName;
             existingCategory.Description = category.Description;
-                
+
             _foodCategoryRepository.Update(existingCategory);
             await _foodCategoryRepository.SaveChangesAsync();
         }

@@ -1,15 +1,11 @@
-using Microsoft.EntityFrameworkCore;
-using RestERP.Application.Services.Abstract;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
-using RestERP.Core.Domain.Entities;
-using RestERP.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
-namespace RestERP.Application.Services
+using Microsoft.EntityFrameworkCore;
+using RestERP.Application.Features.Users;
+using RestERP.Application.Services.Abstract;
+using RestERP.Core.Domain.Entities;
+
+namespace RestERP.Application.Services.Concrete
 {
     public class UserService : IUserService
     {
@@ -32,64 +28,48 @@ namespace RestERP.Application.Services
             return await _userManager.Users.Where(u => u.IsActive).ToListAsync();
         }
 
-        public async Task<ApplicationUser> GetUserByIdAsync(int id)
+        public Task<ApplicationUser?> GetUserByIdAsync(int id)
         {
-            return await _userManager.FindByIdAsync(id.ToString());
+            return _userManager.FindByIdAsync(id.ToString());
         }
 
-        public async Task<ApplicationUser> GetUserByUsernameAsync(string username)
+        public Task<ApplicationUser?> GetUserByUsernameAsync(string username)
         {
-            var user = await _userManager.FindByNameAsync(username);
-            
-            // Debug için konsola yazdır
-            Console.WriteLine($"GetUserByUsernameAsync called with username: {username}");
-            Console.WriteLine($"User found: {user != null}");
-            if (user != null)
-            {
-                Console.WriteLine($"User details - Id: {user.Id}, UserName: {user.UserName}, IsActive: {user.IsActive}");
-            }
-            
-            return user;
+            return _userManager.FindByNameAsync(username);
         }
 
-        public async Task<ApplicationUser> GetUserByEmailAsync(string email)
+        public Task<ApplicationUser?> GetUserByEmailAsync(string email)
         {
-            return await _userManager.FindByEmailAsync(email);
-        }
-        
-        public async Task<bool> CreateUserAsync(ApplicationUser user)
-        {
-            return (await CreateUserWithPasswordAsync(user, string.Empty)).Succeeded;
+            return _userManager.FindByEmailAsync(email);
         }
 
-        public async Task<(bool Succeeded, IReadOnlyList<string> Errors)> CreateUserWithPasswordAsync(
-            ApplicationUser user,
-            string password)
+        public async Task<ApplicationUser?> GetCurrentUserAsync()
+        {
+            var username = _httpContextAccessor.HttpContext?.User?.Identity?.Name;
+            if (string.IsNullOrEmpty(username))
+                return null;
+
+            return await GetUserByUsernameAsync(username);
+        }
+
+        public async Task<UserCommandResult> CreateUserAsync(ApplicationUser user, string password)
         {
             if (user == null)
-            {
-                return (false, new[] { "Kullanıcı bilgisi boş olamaz." });
-            }
+                return UserCommandResult.Fail("Kullanıcı bilgisi boş olamaz.");
 
             if (string.IsNullOrWhiteSpace(password))
-            {
-                return (false, new[] { "Şifre zorunludur." });
-            }
+                return UserCommandResult.Fail("Şifre zorunludur.");
 
             var existingByEmail = await _userManager.FindByEmailAsync(user.Email);
             if (existingByEmail != null)
-            {
-                return (false, new[] { "Bu e-posta adresi zaten kullanılıyor." });
-            }
+                return UserCommandResult.Fail("Bu e-posta adresi zaten kullanılıyor.");
 
             user.UserName ??= user.Email;
             user.IsActive = true;
 
             var createResult = await _userManager.CreateAsync(user, password);
             if (!createResult.Succeeded)
-            {
-                return (false, createResult.Errors.Select(e => e.Description).ToList());
-            }
+                return UserCommandResult.Fail(createResult.Errors.Select(e => e.Description));
 
             var roleName = user.RoleType.ToString();
             if (!await _roleManager.RoleExistsAsync(roleName))
@@ -99,11 +79,9 @@ namespace RestERP.Application.Services
 
             var roleResult = await _userManager.AddToRoleAsync(user, roleName);
             if (!roleResult.Succeeded)
-            {
-                return (false, roleResult.Errors.Select(e => e.Description).ToList());
-            }
+                return UserCommandResult.Fail(roleResult.Errors.Select(e => e.Description));
 
-            return (true, Array.Empty<string>());
+            return UserCommandResult.Success();
         }
 
         public async Task<bool> UpdateUserAsync(ApplicationUser user)
@@ -119,22 +97,18 @@ namespace RestERP.Application.Services
             }
         }
 
-        public async Task<(bool Succeeded, IReadOnlyList<string> Errors)> ResetPasswordAsync(int userId, string newPassword)
+        public async Task<UserCommandResult> ResetPasswordAsync(int userId, string newPassword)
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             if (user == null)
-            {
-                return (false, new[] { "Kullanıcı bulunamadı." });
-            }
+                return UserCommandResult.Fail("Kullanıcı bulunamadı.");
 
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
             if (!result.Succeeded)
-            {
-                return (false, result.Errors.Select(e => e.Description).ToList());
-            }
+                return UserCommandResult.Fail(result.Errors.Select(e => e.Description));
 
-            return (true, Array.Empty<string>());
+            return UserCommandResult.Success();
         }
 
         public async Task<bool> DeleteUserAsync(int id)
@@ -142,28 +116,17 @@ namespace RestERP.Application.Services
             try
             {
                 var user = await _userManager.FindByIdAsync(id.ToString());
-                if (user != null)
-                {
-                    // Soft delete: sadece IsActive'i false yap
-                    user.IsActive = false;
-                    var result = await _userManager.UpdateAsync(user);
-                    return result.Succeeded;
-                }
-                return false;
+                if (user == null)
+                    return false;
+
+                user.IsActive = false;
+                var result = await _userManager.UpdateAsync(user);
+                return result.Succeeded;
             }
             catch
             {
                 return false;
             }
         }
-
-        public async Task<ApplicationUser> GetCurrentUserAsync()
-        {
-            var username = _httpContextAccessor.HttpContext?.User?.Identity?.Name;
-            if (string.IsNullOrEmpty(username))
-                return null;
-
-            return await GetUserByUsernameAsync(username);
-        }
     }
-} 
+}
