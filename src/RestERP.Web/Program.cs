@@ -7,7 +7,7 @@ using RestERP.Application.Services;
 using RestERP.Application.Services.Abstract;
 using RestERP.Application.Services.Concrete;
 using RestERP.Core.Domain.Entities;
-using RestERP.Core.Interfaces;
+using RestERP.Core.Interfaces.Repositories;
 using RestERP.Domain.Enums;
 using RestERP.Infrastructure.Context;
 using RestERP.Infrastructure.Data.SeedData;
@@ -109,8 +109,18 @@ builder.Services
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<IFoodRepository, FoodRepository>();
+builder.Services.AddScoped<IFoodCategoryRepository, FoodCategoryRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+builder.Services.AddScoped<ITableRepository, TableRepository>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<ILogRepository, LogRepository>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFoodService, FoodService>();
 builder.Services.AddScoped<IUserService, UserService>();

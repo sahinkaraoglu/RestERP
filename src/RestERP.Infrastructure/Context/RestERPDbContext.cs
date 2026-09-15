@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RestERP.Core.Domain.Entities;
+using RestERP.Core.Domain.Entities.Base;
 using RestERP.Infrastructure.Data.SeedData;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -11,6 +12,30 @@ namespace RestERP.Infrastructure.Context
         public RestERPDbContext(DbContextOptions<RestERPDbContext> options)
             : base(options)
         {
+        }
+
+        /// <summary>
+        /// Audit alanlarını (CreatedDate/UpdatedDate) otomatik set eder.
+        /// Bu mantık daha önce UnitOfWork.SaveChangesAsync içindeydi; UnitOfWork kaldırıldığı için
+        /// buraya (DbContext'in kendisine) taşındı, böylece hangi repository üzerinden
+        /// SaveChangesAsync çağrılırsa çağrılsın davranış tutarlı kalır.
+        /// </summary>
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.CreatedDate = DateTime.UtcNow;
+                        break;
+                    case EntityState.Modified:
+                        entry.Entity.UpdatedDate = DateTime.UtcNow;
+                        break;
+                }
+            }
+
+            return await base.SaveChangesAsync(cancellationToken);
         }
 
         public DbSet<Food> Foods { get; set; }

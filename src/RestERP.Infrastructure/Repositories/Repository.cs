@@ -166,5 +166,12 @@ namespace RestERP.Infrastructure.Repositories
         // Global query filter otomatik olarak !e.IsDeleted kontrolü yapıyor
         return await _dbContext.Set<T>().Where(predicate).CountAsync();
     }
+
+    public async Task<int> SaveChangesAsync()
+    {
+        // CreatedDate/UpdatedDate gibi audit alanları RestERPDbContext.SaveChangesAsync
+        // override'ında otomatik set ediliyor.
+        return await _dbContext.SaveChangesAsync();
+    }
     }
 } 

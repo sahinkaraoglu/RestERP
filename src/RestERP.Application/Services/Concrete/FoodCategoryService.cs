@@ -1,6 +1,6 @@
 using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
-using RestERP.Core.Interfaces;
+using RestERP.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,11 +9,11 @@ namespace RestERP.Application.Services
 {
     public class FoodCategoryService : IFoodCategoryService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IFoodCategoryRepository _foodCategoryRepository;
 
-        public FoodCategoryService(IUnitOfWork unitOfWork)
+        public FoodCategoryService(IFoodCategoryRepository foodCategoryRepository)
         {
-            _unitOfWork = unitOfWork;
+            _foodCategoryRepository = foodCategoryRepository;
         }
 
         public async Task<FoodCategory> CreateCategoryAsync(FoodCategory category)
@@ -21,30 +21,30 @@ namespace RestERP.Application.Services
             if (category == null)
                 throw new ArgumentNullException(nameof(category));
 
-            await _unitOfWork.Repository<FoodCategory>().AddAsync(category);
-            await _unitOfWork.SaveChangesAsync();
+            await _foodCategoryRepository.AddAsync(category);
+            await _foodCategoryRepository.SaveChangesAsync();
             return category;
         }
 
         public async Task DeleteCategoryAsync(int id)
         {
-            var category = await _unitOfWork.Repository<FoodCategory>().GetByIdAsync(id);
+            var category = await _foodCategoryRepository.GetByIdAsync(id);
             
             if (category == null)
                 throw new KeyNotFoundException($"Kategori bulunamadı. Id: {id}");
                 
-            _unitOfWork.Repository<FoodCategory>().Delete(category);
-            await _unitOfWork.SaveChangesAsync();
+            _foodCategoryRepository.Delete(category);
+            await _foodCategoryRepository.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<FoodCategory>> GetAllCategoriesAsync()
         {
-            return await _unitOfWork.Repository<FoodCategory>().GetAllAsync();
+            return await _foodCategoryRepository.GetAllAsync();
         }
 
         public async Task<FoodCategory> GetCategoryByIdAsync(int id)
         {
-            var category = await _unitOfWork.Repository<FoodCategory>().GetByIdAsync(id);
+            var category = await _foodCategoryRepository.GetByIdAsync(id);
             
             if (category == null)
                 throw new KeyNotFoundException($"Kategori bulunamadı. Id: {id}");
@@ -57,7 +57,7 @@ namespace RestERP.Application.Services
             if (category == null)
                 throw new ArgumentNullException(nameof(category));
                 
-            var existingCategory = await _unitOfWork.Repository<FoodCategory>().GetByIdAsync(category.Id);
+            var existingCategory = await _foodCategoryRepository.GetByIdAsync(category.Id);
             
             if (existingCategory == null)
                 throw new KeyNotFoundException($"Kategori bulunamadı. Id: {category.Id}");
@@ -67,8 +67,8 @@ namespace RestERP.Application.Services
             existingCategory.TurkishName = category.TurkishName;
             existingCategory.Description = category.Description;
                 
-            _unitOfWork.Repository<FoodCategory>().Update(existingCategory);
-            await _unitOfWork.SaveChangesAsync();
+            _foodCategoryRepository.Update(existingCategory);
+            await _foodCategoryRepository.SaveChangesAsync();
         }
     }
-} 
+}

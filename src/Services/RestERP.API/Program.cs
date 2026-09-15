@@ -8,9 +8,7 @@ using Microsoft.OpenApi.Models;
 using RestERP.Application.Services;
 using RestERP.Application.Services.Abstract;
 using RestERP.Application.Services.Concrete;
-using RestERP.Core.Interfaces;
 using RestERP.Infrastructure.Context;
-using RestERP.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 using RestERP.Core.Domain.Entities;
@@ -20,15 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
-    // Repository ve UnitOfWork
-    containerBuilder.RegisterGeneric(typeof(Repository<>))
-                   .As(typeof(IRepository<>))
-                   .InstancePerLifetimeScope();
-
-    containerBuilder.RegisterType<UnitOfWork>()
-                   .As<IUnitOfWork>()
-                   .InstancePerLifetimeScope();
-
     containerBuilder.RegisterModule(new RestERP.API.DependencyInjection.AutofacModule());
 });
 

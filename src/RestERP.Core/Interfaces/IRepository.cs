@@ -25,5 +25,12 @@ namespace RestERP.Core.Interfaces
         void Delete(T entity);
         Task<bool> ExistsAsync(int id);
         Task<int> CountAsync(Expression<Func<T, bool>> predicate);
+
+        /// <summary>
+        /// Bu repository'nin bağlı olduğu DbContext üzerindeki bekleyen tüm değişiklikleri kaydeder.
+        /// UnitOfWork kaldırıldığı için DbContext (Scoped) zaten bir Unit of Work görevi görür;
+        /// aynı istek kapsamındaki tüm repository'ler aynı context instance'ını paylaşır.
+        /// </summary>
+        Task<int> SaveChangesAsync();
     }
 } 

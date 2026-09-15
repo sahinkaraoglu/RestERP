@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
-using RestERP.Core.Interfaces;
+using RestERP.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,12 +10,12 @@ namespace RestERP.Application.Services
 {
     public class TableService : ITableService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITableRepository _tableRepository;
         private readonly ILogger<TableService> _logger;
 
-        public TableService(IUnitOfWork unitOfWork, ILogger<TableService> logger)
+        public TableService(ITableRepository tableRepository, ILogger<TableService> logger)
         {
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _tableRepository = tableRepository ?? throw new ArgumentNullException(nameof(tableRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -23,7 +23,7 @@ namespace RestERP.Application.Services
         {
             try
             {
-                var tables = await _unitOfWork.Repository<Table>().GetAllAsync();
+                var tables = await _tableRepository.GetAllAsync();
                 return tables;
             }
             catch (Exception ex)
@@ -37,7 +37,7 @@ namespace RestERP.Application.Services
         {
             try
             {
-                var table = await _unitOfWork.Repository<Table>().GetByIdAsync(id);
+                var table = await _tableRepository.GetByIdAsync(id);
                 if (table == null)
                 {
                     _logger.LogWarning("Masa bulunamadı: {Id}", id);
@@ -56,8 +56,8 @@ namespace RestERP.Application.Services
         {
             try
             {
-                var newTable = await _unitOfWork.Repository<Table>().AddAsync(table);
-                await _unitOfWork.SaveChangesAsync();
+                var newTable = await _tableRepository.AddAsync(table);
+                await _tableRepository.SaveChangesAsync();
                 return newTable;
             }
             catch (Exception ex)
@@ -71,8 +71,8 @@ namespace RestERP.Application.Services
         {
             try
             {
-                _unitOfWork.Repository<Table>().Update(table);
-                await _unitOfWork.SaveChangesAsync();
+                _tableRepository.Update(table);
+                await _tableRepository.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -85,15 +85,15 @@ namespace RestERP.Application.Services
         {
             try
             {
-                var table = await _unitOfWork.Repository<Table>().GetByIdAsync(id);
+                var table = await _tableRepository.GetByIdAsync(id);
                 if (table == null)
                 {
                     _logger.LogWarning("Silinecek masa bulunamadı: {Id}", id);
                     throw new KeyNotFoundException($"ID'si {id} olan masa bulunamadı");
                 }
 
-                _unitOfWork.Repository<Table>().Delete(table);
-                await _unitOfWork.SaveChangesAsync();
+                _tableRepository.Delete(table);
+                await _tableRepository.SaveChangesAsync();
             }
             catch (Exception ex) when (ex is not KeyNotFoundException)
             {
@@ -106,7 +106,7 @@ namespace RestERP.Application.Services
         {
             try
             {
-                var table = await _unitOfWork.Repository<Table>().GetByIdAsync(id);
+                var table = await _tableRepository.GetByIdAsync(id);
                 if (table == null)
                 {
                     _logger.LogWarning("Masa bulunamadı: {Id}", id);
@@ -114,8 +114,8 @@ namespace RestERP.Application.Services
                 }
 
                 table.IsOccupied = isOccupied;
-                _unitOfWork.Repository<Table>().Update(table);
-                await _unitOfWork.SaveChangesAsync();
+                _tableRepository.Update(table);
+                await _tableRepository.SaveChangesAsync();
                 return true;
             }
             catch (Exception ex) when (ex is not KeyNotFoundException)
@@ -125,4 +125,4 @@ namespace RestERP.Application.Services
             }
         }
     }
-} 
+}

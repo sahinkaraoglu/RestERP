@@ -1,6 +1,6 @@
 using RestERP.Application.Services.Abstract;
 using RestERP.Core.Domain.Entities;
-using RestERP.Core.Interfaces;
+using RestERP.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,56 +10,56 @@ namespace RestERP.Application.Services
 {
     public class ReservationService : IReservationService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IReservationRepository _reservationRepository;
 
-        public ReservationService(IUnitOfWork unitOfWork)
+        public ReservationService(IReservationRepository reservationRepository)
         {
-            _unitOfWork = unitOfWork;
+            _reservationRepository = reservationRepository;
         }
 
         public async Task<Reservation> CreateReservationAsync(Reservation reservation)
         {
-            await _unitOfWork.Repository<Reservation>().AddAsync(reservation);
-            await _unitOfWork.SaveChangesAsync();
+            await _reservationRepository.AddAsync(reservation);
+            await _reservationRepository.SaveChangesAsync();
             return reservation;
         }
 
         public async Task UpdateReservationAsync(Reservation reservation)
         {
-            _unitOfWork.Repository<Reservation>().Update(reservation);
-            await _unitOfWork.SaveChangesAsync();
+            _reservationRepository.Update(reservation);
+            await _reservationRepository.SaveChangesAsync();
         }
 
         public async Task DeleteReservationAsync(int id)
         {
-            var reservation = await _unitOfWork.Repository<Reservation>().GetByIdAsync(id);
+            var reservation = await _reservationRepository.GetByIdAsync(id);
             if (reservation != null)
             {
-                _unitOfWork.Repository<Reservation>().Delete(reservation);
-                await _unitOfWork.SaveChangesAsync();
+                _reservationRepository.Delete(reservation);
+                await _reservationRepository.SaveChangesAsync();
             }
         }
 
         public async Task<Reservation> GetReservationByIdAsync(int id)
         {
-            return await _unitOfWork.Repository<Reservation>().GetByIdAsync(id);
+            return await _reservationRepository.GetByIdAsync(id);
         }
 
         public async Task<List<Reservation>> GetAllReservationsAsync()
         {
-            var result = await _unitOfWork.Repository<Reservation>().GetAllAsync();
+            var result = await _reservationRepository.GetAllAsync();
             return result.ToList();
         }
 
         public async Task<List<Reservation>> GetAllAsync()
         {
-            var result = await _unitOfWork.Repository<Reservation>().GetAllAsync();
+            var result = await _reservationRepository.GetAllAsync();
             return result.ToList();
         }
 
         public async Task<Reservation> GetByIdAsync(int id)
         {
-            return await _unitOfWork.Repository<Reservation>().GetByIdAsync(id);
+            return await _reservationRepository.GetByIdAsync(id);
         }
 
         private void ValidateReservation(Reservation reservation)
