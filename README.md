@@ -19,47 +19,22 @@ Production-ready, layered restaurant ERP built on ASP.NET Core (.NET 9). The sol
 - `RestERP.Web`: MVC UI (Areas/Admin), HttpClient to API, auth integration
 - `RestERP.Mobile`: React Native (Expo) client for customer and admin workflows over the same API
 
-### Web Screenshots
-
-<div align="center">
-    <table>
-        <tr>
-            <td>
-                <img src="https://github.com/user-attachments/assets/14fcac76-30d6-4b66-a919-d73a881c8e60" alt="Web — Home" width="400"/>
-            </td>
-            <td>
-                <img src="https://github.com/user-attachments/assets/4a868afa-651f-49c2-9358-d9650db4b7b2" alt="Web — Management" width="400"/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <img src="https://github.com/user-attachments/assets/74c4cadd-49ca-43e6-8060-00a5ba1af2b2" alt="Web — Menu" width="400"/>
-            </td>
-            <td>
-                <img src="https://github.com/user-attachments/assets/8db0fe5f-c4d0-41a5-abc3-c5aa52bf1d85" alt="Web — Login" width="400"/>
-            </td>
-        </tr>
-    </table>
-</div>
-
 ### Mobile Screenshots
 
 <div align="center">
     <table>
         <tr>
-            <td>
-                <img src="YOUR_IMAGE_URL_1" alt="Mobile — Home" width="250"/>
+            <td align="center">
+                <img src="https://github.com/user-attachments/assets/d0602d43-c71f-41b6-8cb0-9342343eca13" alt="Mobile — Home" width="180"/>
             </td>
-            <td>
-                <img src="YOUR_IMAGE_URL_2" alt="Mobile — Menu" width="250"/>
+            <td align="center">
+                <img src="https://github.com/user-attachments/assets/386d6d44-50cf-4f0d-8ff2-9518a9cb4da7" alt="Mobile — Menu" width="180"/>
             </td>
-        </tr>
-        <tr>
-            <td>
-                <img src="YOUR_IMAGE_URL_3" alt="Mobile — Orders" width="250"/>
+            <td align="center">
+                <img src="https://github.com/user-attachments/assets/00ceba68-b452-411d-8f0a-aad7faa628b2" alt="Mobile — Orders" width="180"/>
             </td>
-            <td>
-                <img src="YOUR_IMAGE_URL_4" alt="Mobile — Admin Panel" width="250"/>
+            <td align="center">
+                <img src="https://github.com/user-attachments/assets/7901b0cd-844f-41b0-a78f-6f298c8395ca" alt="Mobile — Admin Panel" width="180"/>
             </td>
         </tr>
     </table>
@@ -113,14 +88,6 @@ Open with Expo Go or an emulator.
 | iOS simulator / physical device | Same LAN IP as your machine (`src/RestERP.Mobile/src/config.ts`) |
 
 Start the API with the `http` profile so the mobile client can reach it on the local network.
-
-### Test Users (Development)
-
-| Email | Password | Role |
-|---|---|---|
-| admin@resterp.com | Admin123! | Admin |
-| employee@resterp.com | Employee123! | Employee |
-| customer@test.com | Customer123! | Customer |
 
 ### Mobile Screens
 
