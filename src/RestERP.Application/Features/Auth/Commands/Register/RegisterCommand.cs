@@ -1,10 +1,11 @@
 using MediatR;
 using RestERP.Application.DTOs;
+using RestERP.Application.Logging;
 using RestERP.Application.Services.Abstract;
 
 namespace RestERP.Application.Features.Auth.Commands.Register
 {
-    public record RegisterCommand(RegisterRequest Request) : IRequest<TokenResponse?>;
+    public record RegisterCommand(RegisterRequest Request) : IRequest<TokenResponse?>, INoLogRequest;
 
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, TokenResponse?>
     {

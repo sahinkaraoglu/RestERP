@@ -1,9 +1,10 @@
 using MediatR;
+using RestERP.Application.Logging;
 using RestERP.Application.Services.Abstract;
 
 namespace RestERP.Application.Features.Users.Commands.ResetPassword
 {
-    public record ResetPasswordCommand(int UserId, string NewPassword) : IRequest<UserCommandResult>;
+    public record ResetPasswordCommand(int UserId, string NewPassword) : IRequest<UserCommandResult>, INoLogRequest;
 
     public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, UserCommandResult>
     {

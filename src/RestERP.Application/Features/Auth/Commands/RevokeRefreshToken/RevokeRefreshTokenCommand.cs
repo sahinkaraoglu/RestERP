@@ -1,9 +1,10 @@
 using MediatR;
+using RestERP.Application.Logging;
 using RestERP.Application.Services.Abstract;
 
 namespace RestERP.Application.Features.Auth.Commands.RevokeRefreshToken
 {
-    public record RevokeRefreshTokenCommand(string RefreshToken) : IRequest<bool>;
+    public record RevokeRefreshTokenCommand(string RefreshToken) : IRequest<bool>, INoLogRequest;
 
     public class RevokeRefreshTokenCommandHandler : IRequestHandler<RevokeRefreshTokenCommand, bool>
     {

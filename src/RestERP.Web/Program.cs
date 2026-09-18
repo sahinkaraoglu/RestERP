@@ -90,6 +90,8 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddDbContext<RestERPDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddRestERPLogging(builder.Configuration.GetConnectionString("LoggingConnection")!);
+
 builder.Services
     .AddIdentityCore<ApplicationUser>(options =>
     {

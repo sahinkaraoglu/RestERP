@@ -1,10 +1,11 @@
 using MediatR;
 using RestERP.Application.DTOs;
+using RestERP.Application.Logging;
 using RestERP.Application.Services.Abstract;
 
 namespace RestERP.Application.Features.Auth.Commands.Login
 {
-    public record LoginCommand(LoginRequest Request) : IRequest<TokenResponse?>;
+    public record LoginCommand(LoginRequest Request) : IRequest<TokenResponse?>, INoLogRequest;
 
     public class LoginCommandHandler : IRequestHandler<LoginCommand, TokenResponse?>
     {

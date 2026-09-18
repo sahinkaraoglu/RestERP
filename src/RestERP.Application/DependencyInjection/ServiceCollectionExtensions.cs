@@ -1,4 +1,6 @@
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using RestERP.Application.Behaviors;
 using RestERP.Application.Features.Auth;
 using RestERP.Application.Services.Abstract;
 using RestERP.Application.Services.Concrete;
@@ -10,7 +12,10 @@ namespace RestERP.Application.DependencyInjection
         public static IServiceCollection AddRestERPApplicationServices(this IServiceCollection services)
         {
             services.AddMediatR(cfg =>
-                cfg.RegisterServicesFromAssembly(typeof(ServiceCollectionExtensions).Assembly));
+            {
+                cfg.RegisterServicesFromAssembly(typeof(ServiceCollectionExtensions).Assembly);
+                cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            });
 
             services.AddScoped<AuthTokenService>();
             services.AddScoped<IFoodService, FoodService>();
