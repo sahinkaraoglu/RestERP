@@ -1,13 +1,8 @@
-using System;
-using System.Linq;
 using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
-namespace RestERP.Web.Middleware
+namespace RestERP.API.Middleware
 {
     public class ExceptionHandlingMiddleware
     {
@@ -26,6 +21,10 @@ namespace RestERP.Web.Middleware
             {
                 await _next(context);
             }
+            catch (ValidationException ex)
+            {
+                await HandleValidationExceptionAsync(context, ex);
+            }
             catch (KeyNotFoundException ex)
             {
                 await HandleExceptionAsync(context, ex, HttpStatusCode.NotFound, "Kaynak bulunamadı");
@@ -33,10 +32,6 @@ namespace RestERP.Web.Middleware
             catch (ArgumentException ex)
             {
                 await HandleExceptionAsync(context, ex, HttpStatusCode.BadRequest, "Geçersiz argüman");
-            }
-            catch (ValidationException ex)
-            {
-                await HandleValidationExceptionAsync(context, ex);
             }
             catch (Exception ex)
             {
@@ -46,7 +41,8 @@ namespace RestERP.Web.Middleware
 
         private async Task HandleValidationExceptionAsync(HttpContext context, ValidationException exception)
         {
-            _logger.LogWarning("Validation failed: {Errors}", string.Join(", ", exception.Errors.Select(e => e.ErrorMessage)));
+            _logger.LogWarning("Validation failed: {Errors}",
+                string.Join(", ", exception.Errors.Select(e => e.ErrorMessage)));
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -62,26 +58,28 @@ namespace RestERP.Web.Middleware
                 })
             };
 
-            var jsonResponse = JsonSerializer.Serialize(errorResponse);
-            await context.Response.WriteAsync(jsonResponse);
+            await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
         }
 
-        private async Task HandleExceptionAsync(HttpContext context, Exception exception, HttpStatusCode statusCode, string message)
+        private async Task HandleExceptionAsync(
+            HttpContext context,
+            Exception exception,
+            HttpStatusCode statusCode,
+            string message)
         {
             _logger.LogError(exception, exception.Message);
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;
 
-            var errorResponse = new 
+            var errorResponse = new
             {
                 StatusCode = context.Response.StatusCode,
                 Message = message,
                 Detail = exception.Message
             };
 
-            var jsonResponse = JsonSerializer.Serialize(errorResponse);
-            await context.Response.WriteAsync(jsonResponse);
+            await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
         }
     }
-} 
+}

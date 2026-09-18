@@ -9,6 +9,7 @@ using RestERP.Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 using RestERP.Core.Domain.Entities;
+using RestERP.API.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -170,6 +171,8 @@ if (!string.IsNullOrWhiteSpace(webRootSetting))
 }
 
 app.UseCors("AllowAll");
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

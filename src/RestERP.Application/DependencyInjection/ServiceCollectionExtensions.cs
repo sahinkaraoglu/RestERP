@@ -1,3 +1,4 @@
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using RestERP.Application.Behaviors;
@@ -11,9 +12,12 @@ namespace RestERP.Application.DependencyInjection
     {
         public static IServiceCollection AddRestERPApplicationServices(this IServiceCollection services)
         {
+            services.AddValidatorsFromAssembly(typeof(ServiceCollectionExtensions).Assembly);
+
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(typeof(ServiceCollectionExtensions).Assembly);
+                cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
                 cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
             });
 
